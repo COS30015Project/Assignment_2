@@ -1,0 +1,8 @@
+Project Goal (Title on UN data on Migration)
+- a website 
+- need 5 visualization for the data 
+   -> in different form such as bar chart + pie chart
+   -> must have map chart 
+
+if the UN website alrd have the visualization, will need to recreate a csv file 
+
