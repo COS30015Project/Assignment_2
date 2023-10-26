@@ -31,8 +31,10 @@ function init() {
 
     const totalByState = new Map(); // Create a map to store the Asian migration data by state
 
-    d3.json("usa.json").then(function (usData) { // Load the U.S. state GeoJSON data
-        d3.csv("us_migration_map.csv").then(function (asianData) { // Load your Asian migration data
+    // Load the U.S. state GeoJSON data
+    d3.json("usa.json").then(function (usData) {
+        // Load your Asian migration data
+        d3.csv("us_migration_map.csv").then(function (asianData) {
             asianData.forEach(function (d) {
                 d.state = d['State of intended residence'];
                 // Aggregate the total number of migrants by state
