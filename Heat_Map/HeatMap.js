@@ -1,4 +1,3 @@
-
 function init() {
     const width = 1200; // Width of the SVG
     const height = 1000; // Height of the SVG
@@ -33,7 +32,11 @@ function init() {
             .style("fill", function (d, i) {
                 return color(i % colorScheme.length); // Apply the color scheme
             })
-            .on("click", clicked);
+            .on("click", clicked)
+            .append("title") // Add a title element for showing state name
+            .text(function (d) {
+                return d.properties.NAME; // Display state name
+            });
 
         // Define a reset function for zoom
         function reset() {
@@ -52,7 +55,7 @@ function init() {
             .scaleExtent([1, 8])
             .on("zoom", zoomed);
 
-        svg.call(zoom);
+        svg.call(zoom); //called the zoom function
 
         // Handle click events
         function clicked(event, d) {
@@ -64,7 +67,7 @@ function init() {
                 zoom.transform,
                 d3.zoomIdentity
                     .translate(width / 2, height / 2)
-                    .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                    .scale(Math.min(8, 0.9 / Math max((x1 - x0) / width, (y1 - y0) / height)))
                     .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
                 d3.pointer(event, svg.node())
             );
