@@ -24,11 +24,6 @@ function init()
 
     const color = d3.scaleOrdinal().range(colorScheme); // Define the color scale
 
-    const zoom = d3.zoom()
-        .scaleExtent([1, 8])
-        .on("zoom", zoomed);
-
-    svg.call(zoom);
 
     // Load the GeoJSON data
     d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
@@ -52,6 +47,12 @@ function init()
         function zoomed(event) {
             g.attr("transform", event.transform);
         }
+
+        const zoom = d3.zoom()
+        .scaleExtent([1, 8])
+        .on("zoom", zoomed);
+
+         svg.call(zoom);
 
         // Handle click events
         function clicked(event, d) {
