@@ -25,15 +25,20 @@ function init() {
     d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
         // Load the CSV data
         d3.csv("us_migration_map.csv").then(function (data) {
-            // Create a map to store values associated with states
-            const stateValueMap = new Map();
+            // Create a map to store data for each state
+            const stateDataMap = new Map();
 
             // Process the CSV data and populate the map
             data.forEach(function (d) {
                 const state = d['State of intended residence'];
-                const value = parseFloat(d['Year: 2022']);
-
-                stateValueMap.set(state, value);
+                const countryData = {};
+                // Loop through the columns for each country and store the data
+                Object.keys(d).forEach(function (key) {
+                    if (key !== 'State of intended residence') {
+                        countryData[key] = parseFloat(d[key].replace(/,/g, '')) || 0;
+                    }
+                });
+                stateDataMap.set(state, countryData);
             });
 
             g.selectAll("path")
@@ -44,15 +49,23 @@ function init() {
                 .attr("class", "feature") // Use a class for styling
                 .style("fill", function (d) {
                     const state = d.properties.NAME;
-                    const value = stateValueMap.get(state);
-                    return color(value || 0); // Use the color scale based on the value
+                    const countryData = stateDataMap.get(state);
+                    // Calculate the total number of people for the state
+                    const totalPeople = Object.values(countryData).reduce((a, b) => a + b, 0);
+                    return color(totalPeople || 0); // Use the color scale based on the total people
                 })
                 .on("click", clicked)
-                .append("title") // Add a title element for showing state name and value
-                .text(function (d) {
+                .append("title") // Add a title element for showing state name and country data
+                .html(function (d) {
                     const state = d.properties.NAME;
-                    const value = stateValueMap.get(state);
-                    return `${state}: ${value || 0}`;
+                    const countryData = stateDataMap.get(state);
+                    // Create an HTML table to display the data
+                    let tooltipHTML = `<strong>${state}</strong><br>`;
+                    Object.keys(countryData).forEach(function (country) {
+                        const value = countryData[country];
+                        tooltipHTML += `${country}: ${value}<br>`;
+                    });
+                    return tooltipHTML;
                 });
         });
 
