@@ -55,7 +55,7 @@ function init() {
                 .attr("fill", "none")
                 .attr("stroke", "white")
                 .attr("stroke-linejoin", "round")
-                .attr("d", path(topojson.mesh(usData, usData.objects.states, (a, b) => a !== b));
+                .attr("d", path(topojson.mesh(usData, usData.objects.states, (a, b) => a !== b)));
 
             g.selectAll("text") // Add text labels with state names
                 .data(usData.features)
