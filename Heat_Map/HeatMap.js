@@ -33,12 +33,12 @@ function init() {
 
     // Load the U.S. state GeoJSON data
     d3.json("usa.json").then(function (usData) {
-        // Load the Asian migration data CSV
-        d3.csv("data.csv").then(function (asianData) {
+        // Load your Asian migration data CSV
+        d3.csv("asian_migration_data.csv").then(function (asianData) {
             asianData.forEach(function (d) {
                 const stateName = d['State of intended residence'];
                 const totalMigrants = +d['Total'];
-                totalByState.set(stateName, d);
+                totalByState.set(stateName, totalMigrants);
             });
 
             const states = g.append("g")
@@ -53,8 +53,8 @@ function init() {
             states.append("title")
                 .text(function (d) {
                     const stateName = d.properties.NAME;
-                    const migrationData = totalByState.get(stateName);
-                    return migrationData ? `${stateName}:\nTotal: ${migrationData.Total}\nChina: ${migrationData.China}\nBangladesh: ${migrationData.Bangladesh}\nIndia: ${migrationData.India}\nIran: ${migrationData.Iran}\nKorea: ${migrationData.Korea}\nPakistan: ${migrationData.Pakistan}\nPhilippines: ${migrationData.Philippines}\nTaiwan: ${migrationData.Taiwan}\nVietnam: ${migrationData.Vietnam}\nOther: ${migrationData.Other}` : `${stateName}: No data available`;
+                    const totalMigrants = totalByState.get(stateName) || 0;
+                    return `${stateName}: ${totalMigrants} migrants`;
                 });
 
             g.append("path")
