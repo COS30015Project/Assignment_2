@@ -1,6 +1,6 @@
 function init() {
-    const width = 1200; // Width of the SVG
-    const height = 1000; // Height of the SVG
+    const width = 1200;
+    const height = 1000;
     const padding = 25;
 
     const colorScheme = [
@@ -68,7 +68,7 @@ function init() {
                     return d.properties.NAME;
                 })
                 .style("text-anchor", "middle")
-                .style("font-size", "5px")
+                .style("font-size", "12px")
                 .style("fill", "black");
 
             function showAsianMigrationData(d, totalByState) {
@@ -76,42 +76,6 @@ function init() {
                 const totalMigrants = totalByState.get(stateName);
                 alert(`Asian Migration Data for ${stateName}: ${totalMigrants} migrants`);
             }
-
-            function reset() {
-                g.selectAll(".feature").style("fill", function (d) {
-                    const stateName = d.properties.NAME;
-                    const totalMigrants = totalByState.get(stateName);
-                    return color(totalMigrants);
-                });
-                g.transition().call(zoom.transform, d3.zoomIdentity);
-            }
-
-            function zoomed(event) {
-                g.attr("transform", event.transform);
-            }
-
-            const zoom = d3.zoom()
-                .scaleExtent([1, 8])
-                .on("zoom", zoomed);
-
-            svg.call(zoom);
-
-            function clicked(event, d) {
-                const [[x0, y0], [x1, y1]] = path.bounds(d);
-                event.stopPropagation();
-                reset();
-                d3.select(this).style("fill", "red");
-                svg.transition().duration(750).call(
-                    zoom.transform,
-                    d3.zoomIdentity
-                        .translate(width / 2, height / 2)
-                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-                    d3.pointer(event, svg.node())
-                );
-            }
-
-            svg.on("click", reset);
         });
     });
 }
