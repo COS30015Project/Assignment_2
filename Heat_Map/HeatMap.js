@@ -26,7 +26,7 @@ function init() {
   
     svg.call(zoom);
   
-    d3.json("USA_State.json").then(function (json) {
+    d3.json("USA_State.geojson").then(function (json) {
       // Append path elements for each feature in the JSON data
       g.selectAll("path")
         .data(json.features)
