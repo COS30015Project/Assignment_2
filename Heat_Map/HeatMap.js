@@ -23,36 +23,39 @@ function init() {
 
     const color = d3.scaleOrdinal().range(colorScheme);
 
+    const zoom = d3.zoom()
+        .scaleExtent([1, 8])
+        .on("zoom", zoomed);
+
+    svg.call(zoom);
+
+    const totalByState = new Map(); // Create a map to store the Asian migration data by state
+
     d3.json("usa.json").then(function (usData) { // Load the U.S. state GeoJSON data
         d3.csv("us_migration_map.csv").then(function (asianData) { // Load your Asian migration data
-            const totalByState = new Map(); // Create a map to store the Asian migration data by state
-
             asianData.forEach(function (d) {
                 d.state = d['State of intended residence'];
                 // Aggregate the total number of migrants by state
                 totalByState.set(d.state, +d['Total']);
             });
 
-            g.selectAll("path")
+            const states = g.append("g")
+                .attr("fill", "#444")
+                .attr("cursor", "pointer")
+                .selectAll("path")
                 .data(usData.features)
-                .enter()
-                .append("path")
-                .attr("d", path)
-                .attr("class", "feature")
-                .style("fill", function (d) {
-                    const stateName = d.properties.NAME;
-                    // Get the total number of Asian migrants for this state
-                    const totalMigrants = totalByState.get(stateName);
-                    // You can use a color scale to represent the number of migrants
-                    return color(totalMigrants);
-                })
-                .on("click", function (event, d) {
-                    showAsianMigrationData(d, totalByState);
-                })
-                .append("title")
-                .text(function (d) {
-                    return d.properties.NAME;
-                });
+                .join("path")
+                .on("click", clicked)
+                .attr("d", path);
+
+            states.append("title")
+                .text(d => d.properties.NAME);
+
+            g.append("path")
+                .attr("fill", "none")
+                .attr("stroke", "white")
+                .attr("stroke-linejoin", "round")
+                .attr("d", path(topojson.mesh(usData, usData.objects.states, (a, b) => a !== b)));
 
             g.selectAll("text") // Add text labels with state names
                 .data(usData.features)
@@ -68,13 +71,43 @@ function init() {
                     return d.properties.NAME;
                 })
                 .style("text-anchor", "middle")
-                .style("font-size", "12px")
+                .style("font-size", "5px")
                 .style("fill", "black");
 
-            function showAsianMigrationData(d, totalByState) {
+            function showAsianMigrationData(d) {
                 const stateName = d.properties.NAME;
                 const totalMigrants = totalByState.get(stateName);
                 alert(`Asian Migration Data for ${stateName}: ${totalMigrants} migrants`);
+            }
+
+            function reset() {
+                states.transition().style("fill", null);
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                );
+            }
+
+            function clicked(event, d) {
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                event.stopPropagation();
+                reset();
+                d3.select(this).transition().style("fill", "red");
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                    d3.pointer(event, svg.node())
+                );
+                showAsianMigrationData(d);
+            }
+
+            function zoomed(event) {
+                const { transform } = event;
+                g.attr("transform", transform);
+                g.attr("stroke-width", 1 / transform.k);
             }
         });
     });
