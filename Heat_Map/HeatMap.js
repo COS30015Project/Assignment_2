@@ -1,9 +1,7 @@
 
-
-function init() 
-{
-    const width = 800; // Width of the SVG
-    const height = 500; // Height of the SVG
+function init() {
+    const width = 1200; // Width of the SVG
+    const height = 1000; // Height of the SVG
 
     const colorScheme = ["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"];
 
@@ -24,7 +22,6 @@ function init()
 
     const color = d3.scaleOrdinal().range(colorScheme); // Define the color scale
 
-
     // Load the GeoJSON data
     d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
         g.selectAll("path")
@@ -40,6 +37,9 @@ function init()
 
         // Define a reset function for zoom
         function reset() {
+            g.selectAll(".feature").style("fill", function (d, i) {
+                return color(i % colorScheme.length); // Reset to the color scheme
+            });
             g.transition().call(zoom.transform, d3.zoomIdentity);
         }
 
@@ -49,18 +49,17 @@ function init()
         }
 
         const zoom = d3.zoom()
-        .scaleExtent([1, 8])
-        .on("zoom", zoomed);
+            .scaleExtent([1, 8])
+            .on("zoom", zoomed);
 
-         svg.call(zoom);
+        svg.call(zoom);
 
         // Handle click events
         function clicked(event, d) {
             const [[x0, y0], [x1, y1]] = path.bounds(d);
             event.stopPropagation();
-            g.selectAll(".feature").style("fill", function (feature) {
-                return feature === d ? "red" : null;
-            });
+            reset(); // Reset colors first
+            d3.select(this).style("fill", "red"); // Highlight the clicked area
             svg.transition().duration(750).call(
                 zoom.transform,
                 d3.zoomIdentity
@@ -70,6 +69,9 @@ function init()
                 d3.pointer(event, svg.node())
             );
         }
+
+        // Attach a click event to reset zoom
+        svg.on("click", reset);
     });
 }
 
