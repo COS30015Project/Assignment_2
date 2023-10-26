@@ -44,10 +44,11 @@ function init() {
                 return color(i % colorScheme.length); // Reset to the color scheme
             });
             g.transition().call(zoom.transform, d3.zoomIdentity);
+            d3.select("#data-display").html(""); // Clear data display
         }
 
         // Define the zoomed function
-        function zoomed(event) {        
+        function zoomed(event) {
             g.attr("transform", event.transform);
         }
 
@@ -71,6 +72,46 @@ function init() {
                     .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
                 d3.pointer(event, svg.node())
             );
+
+            // Display data for the clicked state
+            displayStateData(d);
+        }
+
+        // Display data for the clicked state
+        function displayStateData(d) {
+            // Sample data - Replace this with your CSV data loading logic
+            const sampleData = {
+                "US States": "Alabama",
+                Bangladesh: 12,
+                China: 117,
+                India: 165,
+                Iran: 44,
+                Korea: 33,
+                Pakistan: 24,
+                Philippines: 85,
+                Taiwan: 20,
+                Vietnam: 51,
+                Others: 434,
+            };
+
+            const stateName = d.properties.NAME;
+            const stateData = sampleData[stateName];
+
+            if (stateData) {
+                const dataDisplay = d3.select("#data-display");
+                dataDisplay.html(`<h2>${stateName}</h2>`);
+                dataDisplay.append("table")
+                    .attr("class", "table table-bordered")
+                    .html(`<thead><tr><th>Country</th><th>Count</th></tr></thead>`)
+                    .append("tbody")
+                    .selectAll("tr")
+                    .data(d3.entries(stateData))
+                    .enter()
+                    .append("tr")
+                    .html(function (d) {
+                        return `<td>${d.key}</td><td>${d.value}</td>`;
+                    });
+            }
         }
 
         // Attach a click event to reset zoom
