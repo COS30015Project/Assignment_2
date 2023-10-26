@@ -24,7 +24,7 @@ function init() {
     // Load the GeoJSON data
     d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
         // Load the CSV data
-        d3.csv("your_csv_file.csv").then(function (data) {
+        d3.csv("us_migration_map.csv").then(function (data) {
             // Create a map to store values associated with states
             const stateValueMap = new Map();
 
