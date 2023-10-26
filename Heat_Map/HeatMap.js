@@ -1,11 +1,11 @@
-function init() {
-    var w = 800; // Increased the width for better visualization
-    var h = 500; // Increased the height for better visualization
+// Define a function to initialize the map
+function initMap() {
+    var w = 800; // Width of the SVG
+    var h = 500; // Height of the SVG
 
-    var projection = d3.geoMercator()
-        .center([145, -36.5])
-        .translate([w / 2, h / 2])
-        .scale(700); // Adjusted the scale
+    var projection = d3.geoAlbersUsa() // Use Albers USA projection for the US map
+        .scale(1000) // Adjust the scale as needed
+        .translate([w / 2, h / 2]);
 
     // Set up the path generator
     var path = d3.geoPath()
@@ -16,13 +16,11 @@ function init() {
         .attr("width", w)
         .attr("height", h);
 
-    // Add a group for the map features
     var g = svg.append("g");
 
-    d3.json("USA_State.geojson").then(function (geojson) {
-        // Append path elements for each feature in the JSON data
+    d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
         g.selectAll("path")
-            .data(geojson.features)
+            .data(json.features)
             .enter()
             .append("path")
             .attr("d", path)
@@ -41,13 +39,7 @@ function init() {
         // Attach a click event to reset zoom
         svg.on("click", reset);
     });
-
-        // Create a zoom behavior for the SVG
-        var zoom = d3.zoom()
-        .scaleExtent([1, 8]) // Set your desired scale extent
-        .on("zoom", zoomed);
-
-    svg.call(zoom);
 }
 
-window.onload = init;
+// Call the initMap function when the window loads
+window.onload = initMap;
