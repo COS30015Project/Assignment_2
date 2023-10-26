@@ -68,7 +68,7 @@ function init() {
                     return d.properties.NAME;
                 })
                 .style("text-anchor", "middle")
-                .style("font-size", "12px")
+                .style("font-size", "5px")
                 .style("fill", "black");
 
             function showAsianMigrationData(d, totalByState) {
