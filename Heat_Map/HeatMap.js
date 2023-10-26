@@ -38,84 +38,63 @@ function init() {
                 return d.properties.NAME; // Display state name
             });
 
-        // Define a reset function for zoom
-        function reset() {
-            g.selectAll(".feature").style("fill", function (d, i) {
-                return color(i % colorScheme.length); // Reset to the color scheme
+        // Load CSV data
+        d3.csv("us_migration_data.csv", function (data) {
+            const stateData = {};
+
+            data.forEach(function (d) {
+                const state = d["US States"];
+                stateData[state] = d;
             });
-            g.transition().call(zoom.transform, d3.zoomIdentity);
-            d3.select("#data-display").html(""); // Clear data display
-        }
 
-        // Define the zoomed function
-        function zoomed(event) {
-            g.attr("transform", event.transform);
-        }
-
-        const zoom = d3.zoom()
-            .scaleExtent([1, 8])
-            .on("zoom", zoomed);
-
-        svg.call(zoom); // Call the zoom function
-
-        // Handle click events
-        function clicked(event, d) {
-            const [[x0, y0], [x1, y1]] = path.bounds(d);
-            event.stopPropagation();
-            reset(); // Reset colors first
-            d3.select(this).style("fill", "red"); // Highlight the clicked area
-            svg.transition().duration(750).call(
-                zoom.transform,
-                d3.zoomIdentity
-                    .translate(width / 2, height / 2)
-                    .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                    .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-                d3.pointer(event, svg.node())
-            );
-
-            // Display data for the clicked state
-            displayStateData(d);
-        }
-
-        // Display data for the clicked state
-        function displayStateData(d) {
-            // Sample data - Replace this with your CSV data loading logic
-            const sampleData = {
-                "US States": "Alabama",
-                Bangladesh: 12,
-                China: 117,
-                India: 165,
-                Iran: 44,
-                Korea: 33,
-                Pakistan: 24,
-                Philippines: 85,
-                Taiwan: 20,
-                Vietnam: 51,
-                Others: 434,
-            };
-
-            const stateName = d.properties.NAME;
-            const stateData = sampleData[stateName];
-
-            if (stateData) {
-                const dataDisplay = d3.select("#data-display");
-                dataDisplay.html(`<h2>${stateName}</h2>`);
-                dataDisplay.append("table")
-                    .attr("class", "table table-bordered")
-                    .html(`<thead><tr><th>Country</th><th>Count</th></tr></thead>`)
-                    .append("tbody")
-                    .selectAll("tr")
-                    .data(d3.entries(stateData))
-                    .enter()
-                    .append("tr")
-                    .html(function (d) {
-                        return `<td>${d.key}</td><td>${d.value}</td>`;
-                    });
+            // Define a reset function for zoom
+            function reset() {
+                g.selectAll(".feature").style("fill", function (d, i) {
+                    return color(i % colorScheme.length); // Reset to the color scheme
+                });
+                g.transition().call(zoom.transform, d3.zoomIdentity);
             }
-        }
 
-        // Attach a click event to reset zoom
-        svg.on("click", reset);
+            // Define the zoomed function
+            function zoomed(event) {
+                g.attr("transform", event.transform);
+            }
+
+            const zoom = d3.zoom()
+                .scaleExtent([1, 8])
+                .on("zoom", zoomed);
+
+            svg.call(zoom); // Call the zoom function
+
+            // Handle click events
+            function clicked(event, d) {
+                const stateName = d.properties.NAME;
+                const state = stateData[stateName];
+
+                if (state) {
+                    const [[x0, y0], [x1, y1]] = path.bounds(d);
+                    event.stopPropagation();
+                    reset(); // Reset colors first
+                    d3.select(this).style("fill", "red"); // Highlight the clicked area
+
+                    // Display the data for the clicked state
+                    console.log("State: " + stateName);
+                    console.log("Data:", state);
+
+                    svg.transition().duration(750).call(
+                        zoom.transform,
+                        d3.zoomIdentity
+                            .translate(width / 2, height / 2)
+                            .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                            .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                        d3.pointer(event, svg.node())
+                    );
+                }
+            }
+
+            // Attach a click event to reset zoom
+            svg.on("click", reset);
+        });
     });
 }
 
