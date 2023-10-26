@@ -23,34 +23,48 @@ function init() {
 
     // Load the GeoJSON data
     d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
-        g.selectAll("path")
-            .data(json.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .attr("class", "feature") // Use a class for styling
-            .style("fill", function (d, i) {
-                return color(i % colorScheme.length); // Apply the color scheme
-            })
-            .on("click", clicked)
-            .append("title") // Add a title element for showing state name
-            .text(function (d) {
-                return d.properties.NAME; // Display state name
-            });
-
-        // Load CSV data
+        // Load the CSV data containing the immigration numbers
         d3.csv("us_migration_data.csv", function (data) {
-            const stateData = {};
-
+            // Modify the data to match the map's features
+            const processedData = {};
             data.forEach(function (d) {
-                const state = d["US States"];
-                stateData[state] = d;
+                const stateName = d['US States'];
+                processedData[stateName] = {
+                    Bangladesh: +d.Bangladesh,
+                    China: +d.China,
+                    India: +d.India,
+                    Iran: +d.Iran,
+                    Korea: +d.Korea,
+                    Pakistan: +d.Pakistan,
+                    Philippines: +d.Philippines,
+                    Taiwan: +d.Taiwan,
+                    Vietnam: +d.Vietnam,
+                    Others: +d.Others,
+                };
             });
+
+            g.selectAll("path")
+                .data(json.features)
+                .enter()
+                .append("path")
+                .attr("d", path)
+                .attr("class", "feature") // Use a class for styling
+                .style("fill", function (d) {
+                    return color(d.properties.NAME);
+                })
+                .on("click", clicked)
+                .append("title") // Add a title element for showing state name and data
+                .text(function (d) {
+                    const stateName = d.properties.NAME;
+                    const data = processedData[stateName];
+                    const formattedData = formatData(data);
+                    return stateName + "\n" + formattedData;
+                });
 
             // Define a reset function for zoom
             function reset() {
-                g.selectAll(".feature").style("fill", function (d, i) {
-                    return color(i % colorScheme.length); // Reset to the color scheme
+                g.selectAll(".feature").style("fill", function (d) {
+                    return color(d.properties.NAME);
                 });
                 g.transition().call(zoom.transform, d3.zoomIdentity);
             }
@@ -68,34 +82,32 @@ function init() {
 
             // Handle click events
             function clicked(event, d) {
-                const stateName = d.properties.NAME;
-                const state = stateData[stateName];
-
-                if (state) {
-                    const [[x0, y0], [x1, y1]] = path.bounds(d);
-                    event.stopPropagation();
-                    reset(); // Reset colors first
-                    d3.select(this).style("fill", "red"); // Highlight the clicked area
-
-                    // Display the data for the clicked state
-                    console.log("State: " + stateName);
-                    console.log("Data:", state);
-
-                    svg.transition().duration(750).call(
-                        zoom.transform,
-                        d3.zoomIdentity
-                            .translate(width / 2, height / 2)
-                            .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                            .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-                        d3.pointer(event, svg.node())
-                    );
-                }
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                event.stopPropagation();
+                reset(); // Reset colors first
+                d3.select(this).style("fill", "red"); // Highlight the clicked area
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                    d3.pointer(event, svg.node())
+                );
             }
 
             // Attach a click event to reset zoom
             svg.on("click", reset);
         });
     });
+}
+
+function formatData(data) {
+    const formattedData = [];
+    for (const category in data) {
+        formattedData.push(`${category}: ${data[category]}`);
+    }
+    return formattedData.join("\n");
 }
 
 // Call the init function when the window loads
