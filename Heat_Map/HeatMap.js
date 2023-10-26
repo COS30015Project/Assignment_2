@@ -2,13 +2,14 @@ function init() {
     const width = 1200; // Width of the SVG
     const height = 1000; // Height of the SVG
 
-    const colorScheme = ["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"];
+    const colorScheme = [
+        "#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"
+    ];
 
-    const projection = d3.geoAlbersUsa() // Use Albers USA projection for the US map
-        .scale(1000) // Adjust the scale as needed
+    const projection = d3.geoAlbersUsa()
+        .scale(1000)
         .translate([width / 2, height / 2]);
 
-    // Set up the path generator
     const path = d3.geoPath()
         .projection(projection);
 
@@ -19,95 +20,74 @@ function init() {
 
     const g = svg.append("g");
 
-    const color = d3.scaleOrdinal().range(colorScheme); // Define the color scale
+    const color = d3.scaleOrdinal().range(colorScheme);
 
-    // Load the GeoJSON data
-    d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
-        // Load the CSV data
-        d3.csv("us_migration_map.csv").then(function (data) {
-            // Create a map to store data for each state
-            const stateDataMap = new Map();
+    d3.json("usa.json").then(function (usData) { // Load the U.S. state GeoJSON data
+        d3.csv("us_migration_map.csv").then(function (asianData) { // Load your Asian migration data
+            const totalByState = new Map(); // Create a map to store the Asian migration data by state
 
-            // Process the CSV data and populate the map
-            data.forEach(function (d) {
-                const state = d['State of intended residence'];
-                const countryData = {};
-                // Loop through the columns for each country and store the data
-                Object.keys(d).forEach(function (key) {
-                    if (key !== 'State of intended residence') {
-                        countryData[key] = parseFloat(d[key].replace(/,/g, '')) || 0;
-                    }
-                });
-                stateDataMap.set(state, countryData);
+            asianData.forEach(function (d) {
+                d.state = d['State of intended residence'];
+                // Aggregate the total number of migrants by state
+                totalByState.set(d.state, +d['Total']);
             });
 
             g.selectAll("path")
-                .data(json.features)
+                .data(usData.features)
                 .enter()
                 .append("path")
                 .attr("d", path)
-                .attr("class", "feature") // Use a class for styling
+                .attr("class", "feature")
                 .style("fill", function (d) {
-                    const state = d.properties.NAME;
-                    const countryData = stateDataMap.get(state);
-                    // Calculate the total number of people for the state
-                    const totalPeople = Object.values(countryData).reduce((a, b) => a + b, 0);
-                    return color(totalPeople || 0); // Use the color scale based on the total people
+                    const stateName = d.properties.NAME;
+                    // Get the total number of Asian migrants for this state
+                    const totalMigrants = totalByState.get(stateName);
+                    // You can use a color scale to represent the number of migrants
+                    return color(totalMigrants);
                 })
                 .on("click", clicked)
-                .append("title") // Add a title element for showing state name and country data
-                .html(function (d) {
-                    const state = d.properties.NAME;
-                    const countryData = stateDataMap.get(state);
-                    // Create an HTML table to display the data
-                    let tooltipHTML = `<strong>${state}</strong><br>`;
-                    Object.keys(countryData).forEach(function (country) {
-                        const value = countryData[country];
-                        tooltipHTML += `${country}: ${value}<br>`;
-                    });
-                    return tooltipHTML;
+                .append("title")
+                .text(function (d) {
+                    return d.properties.NAME;
                 });
+
+            function reset() {
+                g.selectAll(".feature").style("fill", function (d) {
+                    const stateName = d.properties.NAME;
+                    const totalMigrants = totalByState.get(stateName);
+                    return color(totalMigrants);
+                });
+                g.transition().call(zoom.transform, d3.zoomIdentity);
+            }
+
+            function zoomed(event) {
+                g.attr("transform", event.transform);
+            }
+
+            const zoom = d3.zoom()
+                .scaleExtent([1, 8])
+                .on("zoom", zoomed);
+
+            svg.call(zoom);
+
+            function clicked(event, d) {
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                event.stopPropagation();
+                reset();
+                d3.select(this).style("fill", "red");
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                    d3.pointer(event, svg.node())
+                );
+            }
+
+            svg.on("click", reset);
         });
-
-        // Define a reset function for zoom
-        function reset() {
-            g.selectAll(".feature").style("fill", function (d, i) {
-                return color(i % colorScheme.length); // Reset to the color scheme
-            });
-            g.transition().call(zoom.transform, d3.zoomIdentity);
-        }
-
-        // Define the zoomed function
-        function zoomed(event) {
-            g.attr("transform", event.transform);
-        }
-
-        const zoom = d3.zoom()
-            .scaleExtent([1, 8])
-            .on("zoom", zoomed);
-
-        svg.call(zoom); // Call the zoom function
-
-        // Handle click events
-        function clicked(event, d) {
-            const [[x0, y0], [x1, y1]] = path.bounds(d);
-            event.stopPropagation();
-            reset(); // Reset colors first
-            d3.select(this).style("fill", "red"); // Highlight the clicked area
-            svg.transition().duration(750).call(
-                zoom.transform,
-                d3.zoomIdentity
-                    .translate(width / 2, height / 2)
-                    .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                    .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-                d3.pointer(event, svg.node())
-            );
-        }
-
-        // Attach a click event to reset zoom
-        svg.on("click", reset);
     });
 }
 
-// Call the init function when the window loads
 window.onload = init;
