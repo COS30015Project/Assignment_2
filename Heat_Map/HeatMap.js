@@ -3,6 +3,8 @@ function initMap() {
     var w = 800; // Width of the SVG
     var h = 500; // Height of the SVG
 
+    var colorScheme = ["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"];
+
     var projection = d3.geoAlbersUsa() // Use Albers USA projection for the US map
         .scale(1000) // Adjust the scale as needed
         .translate([w / 2, h / 2]);
@@ -18,13 +20,18 @@ function initMap() {
 
     var g = svg.append("g");
 
+    var color = d3.scaleOrdinal().range(colorScheme); // Define the color scale
+
     d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
         g.selectAll("path")
             .data(json.features)
             .enter()
             .append("path")
             .attr("d", path)
-            .attr("class", "feature"); // Use a class for styling
+            .attr("class", "feature") // Use a class for styling
+            .style("fill", function (d, i) {
+                return color(i % colorScheme.length); // Apply the color scheme
+            });
 
         // Define a reset function for zoom
         function reset() {
