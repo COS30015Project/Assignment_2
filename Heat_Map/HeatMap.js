@@ -1,5 +1,7 @@
-// Define a function to initialize the map
-function initMap() {
+
+
+function init() 
+{
     const width = 800; // Width of the SVG
     const height = 500; // Height of the SVG
 
@@ -71,4 +73,4 @@ function initMap() {
 }
 
 // Call the initMap function when the window loads
-window.onload = initMap;
+window.onload = init;
