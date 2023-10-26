@@ -22,7 +22,7 @@ function init() {
 
     Promise.all([
         d3.json("usa.json"),  // Load GeoJSON data
-        d3.csv("immigration_data.csv")  // Load CSV data
+        d3.csv("us_migration_data.csv")  // Load CSV data
     ]).then(function (data) {
         const json = data[0];
         const csvData = data[1];
