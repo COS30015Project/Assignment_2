@@ -23,20 +23,38 @@ function init() {
 
     // Load the GeoJSON data
     d3.json("usa.json").then(function (json) { // Replace "usa.json" with the path to your GeoJSON file
-        g.selectAll("path")
-            .data(json.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .attr("class", "feature") // Use a class for styling
-            .style("fill", function (d, i) {
-                return color(i % colorScheme.length); // Apply the color scheme
-            })
-            .on("click", clicked)
-            .append("title") // Add a title element for showing state name
-            .text(function (d) {
-                return d.properties.NAME; // Display state name
+        // Load the CSV data
+        d3.csv("your_csv_file.csv").then(function (data) {
+            // Create a map to store values associated with states
+            const stateValueMap = new Map();
+
+            // Process the CSV data and populate the map
+            data.forEach(function (d) {
+                const state = d['State of intended residence'];
+                const value = parseFloat(d['Year: 2022']);
+
+                stateValueMap.set(state, value);
             });
+
+            g.selectAll("path")
+                .data(json.features)
+                .enter()
+                .append("path")
+                .attr("d", path)
+                .attr("class", "feature") // Use a class for styling
+                .style("fill", function (d) {
+                    const state = d.properties.NAME;
+                    const value = stateValueMap.get(state);
+                    return color(value || 0); // Use the color scale based on the value
+                })
+                .on("click", clicked)
+                .append("title") // Add a title element for showing state name and value
+                .text(function (d) {
+                    const state = d.properties.NAME;
+                    const value = stateValueMap.get(state);
+                    return `${state}: ${value || 0}`;
+                });
+        });
 
         // Define a reset function for zoom
         function reset() {
