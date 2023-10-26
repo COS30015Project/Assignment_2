@@ -44,6 +44,15 @@ function init() {
             };
         });
 
+        const totalMigration = calculateTotalMigration(processedData);
+
+        // Add a total population display
+        const totalPopulationDisplay = svg.append("text")
+            .attr("class", "total-population")
+            .attr("x", 10)
+            .attr("y", 20)
+            .text("Total Migration: " + totalMigration);
+    
         g.selectAll("path")
             .data(json.features)
             .enter()
@@ -54,6 +63,16 @@ function init() {
                 return color(d.properties.NAME);
             })
             .on("click", clicked)
+            .on("mouseover", function (d) {
+                const stateName = d.properties.NAME;
+                const data = processedData[stateName];
+                const formattedData = formatData(data);
+                d3.select(".total-population").text(stateName + "\n" + formattedData);
+            })
+            .on("mouseout", function () {
+                const totalMigration = calculateTotalMigration(processedData);
+                d3.select(".total-population").text("Total Migration: " + totalMigration);
+            })
             .append("title")
             .text(function (d) {
                 const stateName = d.properties.NAME;
@@ -104,6 +123,16 @@ function formatData(data) {
         formattedData.push(`${category}: ${data[category]}`);
     }
     return formattedData.join("\n");
+}
+
+function calculateTotalMigration(data) {
+    let total = 0;
+    for (const stateData of Object.values(data)) {
+        for (const category in stateData) {
+            total += stateData[category];
+        }
+    }
+    return total;
 }
 
 window.onload = init;
