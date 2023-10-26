@@ -1,15 +1,15 @@
 function init() {
-    const width = 1200;
-    const height = 1000;
+    const width = 1000;
+    const height = 600;
     const padding = 25;
 
-    const colorScheme = [
-        "#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"
-    ];
+    const color = d3.scaleOrdinal()
+        .range(["#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd", "#ccebc5", "#ffed6f"]);
 
-    const projection = d3.geoAlbersUsa()
-        .scale(1000)
-        .translate([width / 2, height / 2]);
+    const projection = d3.geoMercator()
+        .center([145, -36])
+        .translate([width / 2, height / 2])
+        .scale(5000);
 
     const path = d3.geoPath()
         .projection(projection);
@@ -19,78 +19,110 @@ function init() {
         .attr("width", width + padding)
         .attr("height", height + padding);
 
-    const g = svg.append("g");
+    // Load the unemployment data from CSV
+    d3.csv("VIC_LGA_unemployment.csv", function (d) {
+        return {
+            LGA: d.LGA,
+            unemployed: +d.unemployed
+        };
+    }).then(function (data) {
+        // Load the VIC geographic data from JSON
+        d3.json("LGA_VIC.json").then(function (json) {
+            // Match data to features
+            for (let i = 0; i < data.length; i++) {
+                const dataState = data[i].LGA;
+                const dataValue = parseFloat(data[i].unemployed);
 
-    const color = d3.scaleOrdinal().range(colorScheme);
+                for (let j = 0; j < json.features.length; j++) {
+                    const jsonState = json.features[j].properties.LGA_name;
 
-    const zoom = d3.zoom()
-        .scaleExtent([1, 8])
-        .on("zoom", zoomed);
+                    if (dataState == jsonState) {
+                        json.features[j].properties.value = dataValue;
+                        break;
+                    }
+                }
+            }
 
-    svg.call(zoom);
-
-    const totalByState = new Map(); // Create a map to store the Asian migration data by state
-
-    // Load the U.S. state GeoJSON data
-    d3.json("usa.json").then(function (usData) {
-        // Load your Asian migration data CSV
-        d3.csv("asian_migration_data.csv").then(function (asianData) {
-            asianData.forEach(function (d) {
-                const stateName = d['State of intended residence'];
-                const totalMigrants = +d['Total'];
-                totalByState.set(stateName, totalMigrants);
-            });
-
-            const states = g.append("g")
-                .attr("fill", "#444")
-                .attr("cursor", "pointer")
-                .selectAll("path")
-                .data(usData.features)
-                .join("path")
-                .on("click", clicked)
+            // Draw map paths with colors
+            const states = svg.selectAll("path")
+                .data(json.features)
+                .enter()
+                .append("path")
+                .attr("stroke", "dimgray")
+                .attr("fill", function (d, i) {
+                    return color(i);
+                })
                 .attr("d", path);
 
-            states.append("title")
-                .text(function (d) {
-                    const stateName = d.properties.NAME;
-                    const totalMigrants = totalByState.get(stateName) || 0;
-                    return `${stateName}: ${totalMigrants} migrants`;
+            // Load Asian migration data
+            d3.csv("asian_migration_data.csv", function (d) {
+                return {
+                    state: d['State of intended residence'],
+                    total: +d['Total'],
+                    china: +d['China'],
+                    bangladesh: +d['Bangladesh'],
+                    india: +d['India'],
+                    iran: +d['Iran'],
+                    korea: +d['Korea'],
+                    pakistan: +d['Pakistan'],
+                    philippines: +d['Philippines'],
+                    taiwan: +d['Taiwan'],
+                    vietnam: +d['Vietnam'],
+                    other: +d['Other'],
+                };
+            }).then(function (migrationData) {
+                // Display migration data upon state click
+                states.on("click", function (event, d) {
+                    const stateName = d.properties.LGA_name;
+                    const migrationInfo = migrationData.find((item) => item.state === stateName);
+
+                    if (migrationInfo) {
+                        alert(`Migration Data for ${stateName}:\nTotal: ${migrationInfo.total}\nChina: ${migrationInfo.china}\nBangladesh: ${migrationInfo.bangladesh}\nIndia: ${migrationInfo.india}\nIran: ${migrationInfo.iran}\nKorea: ${migrationInfo.korea}\nPakistan: ${migrationInfo.pakistan}\nPhilippines: ${migrationInfo.philippines}\nTaiwan: ${migrationInfo.taiwan}\nVietnam: ${migrationInfo.vietnam}\nOther: ${migrationInfo.other}`);
+                    } else {
+                        alert(`No migration data available for ${stateName}`);
+                    }
                 });
+            });
 
-            g.append("path")
-                .attr("fill", "none")
-                .attr("stroke", "white")
-                .attr("stroke-linejoin", "round")
-                .attr("d", path(topojson.mesh(usData, usData.objects.states, (a, b) => a !== b)));
+            // Load city data from CSV
+            d3.csv("VIC_city.csv", function (d) {
+                return {
+                    place: d.place,
+                    lat: +d.lat,
+                    long: +d.lon
+                };
+            }).then(function (cityData) {
+                // Draw circles for cities
+                svg.selectAll("circle")
+                    .data(cityData)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) {
+                        return projection([d.long, d.lat])[0];
+                    })
+                    .attr("cy", function (d) {
+                        return projection([d.long, d.lat])[1];
+                    })
+                    .attr("r", 5)
+                    .style("fill", d3.color("red"));
 
-            function reset() {
-                states.transition().style("fill", null);
-                svg.transition().duration(750).call(
-                    zoom.transform,
-                    d3.zoomIdentity
-                );
-            }
-
-            function clicked(event, d) {
-                const [[x0, y0], [x1, y1]] = path.bounds(d);
-                event.stopPropagation();
-                reset();
-                d3.select(this).transition().style("fill", "red");
-                svg.transition().duration(750).call(
-                    zoom.transform,
-                    d3.zoomIdentity
-                        .translate(width / 2, height / 2)
-                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-                    d3.pointer(event, svg.node())
-                );
-            }
-
-            function zoomed(event) {
-                const { transform } = event;
-                g.attr("transform", transform);
-                g.attr("stroke-width", 1 / transform.k);
-            }
+                // Display city names as text
+                svg.selectAll("text")
+                    .data(cityData)
+                    .enter()
+                    .append("text")
+                    .attr("x", function (d) {
+                        return projection([d.long, d.lat])[0];
+                    })
+                    .attr("y", function (d) {
+                        return projection([d.long, d.lat])[1];
+                    })
+                    .style("fill", d3.color("black"))
+                    .style("z-index", 1)
+                    .text(function (d) {
+                        return d.place;
+                    });
+            });
         });
     });
 }
