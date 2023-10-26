@@ -55,7 +55,7 @@ function init() {
             .scaleExtent([1, 8])
             .on("zoom", zoomed);
 
-        svg.call(zoom); //called the zoom function
+        svg.call(zoom); // Call the zoom function
 
         // Handle click events
         function clicked(event, d) {
@@ -67,7 +67,7 @@ function init() {
                 zoom.transform,
                 d3.zoomIdentity
                     .translate(width / 2, height / 2)
-                    .scale(Math.min(8, 0.9 / Math max((x1 - x0) / width, (y1 - y0) / height)))
+                    .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
                     .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
                 d3.pointer(event, svg.node())
             );
@@ -78,5 +78,5 @@ function init() {
     });
 }
 
-// Call the initMap function when the window loads
+// Call the init function when the window loads
 window.onload = init;
