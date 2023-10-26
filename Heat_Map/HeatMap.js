@@ -51,6 +51,23 @@ function init() {
                     return d.properties.NAME;
                 });
 
+            g.selectAll("text") // Add text labels with state names
+                .data(usData.features)
+                .enter()
+                .append("text")
+                .attr("x", function (d) {
+                    return path.centroid(d)[0];
+                })
+                .attr("y", function (d) {
+                    return path.centroid(d)[1];
+                })
+                .text(function (d) {
+                    return d.properties.NAME;
+                })
+                .style("text-anchor", "middle")
+                .style("font-size", "12px")
+                .style("fill", "black");
+
             function reset() {
                 g.selectAll(".feature").style("fill", function (d) {
                     const stateName = d.properties.NAME;
