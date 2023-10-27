@@ -44,13 +44,15 @@ function init() {
             };
         });
 
+        const totalMigration = calculateTotalMigration(processedData);
+
         // Add a total population display
         const totalPopulationDisplay = svg.append("text")
             .attr("class", "total-population")
             .attr("x", 10)
             .attr("y", 20)
-            .text("Total Migration: " + calculateTotalMigration(processedData));
-
+            .text("Total Migration: " + totalMigration);
+    
         g.selectAll("path")
             .data(json.features)
             .enter()
@@ -60,9 +62,7 @@ function init() {
             .style("fill", function (d) {
                 return color(d.properties.NAME);
             })
-            .on("click", function (d) {
-                clicked(d, processedData);
-            })
+            .on("click", clicked)
             .on("mouseover", function (d) {
                 const stateName = d.properties.NAME;
                 const data = processedData[stateName];
@@ -80,6 +80,42 @@ function init() {
                 const formattedData = formatData(data);
                 return stateName + "\n" + formattedData;
             });
+
+            // reset to the current 
+        function reset() {
+            g.selectAll(".feature").style("fill", function (d) {
+                return color(d.properties.NAME);
+            });
+            g.transition().call(zoom.transform, d3.zoomIdentity);
+        }
+
+        // zooming
+        function zoomed(event) {
+            g.attr("transform", event.transform);
+        }
+
+        const zoom = d3.zoom()
+            .scaleExtent([1, 8])
+            .on("zoom", zoomed);
+
+        svg.call(zoom);
+
+        function clicked(event, d) {
+            const [[x0, y0], [x1, y1]] = path.bounds(d);
+            event.stopPropagation();
+            reset();
+            d3.select(this).style("fill", "red");
+            svg.transition().duration(750).call(
+                zoom.transform,
+                d3.zoomIdentity
+                    .translate(width / 2, height / 2)
+                    .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                    .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                d3.pointer(event, svg.node())
+            );
+        }
+
+        svg.on("click", reset);
     });
 }
 
@@ -99,13 +135,6 @@ function calculateTotalMigration(data) {
         }
     }
     return total;
-}
-
-function clicked(d, processedData) {
-    const stateName = d.properties.NAME;
-    const data = processedData[stateName];
-    const formattedData = formatData(data);
-    d3.select(".total-population").text(stateName + "\n" + formattedData);
 }
 
 window.onload = init;
