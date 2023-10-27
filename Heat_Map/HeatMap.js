@@ -52,7 +52,7 @@ function init() {
             .attr("x", 10)
             .attr("y", 20)
             .text("Total Migration: " + totalMigration);
-    
+
         g.selectAll("path")
             .data(json.features)
             .enter()
@@ -81,24 +81,36 @@ function init() {
                 return stateName + "\n" + formattedData;
             });
 
-            // reset to the current 
+        // Panning behavior
+        svg.call(d3.drag()
+            .subject(() => ({ x: 0, y: 0 }))
+            .on("start", started)
+            .on("drag", dragged));
+
+        function started() {
+            // Disable click event when dragging
+            svg.on(".click", null);
+        }
+
+        function dragged(event) {
+            g.attr("transform", d3.event.transform);
+        }
+
+        // Reset function
         function reset() {
-            g.selectAll(".feature").style("fill", function (d) {
-                return color(d.properties.NAME);
-            });
-            g.transition().call(zoom.transform, d3.zoomIdentity);
+            g.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
-        // zooming
-        function zoomed(event) {
-            g.attr("transform", event.transform);
-        }
-
+        // Zooming behavior
         const zoom = d3.zoom()
             .scaleExtent([1, 8])
             .on("zoom", zoomed);
 
         svg.call(zoom);
+
+        function zoomed(event) {
+            g.attr("transform", event.transform);
+        }
 
         function clicked(event, d) {
             const [[x0, y0], [x1, y1]] = path.bounds(d);
