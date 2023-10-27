@@ -81,6 +81,7 @@ function init() {
                 return stateName + "\n" + formattedData;
             });
 
+            // reset to the current 
         function reset() {
             g.selectAll(".feature").style("fill", function (d) {
                 return color(d.properties.NAME);
@@ -88,6 +89,7 @@ function init() {
             g.transition().call(zoom.transform, d3.zoomIdentity);
         }
 
+        // zooming
         function zoomed(event) {
             g.attr("transform", event.transform);
         }
