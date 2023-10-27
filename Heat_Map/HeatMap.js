@@ -20,6 +20,8 @@ function init() {
 
     const color = d3.scaleOrdinal().range(colorScheme);
 
+    let selectedState = null; // Track the selected state
+
     Promise.all([
         d3.json("usa.json"),  // Load GeoJSON data
         d3.csv("us_migration_data.csv")  // Load CSV data
@@ -70,8 +72,10 @@ function init() {
                 d3.select(".total-population").text(stateName + "\n" + formattedData);
             })
             .on("mouseout", function () {
-                const totalMigration = calculateTotalMigration(processedData);
-                d3.select(".total-population").text("Total Migration: " + totalMigration);
+                if (selectedState === null) {
+                    const totalMigration = calculateTotalMigration(processedData);
+                    d3.select(".total-population").text("Total Migration: " + totalMigration);
+                }
             })
             .append("title")
             .text(function (d) {
@@ -98,6 +102,10 @@ function init() {
 
         // Reset function
         function reset() {
+            g.selectAll(".feature").style("fill", function (d) {
+                return color(d.properties.NAME);
+            });
+            selectedState = null; // Reset the selected state
             g.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
@@ -116,6 +124,7 @@ function init() {
             const [[x0, y0], [x1, y1]] = path.bounds(d);
             event.stopPropagation();
             reset();
+            selectedState = d; // Store the selected state
             d3.select(this).style("fill", "red");
             svg.transition().duration(750).call(
                 zoom.transform,
