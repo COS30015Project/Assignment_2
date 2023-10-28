@@ -44,6 +44,9 @@ function init() {
                 Vietnam: +d.Vietnam,
                 Others: +d.Others,
             };
+            processedTotal[stateName] = {
+                Total: +d.Total
+            }
         });
 
         const totalMigration = calculateTotalMigration(processedData);
@@ -83,7 +86,7 @@ function init() {
             .append("title")
             .text(function (d) {
                 const stateName = d.properties.NAME;
-                const data = processedData[stateName];
+                const data = processedTotal[stateName];
                 const formattedData = formatData(data);
                 return stateName + "\n" + formattedData;
             });
@@ -137,6 +140,8 @@ function init() {
                     .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
                 d3.pointer(event, svg.node())
             );
+
+
         
         }
 
@@ -145,7 +150,7 @@ function init() {
 
     function displayMigrationInfo(stateName, formattedData) {
         d3.select(".total-population")
-            .text(stateName + "\n" + formattedData + "\n" + totalMigration);
+            .text(stateName + "\n" + formattedData);
     }
 
     function hideMigrationInfo() {
