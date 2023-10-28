@@ -9,11 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
         .attr('width', width)
         .attr('height', height);
 
-    // Create a div element for displaying data
-    const div = d3.select('body').append('div')
-        .attr('class', 'info-box')
-        .style('opacity', 0);
-
     // Load the US GeoJSON data.
     d3.json('usa.json').then(function (usData) {
         // Load the US state data from the CSV.
@@ -43,38 +38,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const projection = d3.geoAlbersUsa();
             const path = d3.geoPath().projection(projection);
 
+            // Bind the GeoJSON data to the SVG and draw the map.
             svg.selectAll('path')
                 .data(usData.features)
                 .enter()
                 .append('path')
                 .attr('d', path)
                 .attr('fill', 'steelblue')
-                .attr('stroke', 'white')
-                .on('mousemove', function (d) {
-                    // Get the data for the hovered state
-                    const stateData = processedData[d.properties.name];
-
-                    // Display data in the div element
-                    div.style('opacity', 0.9);
-                    div.html('<b>' + d.properties.name + '</b><br>' +
-                        'Bangladesh: ' + stateData.Bangladesh + '<br>' +
-                        'China: ' + stateData.China + '<br>' +
-                        'India: ' + stateData.India + '<br>' +
-                        'Iran: ' + stateData.Iran + '<br>' +
-                        'Korea: ' + stateData.Korea + '<br>' +
-                        'Pakistan: ' + stateData.Pakistan + '<br>' +
-                        'Philippines: ' + stateData.Philippines + '<br>' +
-                        'Taiwan: ' + stateData.Taiwan + '<br>' +
-                        'Vietnam: ' + stateData.Vietnam + '<br>' +
-                        'Others: ' + stateData.Others + '<br>' +
-                        'Total: ' + stateData.Total)
-                        .style('left', (d3.event.pageX + 23) + 'px')
-                        .style('top', (d3.event.pageY - 20) + 'px');
-                })
-                .on('mouseout', function () {
-                    // Hide the div element on mouseout
-                    div.style('opacity', 0);
-                });
+                .attr('stroke', 'white');
         });
     });
 });
