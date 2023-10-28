@@ -55,7 +55,7 @@ function init() {
             .attr("y", 20)
             .text("Total Migration: " + totalMigration);
 
-        g.selectAll("path")
+            g.selectAll("path")
             .data(json.features)
             .enter()
             .append("path")
@@ -69,12 +69,15 @@ function init() {
                 const stateName = d.properties.NAME;
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
-                d3.select(".total-population").text(stateName + "\n" + formattedData);
+                d3.select(this).style("fill", "blue"); // Change color on mouseover
+                displayMigrationInfo(stateName, formattedData);
             })
             .on("mouseout", function () {
                 if (selectedState === null) {
-                    const totalMigration = calculateTotalMigration(processedData);
-                    d3.select(".total-population").text("Total Migration: " + totalMigration);
+                    d3.select(this).style("fill", function (d) {
+                        return color(d.properties.NAME);
+                    }); // Restore original color on mouseout
+                    hideMigrationInfo();
                 }
             })
             .append("title")
@@ -134,10 +137,21 @@ function init() {
                     .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
                 d3.pointer(event, svg.node())
             );
+        
         }
 
         svg.on("click", reset);
     });
+
+    function displayMigrationInfo(stateName, formattedData) {
+        d3.select(".total-population")
+            .text(stateName + "\n" + formattedData);
+    }
+
+    function hideMigrationInfo() {
+        const totalMigration = calculateTotalMigration(processedData);
+        d3.select(".total-population").text("Total Migration: " + totalMigration);
+    }
 }
 
 function formatData(data) {
