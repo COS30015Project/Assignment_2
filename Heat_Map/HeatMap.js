@@ -1,7 +1,7 @@
 function init() {
     // Define the dimensions of the SVG canvas.
-    const width = 1200;
-    const height = 1000;
+    const width = 800;
+    const height = 600;
   
     // Define color scale for migration totals.
     const colorScale = d3.scaleSequential(d3.interpolateYlGnBu).domain([0, 30000]);
