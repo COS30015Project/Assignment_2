@@ -2,7 +2,9 @@ function init() {
     const width = 1200;
     const height = 1000;
 
-    const colorScheme = ["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"];
+    const colorScheme = [
+        "#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"
+    ];
 
     const projection = d3.geoAlbersUsa()
         .scale(1000)
@@ -21,6 +23,9 @@ function init() {
     const color = d3.scaleOrdinal().range(colorScheme);
 
     let selectedState = null; // Track the selected state
+
+    // Initialize processedTotal
+    const processedTotal = {};
 
     Promise.all([
         d3.json("usa.json"),  // Load GeoJSON data
@@ -58,7 +63,7 @@ function init() {
             .attr("y", 20)
             .text("Total Migration: " + totalMigration);
 
-            g.selectAll("path")
+        g.selectAll("path")
             .data(json.features)
             .enter()
             .append("path")
@@ -86,7 +91,7 @@ function init() {
             .append("title")
             .text(function (d) {
                 const stateName = d.properties.NAME;
-                const data = processedTotal[stateName];
+                const data = processedData[stateName];
                 const formattedData = formatData(data);
                 return stateName + "\n" + formattedData;
             });
@@ -140,9 +145,6 @@ function init() {
                     .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
                 d3.pointer(event, svg.node())
             );
-
-
-        
         }
 
         svg.on("click", reset);
