@@ -33,7 +33,7 @@ function init() {
         colorScale.domain([0, maxTotal]);
   
         // Bind the GeoJSON data to the SVG and draw the map with colored states.
-        svg.selectAll('path')
+        const statePaths = svg.selectAll('path')
           .data(usData.features)
           .enter()
           .append('path')
@@ -45,25 +45,29 @@ function init() {
           })
           .attr('stroke', 'white');
   
-        // Display the total area for each state.
-        svg.selectAll('text')
-          .data(usData.features)
-          .enter()
-          .append('text')
-          .attr('x', function (d) {
-            return path.centroid(d)[0];
-          })
-          .attr('y', function (d) {
-            return path.centroid(d)[1];
-          })
-          .text(function (d) {
+        // Display the total area for each state on mouseover.
+        statePaths.on('mouseover', function (d) {
+          const stateName = d.properties.NAME;
+          const totalArea = stateAreas[stateName].totalArea;
+          d3.select(this).attr('fill', 'orange'); // Change color on mouseover
+  
+          // Display information in a tooltip box.
+          d3.select('#tooltip')
+            .style('display', 'block')
+            .html(`State: ${stateName}<br>Total Migration: ${totalArea}`)
+            .style('left', (d3.event.pageX) + 'px')
+            .style('top', (d3.event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function () {
+          d3.select(this).attr('fill', function (d) {
             const stateName = d.properties.NAME;
             const totalArea = stateAreas[stateName].totalArea;
-            return `State: ${stateName}, Area: ${totalArea}`;
-          })
-          .attr('text-anchor', 'middle')
-          .attr('dy', '0.35em')
-          .attr('fill', 'black');
+            return colorScale(totalArea);
+          });
+  
+          // Hide the tooltip box on mouseout.
+          d3.select('#tooltip').style('display', 'none');
+        });
       });
     });
   }
