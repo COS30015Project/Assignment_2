@@ -25,9 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     d3.json('usa.json').then(function (usData) {
         // Load the US state data from the CSV.
         d3.csv('us_migration_data.csv').then(function (data) {
-
-            const json = data[0];
-            const csvData = data[1];
+            const csvData = data.slice(1); // Skip the first object (contains column names)
 
             // Create a dictionary to map state names to their data.
             const processedData = {};
@@ -44,10 +42,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     Taiwan: +d.Taiwan,
                     Vietnam: +d.Vietnam,
                     Others: +d.Others,
-                };
-                processedTotal[stateName] = {
                     Total: +d.Total
-                }
+                };
             });
 
             // Create a GeoProjection and path.
@@ -65,14 +61,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 .on('mousemove', function (d) {
                     if (d.properties && d.properties.NAME) {
                         const stateName = d.properties.NAME;
-                        const stateInfo = stateDataMap[stateName];
+                        const stateInfo = processedData[stateName];
                         if (stateInfo) {
                             const totalAmount = stateInfo['Total'];
                             tooltip.style('display', 'block');
                             tooltip.html(`${stateName}<br>Total Amount: ${totalAmount}`);
                             
                             // Update the tooltip's position.
-                            const [x, y] = d3.pointer(d, this);
+                            const [x, y] = d3.pointer(this);
                             tooltip.style('left', x + 'px')
                                 .style('top', y + 'px');
                         }
