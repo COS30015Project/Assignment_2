@@ -1,16 +1,16 @@
-function init() {
+document.addEventListener('DOMContentLoaded', function () {
     // Define the dimensions of the SVG canvas.
     const width = 1200;
     const height = 1000;
 
-    // Append an SVG element for the map to the body of the page.
+    // Append an SVG element to the body of the page.
     const svg = d3.select('#chart')
         .append('svg')
         .attr('width', width)
         .attr('height', height);
 
-    // Append a separate tooltip element for displaying state information.
-    const tooltip = d3.select('body') // Separate tooltip container
+    // Create a tooltip element for displaying state information.
+    const tooltip = d3.select('#chart') // Use '#chart' instead of '#tooltip'
         .append('div')
         .attr('id', 'tooltip')
         .style('display', 'none')
@@ -36,16 +36,14 @@ function init() {
             .attr('fill', 'steelblue')
             .attr('stroke', 'white')
             .on('mousemove', function (d) {
-                if (d) { // Check if 'd' is defined
-                    const stateName = d.properties.NAME;
-                    tooltip.style('display', 'block');
-                    tooltip.html(stateName);
+                const stateName = d.properties.NAME;
+                tooltip.style('display', 'block');
+                tooltip.html(stateName); // Modify this line to display the desired information
 
-                    // Update the tooltip's position.
-                    const [x, y] = d3.mouse(this);
-                    tooltip.style('left', x + 'px')
-                        .style('top', y + 'px');
-                }
+                // Update the tooltip's position.
+                const [x, y] = d3.pointer(d, this); // Updated to use d3.pointer
+                tooltip.style('left', x + 'px')
+                    .style('top', y + 'px');
             })
             .on('mouseout', function () {
                 tooltip.style('display', 'none');
@@ -54,11 +52,9 @@ function init() {
         // Add an 'mousemove' event listener to the SVG container.
         svg.on('mousemove', function () {
             // Update the tooltip's position.
-            const [x, y] = d3.mouse(this);
+            const [x, y] = d3.pointer(this); // Updated to use d3.pointer
             tooltip.style('left', x + 'px')
                 .style('top', y + 'px');
         });
     });
-}
-
-window.onload = init;
+});
