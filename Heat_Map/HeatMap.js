@@ -85,23 +85,9 @@ function init() {
                 const stateName = d.properties.NAME;    
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
-                return stateName + "\n" + formattedData;
+                return stateName + "\n" + formattedData + stateTotal;
             });
 
-        // Panning behavior
-        svg.call(d3.drag()
-            .subject(() => ({ x: 0, y: 0 }))
-            .on("start", started)
-            .on("drag", dragged));
-
-        function started() {
-            // Disable click event when dragging
-            svg.on(".click", null);
-        }
-
-        function dragged(event) {
-            g.attr("transform", d3.event.transform);
-        }
 
         // Reset function
         function reset() {
