@@ -1,19 +1,3 @@
-function formatData(data) {
-    const formattedData = [];
-    for (const category in data) {
-        formattedData.push(`${category}: ${data[category]}`);
-    }
-    return formattedData.join("\n");
-}
-
-function calculateTotalMigration(data) {
-    let total = 0;
-    for (const category in data) {
-        total += data[category];
-    }
-    return total;
-}
-
 function init() {
     const width = 1200;
     const height = 1000;
@@ -71,7 +55,7 @@ function init() {
             .attr("y", 20)
             .text("Total Migration: " + totalMigration);
 
-        g.selectAll("path")
+            g.selectAll("path")
             .data(json.features)
             .enter()
             .append("path")
@@ -86,7 +70,7 @@ function init() {
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
                 d3.select(this).style("fill", "blue"); // Change color on mouseover
-                displayMigrationInfo(stateName, formattedData);
+                displayMigrationInfo(stateName, formattedData, stateTotal);
             })
             .on("mouseout", function () {
                 if (selectedState === null) {
@@ -98,7 +82,7 @@ function init() {
             })
             .append("title")
             .text(function (d) {
-                const stateName = d.properties.NAME;
+                const stateName = d.properties.NAME;    
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
                 return stateName + "\n" + formattedData;
@@ -112,7 +96,7 @@ function init() {
 
         function started() {
             // Disable click event when dragging
-            svg.on("click", null);
+            svg.on(".click", null);
         }
 
         function dragged(event) {
@@ -150,23 +134,38 @@ function init() {
                 d3.zoomIdentity
                     .translate(width / 2, height / 2)
                     .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                    .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
-                );
-            }
-
-            svg.on("click", reset);
-        });
-
-        function displayMigrationInfo(stateName, formattedData) {
-            const stateTotal = calculateTotalMigration(processedData[stateName]);
-            d3.select(".total-population")
-                .text(stateName + "\n" + formattedData + "\nTotal Migration for " + stateName + ": " + stateTotal);
+                    .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                d3.pointer(event, svg.node())
+            );
+        
         }
 
-        function hideMigrationInfo() {
-            const totalMigration = calculateTotalMigration(processedData);
-            d3.select(".total-population").text("Total Migration: " + totalMigration);
-        }
+        svg.on("click", reset);
+    });
+
+    function displayMigrationInfo(stateName, formattedData) {
+        const stateTotal = calculateTotalMigration(processedData[stateName]);
     }
 
-    window.onload = init;
+    function hideMigrationInfo() {
+        const totalMigration = calculateTotalMigration(processedData);
+    }
+}
+
+function formatData(data) {
+    const formattedData = [];
+    for (const category in data) {
+        formattedData.push(`${category}: ${data[category]}`);
+    }
+    return formattedData.join("\n");
+}
+
+function calculateTotalMigration(data) {
+    let total = 0;
+    for (const category in data) {
+        total += data[category];
+    }
+    return total;
+}
+
+window.onload = init;
