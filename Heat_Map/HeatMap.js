@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .attr('d', path)
                 .attr('fill', 'steelblue')
                 .attr('stroke', 'white')
-                .on('mousemove', function (d) {
+                .on('mouseover', function (d) {
                     if (d.properties && d.properties.NAME) {
                         const stateName = d.properties.NAME;
                         const stateInfo = processedData[stateName];
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
                 })
-                .on('mouseout', function () {
+                .on('mouseleave', function () {
                     tooltip.style('display', 'none');
                 });
 
