@@ -24,11 +24,30 @@ document.addEventListener('DOMContentLoaded', function () {
     // Load the US GeoJSON data.
     d3.json('usa.json').then(function (usData) {
         // Load the US state data from the CSV.
-        d3.csv('us_migration_data.csv').then(function (stateData) {
+        d3.csv('us_migration_data.csv').then(function (data) {
+
+            const json = data[0];
+            const csvData = data[1];
+
             // Create a dictionary to map state names to their data.
-            const stateDataMap = {};
-            stateData.forEach(function (row) {
-                stateDataMap[row['US States']] = row;
+            const processedData = {};
+            csvData.forEach(function (d) {
+                const stateName = d['US States'];
+                processedData[stateName] = {
+                    Bangladesh: +d.Bangladesh,
+                    China: +d.China,
+                    India: +d.India,
+                    Iran: +d.Iran,
+                    Korea: +d.Korea,
+                    Pakistan: +d.Pakistan,
+                    Philippines: +d.Philippines,
+                    Taiwan: +d.Taiwan,
+                    Vietnam: +d.Vietnam,
+                    Others: +d.Others,
+                };
+                processedTotal[stateName] = {
+                    Total: +d.Total
+                }
             });
 
             // Create a GeoProjection and path.
