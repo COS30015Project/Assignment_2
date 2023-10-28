@@ -39,10 +39,24 @@ function init() {
            const stateName = d.properties.NAME;
            tooltip.style('display', 'block');
            tooltip.html(stateName); // Modify this line to display the desired information
+
+           // Update the tooltip's position.
+            const [x, y] = d3.mouse(this);
+            tooltip.style('left', x + 'px')
+        .style('top', y + 'px');
+
          })
          .on('mouseout', function () {
            tooltip.style('display', 'none');
          });
+
+         // Add an 'mousemove' event listener to the SVG container.
+svg.on('mousemove', function () {
+    // Update the tooltip's position.
+    const [x, y] = d3.mouse(this);
+    tooltip.style('left', x + 'px')
+       .style('top', y + 'px');
+   });
     });
    }
    
