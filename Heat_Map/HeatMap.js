@@ -1,6 +1,5 @@
-// Wrap the entire code in an IIFE (Immediately Invoked Function Expression)
-(function () {
-    // Define your constants and variables at the beginning of the IIFE
+function init() {
+    // Define your constants and variables
     const width = 1200;
     const height = 1000;
     const colorScheme = ["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"];
@@ -65,13 +64,14 @@
             d3.zoomIdentity
                 .translate(width / 2, height / 2)
                 .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height))
-                .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
+            ),
             d3.pointer(event, svg.node())
         );
     }
 
     function started() {
-        svg.on(".click", null);
+        svg.on("click", null);
     }
 
     function dragged(event) {
@@ -153,4 +153,6 @@
 
         svg.call(zoom);
     });
-})();
+}
+
+window.onload = init;
