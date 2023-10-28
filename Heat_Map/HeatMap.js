@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Load the US GeoJSON data.
     d3.json('usa.json').then(function (usData) {
         // Load the US state data from the CSV.
-        d3.csv('us_state_data.csv').then(function (stateData) {
+        d3.csv('us_migration_data.csv').then(function (stateData) {
             // Create a dictionary to map state names to their data.
             const stateDataMap = {};
             stateData.forEach(function (row) {
