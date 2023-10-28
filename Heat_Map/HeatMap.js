@@ -70,7 +70,7 @@ function init() {
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
                 d3.select(this).style("fill", "blue"); // Change color on mouseover
-                displayMigrationInfo(stateName, formattedData, stateTotal);
+                displayMigrationInfo(stateName, formattedData);
             })
             .on("mouseout", function () {
                 if (selectedState === null) {
@@ -82,12 +82,26 @@ function init() {
             })
             .append("title")
             .text(function (d) {
-                const stateName = d.properties.NAME;    
+                const stateName = d.properties.NAME;
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
-                return stateName + "\n" + formattedData + stateTotal;
+                return stateName + "\n" + formattedData;
             });
 
+        // Panning behavior
+        svg.call(d3.drag()
+            .subject(() => ({ x: 0, y: 0 }))
+            .on("start", started)
+            .on("drag", dragged));
+
+        function started() {
+            // Disable click event when dragging
+            svg.on(".click", null);
+        }
+
+        function dragged(event) {
+            g.attr("transform", d3.event.transform);
+        }
 
         // Reset function
         function reset() {
@@ -130,11 +144,13 @@ function init() {
     });
 
     function displayMigrationInfo(stateName, formattedData) {
-        const stateTotal = calculateTotalMigration(processedData[stateName]);
+        d3.select(".total-population")
+            .text(stateName + "\n" + formattedData + "\n" + totalMigration);
     }
 
     function hideMigrationInfo() {
         const totalMigration = calculateTotalMigration(processedData);
+        d3.select(".total-population").text("Total Migration: " + totalMigration);
     }
 }
 
@@ -148,8 +164,10 @@ function formatData(data) {
 
 function calculateTotalMigration(data) {
     let total = 0;
-    for (const category in data) {
-        total += data[category];
+    for (const stateData of Object.values(data)) {
+        for (const category in stateData) {
+            total += stateData[category];
+        }
     }
     return total;
 }
