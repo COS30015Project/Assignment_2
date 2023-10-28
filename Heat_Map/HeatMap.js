@@ -26,103 +26,111 @@ function init() {
 
     const color = d3.scaleOrdinal().range(colorScheme);
 
-    // Assuming 'trimesters' is defined elsewhere in your code
-    const trimesters = ["2023-Q1", "2023-Q2", "2023-Q3", "2023-Q4"];
+ // Assuming 'trimesters' is defined elsewhere in your code
+const trimesters = ["2023-Q1", "2023-Q2", "2023-Q3", "2023-Q4"];
 
-    // Define the data domains and axis for the slider
-    var yeardomain = [0, trimesters.length - 1];
-    var axisyears = trimesters.map(function(trimester) {
-        return parseFloat(trimester.substring(0, 4));
-    });
+// Define the data domains and axis for the slider
+var yeardomain = [0, trimesters.length - 1];
+var axisyears = trimesters.map(function(trimester) {
+    return parseFloat(trimester.substring(0, 4));
+});
 
-    // Define data for the slider pointer
-    var pointerdata = [
-        { x: 0, y: 0 },
-        { x: 0, y: 25 },
-        { x: 25, y: 25 },
-        { x: 25, y: 0 }
-    ];
+// Define data for the slider pointer
+var pointerdata = [
+    { x: 0, y: 0 },
+    { x: 0, y: 25 },
+    { x: 25, y: 25 },
+    { x: 25, y: 0 }
+];
 
-    // Create a scale for the slider
-    var scale = d3.scaleLinear()
-        .domain(yeardomain)
-        .rangeRound([0, width_slider]);
+// Create a scale for the slider
+var scale = d3.scaleLinear()
+    .domain(yeardomain)
+    .rangeRound([0, width_slider]);
 
-    // Create the slider axis
-    var x = d3.axisTop(scale)
-        .tickFormat(function(d) {
-            return trimesters[d];
-        })
-        .tickSize(0);
+// Create the slider axis
+var x = d3.axisTop(scale)
+    .tickFormat(function(d) {
+        return trimesters[d];
+    })
+    .tickSize(0);
 
-    // Append the axis to the slider
-    svg
-        .append("g")
-        .attr("class", "axis")
-        .attr("transform", "translate(" + trans + "," + trans + ")")
-        .call(x);
+// Append the axis to the slider
+svg
+    .append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(" + trans + "," + trans + ")")
+    .call(x);
 
-    // Create a draggable slider cursor
-    var drag = d3.drag()
-        .origin(function() {
-            return {
-                x: d3.select(this).attr("x"),
-                y: d3.select(this).attr("y")
-            };
-        })
-        .on("start", dragstart)
-        .on("drag", dragmove)
-        .on("end", dragend);
+// Create a draggable slider cursor
+var drag = d3.drag()
+    .origin(function() {
+        return {
+            x: d3.select(this).attr("x"),
+            y: d3.select(this).attr("y")
+        };
+    })
+    .on("start", dragstart)
+    .on("drag", dragmove)
+    .on("end", dragend);
 
-    // Append elements to the slider for selecting trimesters
-    svg
-        .append("g")
-        .append("rect")
-        .attr("class", "slideraxis")
-        .attr("width", width_slider)
-        .attr("height", 7)
-        .attr("x", trans)
-        .attr("y", trans);
+// Append elements to the slider for selecting trimesters
+svg
+    .append("g")
+    .append("rect")
+    .attr("class", "slideraxis")
+    .attr("width", width_slider)
+    .attr("height", 7)
+    .attr("x", trans)
+    .attr("y", trans);
 
-    var cursor = svg
-        .append("g")
-        .attr("class", "move")
-        .append("svg")
-        .attr("x", width_slider + trans)
-        .attr("y", trans)
-        .attr("width", 30)
-        .attr("height", 60);
+var cursor = svg
+    .append("g")
+    .attr("class", "move")
+    .append("svg")
+    .attr("x", width_slider + trans)
+    .attr("y", trans)
+    .attr("width", 30)
+    .attr("height", 60);
 
-    // Call the drag behavior on the cursor element
-    cursor.call(drag);
+// Call the drag behavior on the cursor element
+cursor.call(drag);
 
-    // Define a line drawing function for the cursor
-    var drawline = d3.line()
-        .x(function(d) {
-            return d.x;
-        })
-        .y(function(d) {
-            return d.y;
-        })
-        .curve(d3.curveLinear);
+// Define a line drawing function for the cursor
+var drawline = d3.line()
+    .x(function(d) {
+        return d.x;
+    })
+    .y(function(d) {
+        return d.y;
+    })
+    .curve(d3.curveLinear);
 
-    // Add a cursor path
-    cursor
-        .append("path")
-        .attr("class", "cursor")
-        .attr("transform", "translate(" + 7 + ",0)")
-        .attr("d", drawline(pointerdata));
+// Add a cursor path
+cursor
+    .append("path")
+    .attr("class", "cursor")
+    .attr("transform", "translate(" + 7 + ",0)")
+    .attr("d", drawline(pointerdata));
 
-    // Event handlers for slider cursor
-    cursor.on("mouseover", function() {
-        d3.select(".move").style("cursor", "hand");
-    });
+// Event handlers for slider cursor
+cursor.on("mouseover", function() {
+    d3.select(".move").style("cursor", "hand");
+});
 
-    var aux = 0;
+var aux = 0;
 
-    function drawMap(year) {
-        // Implement your map update logic here based on the selected year (aux)
-    }
+// Define a function to draw the U.S. state heat map
+function drawHeatMap(dataForYear) {
+    // Use dataForYear to update the heat map
+    // You can use D3's data binding and enter/update/exit pattern here
+    // to create or update the map elements based on the data
+}
+
+function drawMap(year) {
+    // Implement your map update logic here based on the selected year (aux)
+    drawHeatMap(processedData[year]); // Use your processed data for the selected year
+}
 
     function dragmove() {
         var x = Math.max(0, Math.min(width_slider, d3.event.x));
