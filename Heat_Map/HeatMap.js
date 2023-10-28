@@ -10,7 +10,7 @@ function init() {
        .attr('height', height);
    
     // Create a tooltip element for displaying state information.
-    const tooltip = d3.select('#chart')
+    const tooltip = d3.select('#tooltip')
        .append('div')
        .attr('id', 'tooltip')
        .style('display', 'none')
