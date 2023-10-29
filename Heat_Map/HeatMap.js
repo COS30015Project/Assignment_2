@@ -1,4 +1,7 @@
-const width = window.innerWidth;
+function init()
+{
+
+    const width = window.innerWidth;
 const height = window.innerHeight;
 
 const colorScheme = [
@@ -81,3 +84,9 @@ const createTooltip = (stateName, total) => {
 };
 
 fetchData();
+
+}
+
+window.onload = init;
+
+
