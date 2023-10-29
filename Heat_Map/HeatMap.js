@@ -59,11 +59,11 @@ d3.json('usa.json').then(function (usData) {
             .attr('stroke', 'white')
             .on('mouseover', function (d) {
                 // Get the data for the hovered state
-                const stateData = processedData[d.properties.name];
+                const stateData = processedData[d.properties.stateProperty];
 
                 // Display data in the div element
                 div.style('opacity', 0.9);
-                div.html('<b>' + d.properties.name + '</b><br>' +
+                div.html('<b>' + stateData.stateProperty + '</b><br>' +
                     'Bangladesh: ' + stateData.Bangladesh + '<br>' +
                     'China: ' + stateData.China + '<br>' +
                     'India: ' + stateData.India + '<br>' +
