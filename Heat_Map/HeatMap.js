@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 .attr('fill', 'steelblue')
                 .attr('stroke', 'white')
                 .on('mouseover', function (event, d) {
-                    // Get the state name and total migration data.
+                    // Get the state name and total migration data if available.
                     const stateName = d.properties.name;
-                    const totalMigration = processedData[stateName].Total;
+                    const totalMigration = processedData[stateName] ? processedData[stateName].Total : 0; // Default to 0 if state not found
 
                     // Calculate the circle position using the projection.
                     const [x, y] = path.centroid(d);
