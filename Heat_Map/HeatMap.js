@@ -62,20 +62,22 @@ function init() {
             .attr("d", path)
             .attr("fill", function (d) {
                 // Use color based on the total migration for the state
-                const stateName = d.properties.name;
+                const stateName = d.properties.NAME;
                 return color(totalMigration[stateName]);
             })
             .on("mouseover", function (d) {
-                const stateName = d.properties.name;
+                const stateName = d.properties.NAME;
                 const total = totalMigration[stateName];
                 const tooltip = createTooltip(stateName, total);
-
+            
                 // Show the tooltip on mouseover
                 d3.select("body").append(() => tooltip.node());
             })
-            .on("mouseout", function () {
+            .on("mouseout", function (d) {
                 // Remove the tooltip on mouseout
-                d3.selectAll(".tooltip").remove();
+                d3.selectAll(".tooltip").filter(function (d) {
+                    return d.properties.NAME === this.id;
+                }).remove();
             });
     });
 }
@@ -90,10 +92,13 @@ function calculateTotalMigration(data) {
 }
 
 function createTooltip(stateName, total) {
+    
     const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("position", "absolute")
         .style("opacity", 0);
+
+        tooltip.attr("id", stateName);
 
     tooltip.html(`<b>${stateName}</b><br>Total Migration: ${total}`)
         .style("left", (d3.event.pageX + 10) + "px")
