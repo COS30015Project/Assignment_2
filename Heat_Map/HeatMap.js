@@ -50,20 +50,22 @@ function init() {
             .attr('fill', 'steelblue')
             .attr('stroke', 'white')
             .on('mouseover', function (d) {
-                const stateData = processedData[d.properties.name];
+                const stateData = d.properties.NAME;
+                const data = processedData[stateName];
+                const formattedData = formatData(data);
 
                 div.style('opacity', 0.9);
-                div.html('<b>' + d.properties.name + '</b><br>' +
-                    'Bangladesh: ' + stateData.Bangladesh + '<br>' +
-                    'China: ' + stateData.China + '<br>' +
-                    'India: ' + stateData.India + '<br>' +
-                    'Iran: ' + stateData.Iran + '<br>' +
-                    'Korea: ' + stateData.Korea + '<br>' +
-                    'Pakistan: ' + stateData.Pakistan + '<br>' +
-                    'Philippines: ' + stateData.Philippines + '<br>' +
-                    'Taiwan: ' + stateData.Taiwan + '<br>' +
-                    'Vietnam: ' + stateData.Vietnam + '<br>' +
-                    'Others: ' + stateData.Others + '<br>' +
+                div.html('<b>' + d.properties.NAME + '</b><br>' +
+                    'Bangladesh: ' + formattedData + '<br>' +
+                    'China: ' + formattedData + '<br>' +
+                    'India: ' + formattedData + '<br>' +
+                    'Iran: ' + formattedData + '<br>' +
+                    'Korea: ' + formattedData + '<br>' +
+                    'Pakistan: ' + formattedData + '<br>' +
+                    'Philippines: ' + formattedData + '<br>' +
+                    'Taiwan: ' + formattedData + '<br>' +
+                    'Vietnam: ' + formattedData + '<br>' +
+                    'Others: ' + formattedData + '<br>' +
                     'Total: ' + stateData.Total)
                     .style('left', (d3.event.pageX + 23) + 'px')
                     .style('top', (d3.event.pageY - 20) + 'px');
