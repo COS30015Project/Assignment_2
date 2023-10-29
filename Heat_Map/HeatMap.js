@@ -22,29 +22,32 @@ function init() {
 
     const color = d3.scaleOrdinal().range(colorScheme);
 
-    // Load the CSV data and handle it
-    d3.csv("us_migration_data.csv").then(function(data) {
-        // Load the GeoJSON data
-        d3.json("usa.json").then(function(geojson) {
-            // Bind the GeoJSON data to the map elements
-            g.selectAll("path")
-                .data(geojson.features)
-                .enter()
-                .append("path")
-                .attr("d", path)
-                .style("fill", function(d) {
-                    // Get the state name
-                    const state = d.properties.name;
-                    // Calculate the total migration to the state from all countries
-                    const rowData = data.find(row => row["US States"] === state);
-                    if (rowData) {
-                        // Calculate the total migration for the state
-                        const totalMigration = d3.sum(d3.values(rowData).slice(1, -1), d => +d);
-                        return color(totalMigration);
-                    }
-                    return "#fff"; // Default color for states with no data
-                });
-        });
+    // Load both CSV and GeoJSON data
+    Promise.all([
+        d3.csv("us_migration_data.csv"),
+        d3.json("usa.json")
+    ]).then(function (data) {
+        const csvData = data[0];
+        const geojsonData = data[1];
+
+        // Bind the GeoJSON data to the map elements
+        g.selectAll("path")
+            .data(geojsonData.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .style("fill", function (d) {
+                // Get the state name
+                const state = d.properties.name;
+                // Calculate the total migration to the state from all countries
+                const rowData = csvData.find(row => row["US States"] === state);
+                if (rowData) {
+                    // Calculate the total migration for the state
+                    const totalMigration = d3.sum(d3.values(rowData).slice(1, -1), d => +d);
+                    return color(totalMigration);
+                }
+                return "#fff"; // Default color for states with no data
+            });
     });
 }
 
