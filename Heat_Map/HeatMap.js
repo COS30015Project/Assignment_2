@@ -62,11 +62,11 @@ function init() {
             .attr("d", path)
             .attr("fill", function (d) {
                 // Use color based on the total migration for the state
-                const stateName = d.properties.NAME;
+                const stateName = d.properties.name;
                 return color(totalMigration[stateName]);
             })
             .on("mouseover", function (d) {
-                const stateName = d.properties.NAME;
+                const stateName = d.properties.name;
                 const total = totalMigration[stateName];
                 const tooltip = createTooltip(stateName, total);
 
