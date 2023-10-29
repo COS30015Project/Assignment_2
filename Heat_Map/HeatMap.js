@@ -22,6 +22,8 @@ function init() {
 
     const color = d3.scaleOrdinal().range(colorScheme);
 
+    let selectedState = null;
+
     Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
         d3.csv("us_migration_data.csv") // Load CSV data
@@ -52,11 +54,33 @@ function init() {
             };
         });
 
+        g.selectAll("path")
+        .data(json.features)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("class", "feature")
+        .style("fill", function (d) {
+            return color(d.properties.NAME);
+        })
+        .append("title")
+            .text(function (d) {
+                const stateName = d.properties.NAME;
+                const data = processedData[stateName];
+                const formattedData = formatData(data);
+                return stateName + "\n" + formattedData;
+            });
+
         // Function to draw a bubble for a state
         function drawBubble(state) {
+            // Calculate the centroid of the state boundary
+            const centroid = path.centroid(state);
+            const cx = centroid[0];
+            const cy = centroid[1];
+
             g.append("circle")
-                .attr("cx", projection(state.geometry.coordinates[0][0][0]))
-                .attr("cy", projection(state.geometry.coordinates[0][0][1]))
+                .attr("cx", cx)
+                .attr("cy", cy)
                 .attr("r", 0) // Start with a radius of 0
                 .style("fill", color(processedTotal[state.properties.NAME]))
                 .transition()
@@ -70,6 +94,44 @@ function init() {
                 drawBubble(state);
             }, 1000); // Delay each state's bubble animation
         });
+
+        // Reset function
+        function reset() {
+            g.selectAll(".feature").style("fill", function (d) {
+                return color(d.properties.NAME);
+            });
+            selectedState = null; // Reset the selected state
+            g.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        }
+
+        // Zooming behavior
+        const zoom = d3.zoom()
+            .scaleExtent([1, 8])
+            .on("zoom", zoomed);
+
+        svg.call(zoom);
+
+        function zoomed(event) {
+            g.attr("transform", event.transform);
+        }
+
+        function clicked(event, d) {
+            const [[x0, y0], [x1, y1]] = path.bounds(d);
+            event.stopPropagation();
+            reset();
+            selectedState = d; // Store the selected state
+            d3.select(this).style("fill", "red");
+            svg.transition().duration(750).call(
+                zoom.transform,
+                d3.zoomIdentity
+                    .translate(width / 2, height / 2)
+                    .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                    .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                d3.pointer(event, svg.node())
+            );
+        }
+
+        svg.on("click", reset);
     });
 }
 
