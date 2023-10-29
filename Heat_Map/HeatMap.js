@@ -23,8 +23,8 @@ function init() {
     const color = d3.scaleOrdinal().range(colorScheme);
 
     Promise.all([
-        d3.json("usa.json"),  // Load GeoJSON data
-        d3.csv("us_migration_data.csv")  // Load CSV data
+        d3.json("usa.json"), // Load GeoJSON data
+        d3.csv("us_migration_data.csv") // Load CSV data
     ]).then(function (data) {
         const json = data[0];
         const csvData = data[1];
@@ -48,35 +48,34 @@ function init() {
             };
 
             processedTotal[stateName] = {
-                Total: +d.Total,
+                Total: +d.Total, 
             };
         });
 
-        // Function to draw bubbles for Total migration
+        // Function to draw a bubble for a state
         function drawBubble(state) {
-            const totalMigration = processedTotal[state];
-            if (totalMigration > 0) {
-                const centroid = path.centroid(json.features.find(feature => feature.properties.NAME === state));
-                g.append("circle")
-                    .attr("cx", centroid[0])
-                    .attr("cy", centroid[1])
-                    .attr("r", Math.sqrt(totalMigration) / 10)
-                    .style("fill", color(totalMigration));
-            }
+            g.append("circle")
+                .attr("cx", projection([state.lon, state.lat])[0])
+                .attr("cy", projection([state.lon, state.lat])[1])
+                .attr("r", 0) // Start with a radius of 0
+                .style("fill", color(processedTotal[state.name]))
+                .transition()
+                .duration(1000) // Animation duration
+                .attr("r", processedTotal[state.name] / 100); // Adjust the scale for appropriate bubble size
         }
 
-        // Bind the GeoJSON data to the map elements
-        g.selectAll("path")
-            .data(json.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .style("fill", function (d) {
-                // Get the state name
-                const state = d.properties.NAME;
-                // Call the drawBubble function to display bubbles for Total migration
+        // Draw bubbles for each state
+        json.features.forEach(function (d) {
+            const stateName = d.properties.NAME;
+            const state = {
+                name: stateName,
+                lat: d.properties.LAT,
+                lon: d.properties.LON,
+            };
+            setTimeout(function () {
                 drawBubble(state);
-            });
+            }, 1000); // Delay each state's bubble animation
+        });
     });
 }
 
