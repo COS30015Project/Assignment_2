@@ -53,31 +53,36 @@ function init() {
         });
 
         const totalMigration = calculateTotalMigration(processedData);
-        const stateName = d.properties.NAME;
+        
 
         // Add the US state map to the heatmap
         g.selectAll("path")
-            .data(usData.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .attr("fill", function (d) {
-                // Use color based on the total migration for the state
-                return color(totalMigration[stateName]);
-            })
-            .on("mouseover", function (d) {
-                const total = totalMigration[stateName];
-                const tooltip = createTooltip(stateName, total);
-            
-                // Show the tooltip on mouseover
-                d3.select("body").append(() => tooltip.node());
-            })
-            .on("mouseout", function (d) {
-                // Remove the tooltip on mouseout
-                d3.selectAll(".tooltip").filter(function (d) {
-                    return d.properties.NAME === this.id;
-                }).remove();
-            });
+    .data(usData.features)
+    .enter()
+    .append("path")
+    .attr("d", path)
+    .attr("fill", function (d) {
+        const stateName = d.properties.NAME;
+        return color(totalMigration[stateName]);
+    })
+    .attr("data-state", function (d) {
+        return d.properties.NAME;
+    })
+    .on("mouseover", function (d) {
+        const stateName = d.properties.NAME;
+        const total = totalMigration[stateName];
+        const tooltip = createTooltip(stateName, total);
+    
+        // Show the tooltip on mouseover
+        d3.select("body").append(() => tooltip.node());
+    })
+    .on("mouseout", function () {
+        const stateName = d3.select(this).attr("data-state"); // Access stateName from the element's data
+        // Remove the tooltip on mouseout
+        d3.selectAll(".tooltip").filter(function () {
+            return d3.select(this).attr("data-state") === stateName;
+        }).remove();
+    });
     });
 }
 
