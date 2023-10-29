@@ -1,103 +1,83 @@
-function init() {
-    const width = 1200;
-    const height = 1000;
+const width = window.innerWidth;
+const height = window.innerHeight;
 
-    const colorScheme = [
-        "#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"
-    ];
+const colorScheme = [
+    "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"
+];
 
-    const projection = d3.geoAlbersUsa()
-        .scale(1000)
-        .translate([width / 2, height / 2]);
+const projection = d3.geoAlbersUsa()
+    .scale(1000)
+    .translate([width / 2, height / 2]);
 
-    const path = d3.geoPath()
-        .projection(projection);
+const path = d3.geoPath()
+    .projection(projection);
 
-    const svg = d3.select("#chart")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height);
+const svg = d3.select("#chart")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
 
-    const g = svg.append("g");
+const color = d3.scaleQuantile()
+    .domain([0, 100000])
+    .range(colorScheme);
 
-    const color = d3.scaleOrdinal().range(colorScheme);
+let totalMigration = null;
 
-    // Use Promise.all to load both GeoJSON and CSV data concurrently
-    Promise.all([
-        d3.json("usa.json"),
+const fetchData = async () => {
+    const [statesTopo, migrationData] = await Promise.all([
+        d3.json("us.json"),
         d3.csv("us_migration_data.csv")
-    ]).then(function (data) {
-        const usData = data[0];
-        const csvData = data[1];
+    ]);
 
-        const processedData = {};
-        const processedTotal = {}; // Initialize a separate object for 'Total' data
+    totalMigration = calculateTotalMigration(migrationData);
 
-        csvData.forEach(function (d) {
-            const stateName = d['US States'];
-            processedData[stateName] = {
-                Bangladesh: +d.Bangladesh,
-                China: +d.China,
-                India: +d.India,
-                Iran: +d.Iran,
-                Korea: +d.Korea,
-                Pakistan: +d.Pakistan,
-                Philippines: +d.Philippines,
-                Taiwan: +d.Taiwan,
-                Vietnam: +d.Vietnam,
-                Others: +d.Others,
-            };
-            processedTotal[stateName] = {
-                Total: +d.Total
-            };
-        });
+    drawMap(statesTopo, migrationData);
+};
 
-        const totalMigration = calculateTotalMigration(processedData);
-
-        // Add the US state map to the heatmap
-        g.selectAll("path")
-            .data(usData.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .attr("fill", function (d) {
-                const stateName = d.properties.NAME;
-                return color(totalMigration[stateName]);
-            })
-            .attr("data-state", function (d) {
-                return d.properties.NAME;
-            })
-            .on("mouseover", function (d) {
-                const stateName = d3.select(this).attr("data-state");
-                const total = totalMigration[stateName];
-                createTooltip(stateName, total);
-            })
-            .on("mouseout", function () {
-                d3.selectAll(".tooltip").remove();
-            });
-    });
-}
-
-function calculateTotalMigration(data) {
+const calculateTotalMigration = (data) => {
     const totalMigration = {};
-    // Calculate the total migration for each state
     for (const stateName in data) {
         totalMigration[stateName] = d3.sum(Object.values(data[stateName]));
     }
     return totalMigration;
-}
+};
 
-function createTooltip(stateName, total) {
+const drawMap = (statesTopo, migrationData) => {
+    svg.selectAll("path")
+        .data(topojson.feature(statesTopo, statesTopo.objects.states).features)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("fill", function (d) {
+            const stateName = d.properties.NAME;
+            return color(totalMigration[stateName]);
+        })
+        .attr("data-state", function (d) {
+            return d.properties.NAME;
+        })
+        .on("mouseover", function (d) {
+            const stateName = d3.select(this).attr("data-state");
+            const total = totalMigration[stateName];
+            createTooltip(stateName, total);
+        })
+        .on("mouseout", function () {
+            d3.selectAll(".tooltip").remove();
+        });
+};
+
+const createTooltip = (stateName, total) => {
     const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("position", "absolute")
         .style("opacity", 0);
 
-    tooltip.attr("id", stateName);
+    tooltip.transition()
+        .duration(200)
+        .style("opacity", 0.9);
 
-    tooltip.html(`<b>${stateName}</b><br>Total Migration: ${total}`)
+    tooltip.html(`<strong>${stateName}</strong>: ${total} migrants (${total.toLocaleString()} people)`)
         .style("left", (d3.event.pageX + 10) + "px")
         .style("top", (d3.event.pageY - 30) + "px");
-}
+};
 
-window.onload = init;
+fetchData();
