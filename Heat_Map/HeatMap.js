@@ -11,6 +11,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Load the US GeoJSON data.
     d3.json('usa.json').then(function (usData) {
+        // Create a GeoProjection and path.
+        const projection = d3.geoAlbersUsa();
+        const path = d3.geoPath().projection(projection);
+
+        // Bind the GeoJSON data to the SVG and draw the map.
+        svg.selectAll('path')
+            .data(usData.features)
+            .enter()
+            .append('path')
+            .attr('d', path)
+            .attr('fill', 'none') // Set the fill to 'none' for the map
+            .attr('stroke', 'white')
+            .attr('stroke-width', 1); // Add a stroke for state boundaries
+
         // Load the US state data from the CSV.
         d3.csv('us_migration_data.csv').then(function (data) {
             const csvData = data.slice(1); // Skip the first object (contains column names)
@@ -34,19 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
             });
 
-            // Create a GeoProjection and path.
-            const projection = d3.geoAlbersUsa();
-            const path = d3.geoPath().projection(projection);
-
-            // Bind the GeoJSON data to the SVG and draw the map.
-            svg.selectAll('path')
-                .data(usData.features)
-                .enter()
-                .append('path')
-                .attr('d', path)
-                .attr('fill', 'steelblue')
-                .attr('stroke', 'white');
-
             // Add dots to the map using your processed data.
             svg.selectAll('circle')
                 .data(Object.keys(processedData)) // Use the state names from your data
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     return feature ? projection(feature.geometry.coordinates[1]) : 0;
                 })
                 .attr('r', 3) // You can adjust the radius as needed
-                .attr('fill', 'blue');
+                .attr('fill', 'blue'); // Set the fill for the circles to 'blue'
 
             // Create an update function to change the radius of dots.
             function update(date) {
