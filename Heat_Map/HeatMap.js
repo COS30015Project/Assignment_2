@@ -1,6 +1,4 @@
-function init()
-{
-
+function init() {
     const width = 1200;
     const height = 1000;
 
@@ -48,29 +46,38 @@ function init()
                 Vietnam: +d.Vietnam,
                 Others: +d.Others,
             };
-            
-            processedTotal[stateName] = {
-                Total: +d.Total, 
-            };
 
+            processedTotal[stateName] = {
+                Total: +d.Total,
+            };
         });
 
-         // Bind the GeoJSON data to the map elements
-         g.selectAll("path")
-         .data(json.features)
-         .enter()
-         .append("path")
-         .attr("d", path)
-         .style("fill", function (d) {
-             // Get the state name
-             const state = d.properties.NAME;
-             // Get the "Total" value for the state from the processed data
-             const totalMigration = processedTotal[state];
-             return color(totalMigration);
-         });
+        // Function to draw bubbles for Total migration
+        function drawBubble(state) {
+            const totalMigration = processedTotal[state];
+            if (totalMigration > 0) {
+                const centroid = path.centroid(json.features.find(feature => feature.properties.NAME === state));
+                g.append("circle")
+                    .attr("cx", centroid[0])
+                    .attr("cy", centroid[1])
+                    .attr("r", Math.sqrt(totalMigration) / 10)
+                    .style("fill", color(totalMigration));
+            }
+        }
 
+        // Bind the GeoJSON data to the map elements
+        g.selectAll("path")
+            .data(json.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .style("fill", function (d) {
+                // Get the state name
+                const state = d.properties.NAME;
+                // Call the drawBubble function to display bubbles for Total migration
+                drawBubble(state);
+            });
     });
-
 }
 
 window.onload = init;
