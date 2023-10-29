@@ -63,9 +63,9 @@ function init()
          .attr("d", path)
          .style("fill", function (d) {
              // Get the state name
-             const state = d.properties.name;
+             const state = d.properties.NAME;
              // Get the "Total" value for the state from the processed data
-             const totalMigration = processedData[state].Total;
+             const totalMigration = processedTotal[state];
              return color(totalMigration);
          });
 
