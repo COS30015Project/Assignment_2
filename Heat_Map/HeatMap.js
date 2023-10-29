@@ -70,17 +70,10 @@ function init() {
             .on("mouseover", function (d) {
                 const stateName = d3.select(this).attr("data-state");
                 const total = totalMigration[stateName];
-                const tooltip = createTooltip(stateName, total, d3.event); // Pass the event object
-
-                // Show the tooltip on mouseover
-                d3.select("body").append(() => tooltip.node());
+                createTooltip(stateName, total);
             })
             .on("mouseout", function () {
-                const stateName = d3.select(this).attr("data-state");
-                // Remove the tooltip on mouseout
-                d3.selectAll(".tooltip").filter(function () {
-                    return d3.select(this).attr("data-state") === stateName;
-                }).remove();
+                d3.selectAll(".tooltip").remove();
             });
     });
 }
@@ -94,7 +87,7 @@ function calculateTotalMigration(data) {
     return totalMigration;
 }
 
-function createTooltip(stateName, total, event) {
+function createTooltip(stateName, total) {
     const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("position", "absolute")
@@ -103,10 +96,8 @@ function createTooltip(stateName, total, event) {
     tooltip.attr("id", stateName);
 
     tooltip.html(`<b>${stateName}</b><br>Total Migration: ${total}`)
-        .style("left", (event.pageX + 10) + "px")
-        .style("top", (event.pageY - 30) + "px");
-
-    return tooltip;
+        .style("left", (d3.event.pageX + 10) + "px")
+        .style("top", (d3.event.pageY - 30) + "px");
 }
 
 window.onload = init;
