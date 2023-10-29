@@ -55,15 +55,16 @@ function init() {
         });
 
         g.selectAll("path")
-        .data(json.features)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("class", "feature")
-        .style("fill", function (d) {
-            return color(d.properties.NAME);
-        })
-        .append("title")
+            .data(json.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("class", "feature")
+            .style("fill", function (d) {
+                return color(d.properties.NAME);
+            })
+            .on("click", clicked)
+            .append("title")
             .text(function (d) {
                 const stateName = d.properties.NAME;
                 const data = processedData[stateName];
@@ -71,28 +72,9 @@ function init() {
                 return stateName + "\n" + formattedData;
             });
 
-        // Function to draw a bubble for a state
-        function drawBubble(state) {
-            // Calculate the centroid of the state boundary
-            const centroid = path.centroid(state);
-            const cx = centroid[0];
-            const cy = centroid[1];
-
-            g.append("circle")
-                .attr("cx", cx)
-                .attr("cy", cy)
-                .attr("r", 0) // Start with a radius of 0
-                .style("fill", color(processedTotal[state.properties.NAME]))
-                .transition()
-                .duration(1000) // Animation duration
-                .attr("r", processedTotal[state.properties.NAME] / 100); // Adjust the scale for appropriate bubble size
-        }
-
         // Draw bubbles for each state
         json.features.forEach(function (state) {
-            setTimeout(function () {
-                drawBubble(state);
-            }, 1000); // Delay each state's bubble animation
+            drawBubble(state);
         });
 
         // Reset function
@@ -101,7 +83,7 @@ function init() {
                 return color(d.properties.NAME);
             });
             selectedState = null; // Reset the selected state
-            g.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+            svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
         // Zooming behavior
@@ -116,22 +98,49 @@ function init() {
         }
 
         function clicked(event, d) {
-            const [[x0, y0], [x1, y1]] = path.bounds(d);
-            event.stopPropagation();
-            reset();
-            selectedState = d; // Store the selected state
-            d3.select(this).style("fill", "red");
-            svg.transition().duration(750).call(
-                zoom.transform,
-                d3.zoomIdentity
-                    .translate(width / 2, height / 2)
-                    .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                    .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-                d3.pointer(event, svg.node())
-            );
+            if (selectedState !== d) {
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                event.stopPropagation();
+                reset();
+                selectedState = d; // Store the selected state
+                d3.select(this).style("fill", "red");
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                    d3.pointer(event, svg.node())
+                );
+            } else {
+                reset();
+            }
         }
 
-        svg.on("click", reset);
+        // Function to draw a bubble for a state
+        function drawBubble(state) {
+            // Calculate the centroid of the state boundary
+            const centroid = path.centroid(state);
+            const cx = centroid[0];
+            const cy = centroid[1];
+
+            g.append("circle")
+                .attr("cx", cx)
+                .attr("cy", cy)
+                .attr("r", 0) // Start with a radius of 0
+                .style("fill", color(processedTotal[state.properties.NAME].Total))
+                .transition()
+                .duration(1000) // Animation duration
+                .attr("r", processedTotal[state.properties.NAME].Total / 100); // Adjust the scale for appropriate bubble size
+        }
+
+        function formatData(data) {
+            const formattedData = [];
+            for (const category in data) {
+                formattedData.push(`${category}: ${data[category]}`);
+            }
+            return formattedData.join("\n");
+        }
     });
 }
 
