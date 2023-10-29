@@ -2,26 +2,37 @@ function init() {
     const width = 1200;
     const height = 1000;
 
-    const svg = d3.select('#chart')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height);
+    const colorScheme = [
+        "#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"
+    ];
 
-    const div = d3.select('body').append('div')
-        .attr('class', 'info-box')
-        .style('opacity', 0);
+    const projection = d3.geoAlbersUsa()
+        .scale(1000)
+        .translate([width / 2, height / 2]);
 
-    const myColor = d3.scaleLinear()
-        .range(["white", "#69b3a2"])
-        .domain([1, 100]);
+    const path = d3.geoPath()
+        .projection(projection);
 
+    const svg = d3.select("#chart")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const g = svg.append("g");
+
+    const color = d3.scaleOrdinal().range(colorScheme);
+
+    // Use Promise.all to load both GeoJSON and CSV data concurrently
     Promise.all([
-        d3.json('usa.json'),
-        d3.csv('us_migration_data.csv')
-    ]).then(([usData, data]) => {
-        const csvData = data.slice(1);
+        d3.json("usa.json"),
+        d3.csv("us_migration_data.csv")
+    ]).then(function (data) {
+        const usData = data[0];
+        const csvData = data[1];
 
         const processedData = {};
+        const processedTotal = {}; // Initialize a separate object for 'Total' data
+
         csvData.forEach(function (d) {
             const stateName = d['US States'];
             processedData[stateName] = {
@@ -35,44 +46,60 @@ function init() {
                 Taiwan: +d.Taiwan,
                 Vietnam: +d.Vietnam,
                 Others: +d.Others,
+            };
+            processedTotal[stateName] = {
                 Total: +d.Total
             };
         });
 
-        const projection = d3.geoAlbersUsa();
-        const path = d3.geoPath().projection(projection);
+        const totalMigration = calculateTotalMigration(processedData);
 
-        svg.selectAll('path')
+        // Add the US state map to the heatmap
+        g.selectAll("path")
             .data(usData.features)
             .enter()
-            .append('path')
-            .attr('d', path)
-            .attr('fill', 'steelblue')
-            .attr('stroke', 'white')
-            .on('mouseover', function (d) {
-                const stateName = d.properties.NAME; // Use the correct property name
-                const stateData = processedData[stateName];
-
-                div.style('opacity', 0.9);
-                div.html('<b>' + stateName + '</b><br>' +
-                    'Bangladesh: ' + stateData.Bangladesh + '<br>' +
-                    'China: ' + stateData.China + '<br>' +
-                    'India: ' + stateData.India + '<br>' +
-                    'Iran: ' + stateData.Iran + '<br>' +
-                    'Korea: ' + stateData.Korea + '<br>' +
-                    'Pakistan: ' + stateData.Pakistan + '<br>' +
-                    'Philippines: ' + stateData.Philippines + '<br>' +
-                    'Taiwan: ' + stateData.Taiwan + '<br>' +
-                    'Vietnam: ' + stateData.Vietnam + '<br>' +
-                    'Others: ' + stateData.Others + '<br>' +
-                    'Total: ' + stateData.Total)
-                    .style('left', (d3.event.pageX + 23) + 'px')
-                    .style('top', (d3.event.pageY - 20) + 'px');
+            .append("path")
+            .attr("d", path)
+            .attr("fill", function (d) {
+                // Use color based on the total migration for the state
+                const stateName = d.properties.NAME;
+                return color(totalMigration[stateName]);
             })
-            .on('mouseout', function () {
-                div.style('opacity', 0);
+            .on("mouseover", function (d) {
+                const stateName = d.properties.NAME;
+                const total = totalMigration[stateName];
+                const tooltip = createTooltip(stateName, total);
+
+                // Show the tooltip on mouseover
+                d3.select("body").append(() => tooltip.node());
+            })
+            .on("mouseout", function () {
+                // Remove the tooltip on mouseout
+                d3.selectAll(".tooltip").remove();
             });
     });
+}
+
+function calculateTotalMigration(data) {
+    const totalMigration = {};
+    // Calculate the total migration for each state
+    for (const stateName in data) {
+        totalMigration[stateName] = d3.sum(Object.values(data[stateName]));
+    }
+    return totalMigration;
+}
+
+function createTooltip(stateName, total) {
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("opacity", 0);
+
+    tooltip.html(`<b>${stateName}</b><br>Total Migration: ${total}`)
+        .style("left", (d3.event.pageX + 10) + "px")
+        .style("top", (d3.event.pageY - 30) + "px");
+
+    return tooltip;
 }
 
 window.onload = init;
