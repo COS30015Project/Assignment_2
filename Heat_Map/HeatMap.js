@@ -54,11 +54,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 .append('circle')
                 .attr('cx', function (d) {
                     // Use projection to set the x-coordinate
-                    return projection(usData.features.find(feature => feature.properties.name === d).geometry.coordinates[0]);
+                    const feature = usData.features.find(feature => feature.properties.name === d);
+                    return feature ? projection(feature.geometry.coordinates[0]) : 0;
                 })
                 .attr('cy', function (d) {
                     // Use projection to set the y-coordinate
-                    return projection(usData.features.find(feature => feature.properties.name === d).geometry.coordinates[1]);
+                    const feature = usData.features.find(feature => feature.properties.name === d);
+                    return feature ? projection(feature.geometry.coordinates[1]) : 0;
                 })
                 .attr('r', 3) // You can adjust the radius as needed
                 .attr('fill', 'blue');
@@ -68,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 svg.selectAll('circle')
                     .attr('r', function (d) {
                         // You can use processedData to adjust the radius based on the selected date.
-                        return processedData[d][date]; // Modify this logic as per your data structure.
+                        return processedData[d][date] || 0; // Add a default value or handle undefined cases.
                     });
             }
 
