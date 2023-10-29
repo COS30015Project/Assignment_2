@@ -53,36 +53,35 @@ function init() {
         });
 
         const totalMigration = calculateTotalMigration(processedData);
-        
 
         // Add the US state map to the heatmap
         g.selectAll("path")
-    .data(usData.features)
-    .enter()
-    .append("path")
-    .attr("d", path)
-    .attr("fill", function (d) {
-        const stateName = d.properties.NAME;
-        return color(totalMigration[stateName]);
-    })
-    .attr("data-state", function (d) {
-        return d.properties.NAME;
-    })
-    .on("mouseover", function (d) {
-        const stateName = d3.select(this).attr("data-state");
-        const total = totalMigration[stateName];
-        const tooltip = createTooltip(stateName, total);
-    
-        // Show the tooltip on mouseover
-        d3.select("body").append(() => tooltip.node());
-    })
-    .on("mouseout", function () {
-        const stateName = d3.select(this).attr("data-state"); // Access stateName from the element's data
-        // Remove the tooltip on mouseout
-        d3.selectAll(".tooltip").filter(function () {
-            return d3.select(this).attr("data-state") === stateName;
-        }).remove();
-    });
+            .data(usData.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("fill", function (d) {
+                const stateName = d.properties.NAME;
+                return color(totalMigration[stateName]);
+            })
+            .attr("data-state", function (d) {
+                return d.properties.NAME;
+            })
+            .on("mouseover", function (d) {
+                const stateName = d3.select(this).attr("data-state");
+                const total = totalMigration[stateName];
+                const tooltip = createTooltip(stateName, total, d3.event); // Pass the event object
+
+                // Show the tooltip on mouseover
+                d3.select("body").append(() => tooltip.node());
+            })
+            .on("mouseout", function () {
+                const stateName = d3.select(this).attr("data-state");
+                // Remove the tooltip on mouseout
+                d3.selectAll(".tooltip").filter(function () {
+                    return d3.select(this).attr("data-state") === stateName;
+                }).remove();
+            });
     });
 }
 
@@ -95,18 +94,17 @@ function calculateTotalMigration(data) {
     return totalMigration;
 }
 
-function createTooltip(stateName, total) {
-    
+function createTooltip(stateName, total, event) {
     const tooltip = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("position", "absolute")
         .style("opacity", 0);
 
-        tooltip.attr("id", stateName);
+    tooltip.attr("id", stateName);
 
     tooltip.html(`<b>${stateName}</b><br>Total Migration: ${total}`)
-        .style("left", (d3.event.pageX + 10) + "px")
-        .style("top", (d3.event.pageY - 30) + "px");
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 30) + "px");
 
     return tooltip;
 }
