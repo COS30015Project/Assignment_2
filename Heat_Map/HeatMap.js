@@ -36,17 +36,13 @@ function init() {
                     // Get the state name
                     const state = d.properties.name;
                     // Calculate the total migration to the state from all countries
-                    const totalMigration = data
-                        .filter(function(row) {
-                            return row["US States"] === state;
-                        })
-                        .map(function(row) {
-                            return +row["Total"];
-                        })
-                        .reduce(function(acc, value) {
-                            return acc + value;
-                        }, 0);
-                    return color(totalMigration);
+                    const rowData = data.find(row => row["US States"] === state);
+                    if (rowData) {
+                        // Calculate the total migration for the state
+                        const totalMigration = d3.sum(d3.values(rowData).slice(1, -1), d => +d);
+                        return color(totalMigration);
+                    }
+                    return "#fff"; // Default color for states with no data
                 });
         });
     });
