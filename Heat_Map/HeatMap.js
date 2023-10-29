@@ -1,92 +1,79 @@
-function init()
-{
+document.addEventListener('DOMContentLoaded', function () {
+    // Define the dimensions of the SVG canvas.
+    const width = 1200;
+    const height = 1000;
 
-    const width = window.innerWidth;
-const height = window.innerHeight;
+    // Append an SVG element to the body of the page.
+    const svg = d3.select('#chart')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
 
-const colorScheme = [
-    "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"
-];
+    // Load the US GeoJSON data.
+    d3.json('usa.json').then(function (usData) {
+        // Load the US state data from the CSV.
+        d3.csv('us_migration_data.csv').then(function (data) {
+            const csvData = data.slice(1); // Skip the first object (contains column names)
 
-const projection = d3.geoAlbersUsa()
-    .scale(1000)
-    .translate([width / 2, height / 2]);
+            // Create a dictionary to map state names to their data.
+            const processedData = {};
+            csvData.forEach(function (d) {
+                const stateName = d['US States'];
+                processedData[stateName] = {
+                    Bangladesh: +d.Bangladesh,
+                    China: +d.China,
+                    India: +d.India,
+                    Iran: +d.Iran,
+                    Korea: +d.Korea,
+                    Pakistan: +d.Pakistan,
+                    Philippines: +d.Philippines,
+                    Taiwan: +d.Taiwan,
+                    Vietnam: +d.Vietnam,
+                    Others: +d.Others,
+                    Total: +d.Total
+                };
+            });
 
-const path = d3.geoPath()
-    .projection(projection);
+            // Create a GeoProjection and path.
+            const projection = d3.geoAlbersUsa();
+            const path = d3.geoPath().projection(projection);
 
-const svg = d3.select("#chart")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+            // Bind the GeoJSON data to the SVG and draw the map.
+            svg.selectAll('path')
+                .data(usData.features)
+                .enter()
+                .append('path')
+                .attr('d', path)
+                .attr('fill', 'steelblue')
+                .attr('stroke', 'white');
 
-const color = d3.scaleQuantile()
-    .domain([0, 100000])
-    .range(colorScheme);
+            // Add dots to the map using your processed data.
+            svg.selectAll('circle')
+                .data(Object.keys(processedData)) // Use the state names from your data
+                .enter()
+                .append('circle')
+                .attr('cx', function (d) {
+                    // Use projection to set the x-coordinate
+                    return projection(usData.features.find(feature => feature.properties.name === d).geometry.coordinates[0]);
+                })
+                .attr('cy', function (d) {
+                    // Use projection to set the y-coordinate
+                    return projection(usData.features.find(feature => feature.properties.name === d).geometry.coordinates[1]);
+                })
+                .attr('r', 3) // You can adjust the radius as needed
+                .attr('fill', 'blue');
 
-let totalMigration = null;
+            // Create an update function to change the radius of dots.
+            function update(date) {
+                svg.selectAll('circle')
+                    .attr('r', function (d) {
+                        // You can use processedData to adjust the radius based on the selected date.
+                        return processedData[d][date]; // Modify this logic as per your data structure.
+                    });
+            }
 
-const fetchData = async () => {
-    const [statesTopo, migrationData] = await Promise.all([
-        d3.json("us.json"),
-        d3.csv("us_migration_data.csv")
-    ]);
-
-    totalMigration = calculateTotalMigration(migrationData);
-
-    drawMap(statesTopo, migrationData);
-};
-
-const calculateTotalMigration = (data) => {
-    const totalMigration = {};
-    for (const stateName in data) {
-        totalMigration[stateName] = d3.sum(Object.values(data[stateName]));
-    }
-    return totalMigration;
-};
-
-const drawMap = (statesTopo, migrationData) => {
-    svg.selectAll("path")
-        .data(topojson.feature(statesTopo, statesTopo.objects.states).features)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("fill", function (d) {
-            const stateName = d.properties.NAME;
-            return color(totalMigration[stateName]);
-        })
-        .attr("data-state", function (d) {
-            return d.properties.NAME;
-        })
-        .on("mouseover", function (d) {
-            const stateName = d3.select(this).attr("data-state");
-            const total = totalMigration[stateName];
-            createTooltip(stateName, total);
-        })
-        .on("mouseout", function () {
-            d3.selectAll(".tooltip").remove();
+            // You can call the update function when needed.
+            update('Total'); // Example: Change the radius based on 'Total' data.
         });
-};
-
-const createTooltip = (stateName, total) => {
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("position", "absolute")
-        .style("opacity", 0);
-
-    tooltip.transition()
-        .duration(200)
-        .style("opacity", 0.9);
-
-    tooltip.html(`<strong>${stateName}</strong>: ${total} migrants (${total.toLocaleString()} people)`)
-        .style("left", (d3.event.pageX + 10) + "px")
-        .style("top", (d3.event.pageY - 30) + "px");
-};
-
-fetchData();
-
-}
-
-window.onload = init;
-
-
+    });
+});
