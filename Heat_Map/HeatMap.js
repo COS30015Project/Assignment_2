@@ -53,6 +53,7 @@ function init() {
         });
 
         const totalMigration = calculateTotalMigration(processedData);
+        const stateName = d.properties.NAME;
 
         // Add the US state map to the heatmap
         g.selectAll("path")
@@ -62,11 +63,9 @@ function init() {
             .attr("d", path)
             .attr("fill", function (d) {
                 // Use color based on the total migration for the state
-                const stateName = d.properties.NAME;
                 return color(totalMigration[stateName]);
             })
             .on("mouseover", function (d) {
-                const stateName = d.properties.NAME;
                 const total = totalMigration[stateName];
                 const tooltip = createTooltip(stateName, total);
             
