@@ -1,5 +1,4 @@
 function init() {
-
     const width = 1200;
     const height = 1000;
 
@@ -25,13 +24,6 @@ function init() {
 
     // Load the CSV data and handle it
     d3.csv("us_migration_data.csv").then(function(data) {
-        // Process the data to calculate the total migration for each state
-        const stateTotals = {};
-
-        data.forEach(function(d) {
-            stateTotals[d["US States"]] = +d["Total"];
-        });
-
         // Load the GeoJSON data
         d3.json("usa.json").then(function(geojson) {
             // Bind the GeoJSON data to the map elements
@@ -41,9 +33,20 @@ function init() {
                 .append("path")
                 .attr("d", path)
                 .style("fill", function(d) {
-                    // Color the map based on total migration
+                    // Get the state name
                     const state = d.properties.name;
-                    return color(stateTotals[state]);
+                    // Calculate the total migration to the state from all countries
+                    const totalMigration = data
+                        .filter(function(row) {
+                            return row["US States"] === state;
+                        })
+                        .map(function(row) {
+                            return +row["Total"];
+                        })
+                        .reduce(function(acc, value) {
+                            return acc + value;
+                        }, 0);
+                    return color(totalMigration);
                 });
         });
     });
