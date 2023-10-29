@@ -9,12 +9,12 @@ document.addEventListener('DOMContentLoaded', function () {
         .attr('width', width)
         .attr('height', height);
 
+    // Define your projection and path.
+    const projection = d3.geoAlbersUsa();
+    const path = d3.geoPath().projection(projection);
+
     // Load the US GeoJSON data.
     d3.json('usa.json').then(function (usData) {
-        // Create a GeoProjection and path.
-        const projection = d3.geoAlbersUsa();
-        const path = d3.geoPath().projection(projection);
-
         // Bind the GeoJSON data to the SVG and draw the map.
         svg.selectAll('path')
             .data(usData.features)
@@ -25,58 +25,44 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr('stroke', 'white')
             .attr('stroke-width', 1); // Add a stroke for state boundaries
 
-        // Load the US state data from the CSV.
-        d3.csv('us_migration_data.csv').then(function (data) {
-            const csvData = data.slice(1); // Skip the first object (contains column names)
+        // Simulated data for state circles (replace with your data)
+        const stateData = [
+            { state: 'Alabama', value: 50 },
+            { state: 'Alaska', value: 30 },
+            // Add data for other states
+        ];
 
-            // Create a dictionary to map state names to their data.
-            const processedData = {};
-            csvData.forEach(function (d) {
-                const stateName = d['US States'];
-                processedData[stateName] = {
-                    Bangladesh: +d.Bangladesh,
-                    China: +d.China,
-                    India: +d.India,
-                    Iran: +d.Iran,
-                    Korea: +d.Korea,
-                    Pakistan: +d.Pakistan,
-                    Philippines: +d.Philippines,
-                    Taiwan: +d.Taiwan,
-                    Vietnam: +d.Vietnam,
-                    Others: +d.Others,
-                    Total: +d.Total
-                };
-            });
-
-            // Add dots to the map using your processed data.
-            svg.selectAll('circle')
-                .data(Object.keys(processedData)) // Use the state names from your data
-                .enter()
-                .append('circle')
-                .attr('cx', function (d) {
-                    // Use projection to set the x-coordinate
-                    const feature = usData.features.find(feature => feature.properties.name === d);
-                    return feature ? projection(feature.geometry.coordinates[0]) : 0;
-                })
-                .attr('cy', function (d) {
-                    // Use projection to set the y-coordinate
-                    const feature = usData.features.find(feature => feature.properties.name === d);
-                    return feature ? projection(feature.geometry.coordinates[1]) : 0;
-                })
-                .attr('r', 3) // You can adjust the radius as needed
-                .attr('fill', 'blue'); // Set the fill for the circles to 'blue'
-
-            // Create an update function to change the radius of dots.
-            function update(date) {
-                svg.selectAll('circle')
-                    .attr('r', function (d) {
-                        // You can use processedData to adjust the radius based on the selected date.
-                        return processedData[d][date] || 0; // Add a default value or handle undefined cases.
-                    });
-            }
-
-            // You can call the update function when needed.
-            update('Total'); // Example: Change the radius based on 'Total' data.
+        // Create a dictionary to map state names to their data.
+        const processedData = {};
+        stateData.forEach(function (d) {
+            processedData[d.state] = d.value;
         });
+
+        // Add dots to the map using your processed data.
+        svg.selectAll('circle')
+            .data(Object.keys(processedData))
+            .enter()
+            .append('circle')
+            .attr('cx', function (d) {
+                const feature = usData.features.find(feature => feature.properties.name === d);
+                return feature ? projection(path.centroid(feature)[0]) : 0;
+            })
+            .attr('cy', function (d) {
+                const feature = usData.features.find(feature => feature.properties.name === d);
+                return feature ? projection(path.centroid(feature)[1]) : 0;
+            })
+            .attr('r', 5) // Adjust the radius as needed
+            .attr('fill', 'blue'); // Set the fill for the circles to 'blue'
+
+        // Create an update function to change the radius of dots.
+        function update(value) {
+            svg.selectAll('circle')
+                .attr('r', function (d) {
+                    return processedData[d] || 0;
+                });
+        }
+
+        // You can call the update function when needed.
+        update('value'); // Example: Change the radius based on 'value' data.
     });
 });
