@@ -69,7 +69,7 @@ function init() {
         return d.properties.NAME;
     })
     .on("mouseover", function (d) {
-        const stateName = d.properties.NAME;
+        const stateName = d3.select(this).attr("data-state");
         const total = totalMigration[stateName];
         const tooltip = createTooltip(stateName, total);
     
