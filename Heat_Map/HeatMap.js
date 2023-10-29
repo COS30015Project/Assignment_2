@@ -27,6 +27,8 @@ function init() {
     // Initialize processedTotal
     const processedTotal = {};
 
+    let bubbleG; // Define bubbleG at the top level
+
     Promise.all([
         d3.json("usa.json"),  // Load GeoJSON data
         d3.csv("us_migration_data.csv")  // Load CSV data
@@ -149,6 +151,9 @@ function init() {
 
         svg.on("click", reset);
 
+        // Define the bubbleG within the Promise scope
+        bubbleG = svg.append("g").classed("animated-bubbles", true);
+
         // Add animated bubbles
         const states = json.features.map(d => d.properties.NAME);
         animateBubbles(states, processedData);
@@ -184,7 +189,6 @@ function calculateTotalMigration(data) {
 }
 
 function animateBubbles(states, data) {
-    const bubbleG = svg.append("g").classed("animated-bubbles", true);
     const delay = 500; // Adjust the delay as needed
     const duration = 1000; // Adjust the duration as needed
 
