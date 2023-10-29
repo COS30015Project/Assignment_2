@@ -1,4 +1,6 @@
-function init() {
+function init()
+{
+
     const width = 1200;
     const height = 1000;
 
@@ -22,33 +24,53 @@ function init() {
 
     const color = d3.scaleOrdinal().range(colorScheme);
 
-    // Load both CSV and GeoJSON data
     Promise.all([
-        d3.csv("us_migration_data.csv"),
-        d3.json("usa.json")
+        d3.json("usa.json"),  // Load GeoJSON data
+        d3.csv("us_migration_data.csv")  // Load CSV data
     ]).then(function (data) {
-        const csvData = data[0];
-        const geojsonData = data[1];
+        const json = data[0];
+        const csvData = data[1];
 
-        // Bind the GeoJSON data to the map elements
-        g.selectAll("path")
-            .data(geojsonData.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .style("fill", function (d) {
-                // Get the state name
-                const state = d.properties.name;
-                // Calculate the total migration to the state from all countries
-                const rowData = csvData.find(row => row["US States"] === state);
-                if (rowData) {
-                    // Calculate the total migration for the state
-                    const totalMigration = d3.sum(d3.values(rowData).slice(1, -1), d => +d);
-                    return color(totalMigration);
-                }
-                return "#fff"; // Default color for states with no data
-            });
+        const processedData = {};
+        const processedTotal = {};
+
+        csvData.forEach(function (d) {
+            const stateName = d['US States'];
+            processedData[stateName] = {
+                Bangladesh: +d.Bangladesh,
+                China: +d.China,
+                India: +d.India,
+                Iran: +d.Iran,
+                Korea: +d.Korea,
+                Pakistan: +d.Pakistan,
+                Philippines: +d.Philippines,
+                Taiwan: +d.Taiwan,
+                Vietnam: +d.Vietnam,
+                Others: +d.Others,
+            };
+            
+            processedTotal[stateName] = {
+                Total: +d.Total, 
+            };
+
+        });
+
+         // Bind the GeoJSON data to the map elements
+         g.selectAll("path")
+         .data(json.features)
+         .enter()
+         .append("path")
+         .attr("d", path)
+         .style("fill", function (d) {
+             // Get the state name
+             const state = d.properties.name;
+             // Get the "Total" value for the state from the processed data
+             const totalMigration = processedData[state].Total;
+             return color(totalMigration);
+         });
+
     });
+
 }
 
 window.onload = init;
