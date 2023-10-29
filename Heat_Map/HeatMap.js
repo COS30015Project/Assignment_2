@@ -31,25 +31,23 @@ function init() {
                 .enter()
                 .append('path')
                 .attr('d', path)
-                .attr('fill', 'none')
+                .attr('fill', 'none') // Set the fill to 'none' for the map
                 .attr('stroke', 'white')
                 .attr('stroke-width', 1);
 
             // Draw circle dots based on migration total.
             svg.selectAll('circle')
-                .data(Object.keys(processedData))
+                .data(usData.features)
                 .enter()
                 .append('circle')
                 .attr('cx', function (d) {
-                    const feature = usData.features.find(feature => feature.properties.name === d);
-                    return feature ? projection(path.centroid(feature)[0]) : 0;
+                    return projection(path.centroid(d)[0]);
                 })
                 .attr('cy', function (d) {
-                    const feature = usData.features.find(feature => feature.properties.name === d);
-                    return feature ? projection(path.centroid(feature)[1]) : 0;
+                    return projection(path.centroid(d)[1]);
                 })
                 .attr('r', function (d) {
-                    return processedData[d] || 0;
+                    return processedData[d.properties.name] || 0;
                 })
                 .attr('fill', 'blue');
         });
