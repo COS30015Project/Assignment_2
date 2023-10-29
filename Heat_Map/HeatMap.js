@@ -131,7 +131,7 @@ function init() {
                 .style("fill", color(processedTotal[state.properties.NAME].Total))
                 .transition()
                 .duration(1000) // Animation duration
-                .attr("r", processedTotal[state.properties.NAME].Total / 5000); // Adjust the scale for appropriate bubble size
+                .attr("r", processedTotal[state.properties.NAME].Total / 800); // Adjust the scale for appropriate bubble size
         }
 
         function formatData(data) {
