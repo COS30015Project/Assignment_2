@@ -48,30 +48,24 @@ function init() {
             };
 
             processedTotal[stateName] = {
-                Total: +d.Total, 
+                Total: +d.Total,
             };
         });
 
         // Function to draw a bubble for a state
         function drawBubble(state) {
             g.append("circle")
-                .attr("cx", projection([state.lon, state.lat])[0])
-                .attr("cy", projection([state.lon, state.lat])[1])
+                .attr("cx", projection(state.geometry.coordinates[0][0][0]))
+                .attr("cy", projection(state.geometry.coordinates[0][0][1]))
                 .attr("r", 0) // Start with a radius of 0
-                .style("fill", color(processedTotal[state.name]))
+                .style("fill", color(processedTotal[state.properties.NAME]))
                 .transition()
                 .duration(1000) // Animation duration
-                .attr("r", processedTotal[state.name] / 100); // Adjust the scale for appropriate bubble size
+                .attr("r", processedTotal[state.properties.NAME] / 100); // Adjust the scale for appropriate bubble size
         }
 
         // Draw bubbles for each state
-        json.features.forEach(function (d) {
-            const stateName = d.properties.NAME;
-            const state = {
-                name: stateName,
-                lat: d.properties.LAT,
-                lon: d.properties.LON,
-            };
+        json.features.forEach(function (state) {
             setTimeout(function () {
                 drawBubble(state);
             }, 1000); // Delay each state's bubble animation
