@@ -118,20 +118,22 @@ function init() {
         }
 
         // Function to draw a bubble for a state
-        function drawBubble(state, d) {
+        function drawBubble(state) {
             // Calculate the centroid of the state boundary
             const centroid = path.centroid(state);
             const cx = centroid[0];
             const cy = centroid[1];
 
-            g.append("circle")
-                .attr("cx", cx)
-                .attr("cy", cy)
-                .attr("r", 0) // Start with a radius of 0
-                .style("fill", color(processedTotal[d.properties.NAME]))
-                .transition()
-                .duration(1000) // Animation duration
-                .attr("r", 2); // Adjust the scale for appropriate bubble size
+            if (!isNaN(cx) && !isNaN(cy)) {
+                g.append("circle")
+                    .attr("cx", cx)
+                    .attr("cy", cy)
+                    .attr("r", 0) // Start with a radius of 0
+                    .style("fill", color(processedTotal[state.properties.NAME].Total))
+                    .transition()
+                    .duration(1000) // Animation duration
+                    .attr("r", 5); // Adjust the scale for appropriate bubble size
+            }
         }
 
         function formatData(data) {
