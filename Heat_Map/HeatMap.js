@@ -74,11 +74,13 @@ function init() {
 
         // Draw bubbles for each state
         json.features.forEach(function (state) {
-            drawBubble(state);
+            const totalMigrants = processedTotal[state.properties.NAME].Total;
+            drawBubbles(state, totalMigrants);
         });
 
         // Reset function
         function reset() {
+            g.selectAll(".bubble").remove();
             g.selectAll(".feature").style("fill", function (d) {
                 return color(d.properties.NAME);
             });
@@ -117,21 +119,28 @@ function init() {
             }
         }
 
-        // Function to draw a bubble for a state
-        function drawBubble(state) {
+        function drawBubbles(state, totalMigrants) {
             // Calculate the centroid of the state boundary
             const centroid = path.centroid(state);
             const cx = centroid[0];
             const cy = centroid[1];
 
-            g.append("circle")
-                .attr("cx", cx)
-                .attr("cy", cy)
-                .attr("r", 0) // Start with a radius of 0
-                .style("fill", color(processedTotal[state.properties.NAME].Total))
-                .transition()
-                .duration(1000) // Animation duration
-                .attr("r", processedTotal[state.properties.NAME].Total / 1500); // Adjust the scale for appropriate bubble size
+            for (let i = 0; i < totalMigrants; i++) {
+                const angle = Math.random() * 2 * Math.PI;
+                const radius = Math.sqrt(Math.random()) * 5; // Adjust the scale for appropriate bubble size
+
+                const bubbleX = cx + radius * Math.cos(angle);
+                const bubbleY = cy + radius * Math.sin(angle);
+
+                g.append("circle")
+                    .attr("cx", bubbleX)
+                    .attr("cy", bubbleY)
+                    .attr("r", 2) // You can adjust the initial radius as needed
+                    .style("fill", color(processedTotal[state.properties.NAME].Total))
+                    .transition()
+                    .duration(1000) // Animation duration
+                    .attr("r", 2); // Adjust the final radius as needed
+            }
         }
 
         function formatData(data) {
