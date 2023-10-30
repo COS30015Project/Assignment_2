@@ -54,38 +54,45 @@ function init() {
             };
         });
 
-    // create a tooltip
-  var Tooltip = d3.select("#chart")
-  .append("div")
-  .style("opacity", 0)
-  .attr("class", "tooltip")
-  .style("background-color", "white")
-  .style("border", "solid")
-  .style("border-width", "2px")
-  .style("border-radius", "5px")
-  .style("padding", "5px")
+        // Create a tooltip
+        var Tooltip = d3.select("#chart")
+            .append("div")
+            .style("opacity", 0)
+            .attr("class", "tooltip")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "2px")
+            .style("border-radius", "5px")
+            .style("padding", "5px");
 
-// Three function that change the tooltip when user hover / move / leave a cell
-var mouseover = function(d) {
-  Tooltip
-    .style("opacity", 1)
-  d3.select(this)
-    .style("stroke", "black")
-    .style("opacity", 1)
-}
-var mousemove = function(d) {
-  Tooltip
-    .html("The exact value of<br>this cell is: " + d.value)
-    .style("left", (d3.mouse(this)[0]+70) + "px")
-    .style("top", (d3.mouse(this)[1]) + "px")
-}
-var mouseleave = function(d) {
-  Tooltip
-    .style("opacity", 0)
-  d3.select(this)
-    .style("stroke", "none")
-    .style("opacity", 0.8)
-}
+        // Function for mouseover event
+        var mouseover = function (event, d) {
+            Tooltip
+                .style("opacity", 1)
+            d3.select(this)
+                .style("stroke", "black")
+                .style("opacity", 1);
+        };
+
+        // Function for mousemove event
+        var mousemove = function (event, d) {
+            const stateName = d.properties.NAME;
+            const data = processedData[stateName];
+            const formattedData = formatData(data);
+            Tooltip
+                .html(stateName + "<br>" + formattedData)
+                .style("left", (d3.pointer(event)[0] + 70) + "px")
+                .style("top", (d3.pointer(event)[1]) + "px");
+        };
+
+        // Function for mouseleave event
+        var mouseleave = function (event, d) {
+            Tooltip
+                .style("opacity", 0);
+            d3.select(this)
+                .style("stroke", "none")
+                .style("opacity", 0.8);
+        };
 
         g.selectAll("path")
             .data(json.features)
@@ -97,16 +104,9 @@ var mouseleave = function(d) {
                 return color(d.properties.NAME);
             })
             .on("click", clicked)
-            .append("title")
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
-            .on("mouseleave", mouseleave)
-            /*.text(function (d) {
-                const stateName = d.properties.NAME;
-                const data = processedData[stateName];
-                const formattedData = formatData(data);
-                return stateName + "\n" + formattedData;
-            })*/;
+            .on("mouseleave", mouseleave);
 
         // Reset function
         function reset() {
@@ -153,7 +153,7 @@ var mouseleave = function(d) {
             for (const category in data) {
                 formattedData.push(`${category}: ${data[category]}`);
             }
-            return formattedData.join("\n");
+            return formattedData.join("<br>");
         }
     });
 }
