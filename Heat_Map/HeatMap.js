@@ -68,7 +68,7 @@ function init() {
         // Function for mouseover event
         var mouseover = function (event, d) {
             Tooltip
-                .style("opacity", 1)
+                .style("opacity", 1);
             d3.select(this)
                 .style("stroke", "black")
                 .style("opacity", 1);
