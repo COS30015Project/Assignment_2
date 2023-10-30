@@ -124,24 +124,14 @@ function init() {
             const centroid = path.centroid(state);
             const cx = centroid[0];
             const cy = centroid[1];
-        
+
             for (let i = 0; i < totalMigrants; i++) {
                 const angle = Math.random() * 2 * Math.PI;
                 const radius = Math.sqrt(Math.random()) * 5; // Adjust the scale for appropriate bubble size
-        
-                // Calculate the bubble coordinates
-                let bubbleX = cx + radius * Math.cos(angle);
-                let bubbleY = cy + radius * Math.sin(angle);
-        
-                // Check for NaN values and handle them
-                if (isNaN(bubbleX) || isNaN(bubbleY)) {
-                    // If the calculated coordinates are NaN, generate new values
-                    angle = Math.random() * 2 * Math.PI;
-                    radius = Math.sqrt(Math.random()) * 5;
-                    bubbleX = cx + radius * Math.cos(angle);
-                    bubbleY = cy + radius * Math.sin(angle);
-                }
-        
+
+                const bubbleX = cx + radius * Math.cos(angle);
+                const bubbleY = cy + radius * Math.sin(angle);
+
                 g.append("circle")
                     .attr("cx", bubbleX)
                     .attr("cy", bubbleY)
@@ -149,7 +139,6 @@ function init() {
                     .style("fill", color(processedTotal[state.properties.NAME].Total))
                     .transition()
                     .duration(1000) // Animation duration
-                    .attr("r", 2); // Adjust the final radius as needed
             }
         }
 
