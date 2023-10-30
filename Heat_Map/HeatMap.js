@@ -118,7 +118,7 @@ function init() {
         }
 
         // Function to draw a bubble for a state
-        function drawBubble(state) {
+        function drawBubble(state, d) {
             // Calculate the centroid of the state boundary
             const centroid = path.centroid(state);
             const cx = centroid[0];
@@ -128,7 +128,7 @@ function init() {
                 .attr("cx", cx)
                 .attr("cy", cy)
                 .attr("r", 0) // Start with a radius of 0
-                .style("fill", color(processedTotal[state.properties.NAME]))
+                .style("fill", color(processedTotal[d.properties.NAME]))
                 .transition()
                 .duration(1000) // Animation duration
                 .attr("r", 2); // Adjust the scale for appropriate bubble size
