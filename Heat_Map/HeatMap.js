@@ -117,21 +117,23 @@ function init() {
             }
         }
 
-        // Function to draw a bubble for a state
         function drawBubble(state) {
+            // Get the total number of migrants for the state
+            const totalMigrants = processedTotal[state.properties.NAME].Total;
+        
             // Calculate the centroid of the state boundary
             const centroid = path.centroid(state);
             const cx = centroid[0];
             const cy = centroid[1];
-
+        
+            // Define the radius for the bubbles based on the total number of migrants
+            const radius = Math.sqrt(totalMigrants) / 1500; // Adjust the scale for appropriate bubble size
+        
             g.append("circle")
                 .attr("cx", cx)
                 .attr("cy", cy)
-                .attr("r", 0) // Start with a radius of 0
-                .style("fill", color(processedTotal[state.properties.NAME].Total))
-                .transition()
-                .duration(1000) // Animation duration
-                .attr("r", processedTotal[state.properties.NAME].Total / 1500); // Adjust the scale for appropriate bubble size
+                .attr("r", radius) // Set the radius based on the total migrants
+                .style("fill", color(processedTotal[state.properties.NAME].Total));
         }
 
         function formatData(data) {
