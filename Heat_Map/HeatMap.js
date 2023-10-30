@@ -54,6 +54,39 @@ function init() {
             };
         });
 
+    // create a tooltip
+  var Tooltip = d3.select("#chart")
+  .append("div")
+  .style("opacity", 0)
+  .attr("class", "tooltip")
+  .style("background-color", "white")
+  .style("border", "solid")
+  .style("border-width", "2px")
+  .style("border-radius", "5px")
+  .style("padding", "5px")
+
+// Three function that change the tooltip when user hover / move / leave a cell
+var mouseover = function(d) {
+  Tooltip
+    .style("opacity", 1)
+  d3.select(this)
+    .style("stroke", "black")
+    .style("opacity", 1)
+}
+var mousemove = function(d) {
+  Tooltip
+    .html("The exact value of<br>this cell is: " + d.value)
+    .style("left", (d3.mouse(this)[0]+70) + "px")
+    .style("top", (d3.mouse(this)[1]) + "px")
+}
+var mouseleave = function(d) {
+  Tooltip
+    .style("opacity", 0)
+  d3.select(this)
+    .style("stroke", "none")
+    .style("opacity", 0.8)
+}
+
         g.selectAll("path")
             .data(json.features)
             .enter()
@@ -65,17 +98,15 @@ function init() {
             })
             .on("click", clicked)
             .append("title")
-            .text(function (d) {
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave)
+            /*.text(function (d) {
                 const stateName = d.properties.NAME;
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
                 return stateName + "\n" + formattedData;
-            });
-
-        // Draw bubbles for each state
-        json.features.forEach(function (state) {
-            drawBubble(state);
-        });
+            })*/;
 
         // Reset function
         function reset() {
@@ -114,25 +145,6 @@ function init() {
                 );
             } else {
                 reset();
-            }
-        }
-
-        // Function to draw a bubble for a state
-        function drawBubble(state) {
-            // Calculate the centroid of the state boundary
-            const centroid = path.centroid(state);
-            const cx = centroid[0];
-            const cy = centroid[1];
-
-            if (!isNaN(cx) && !isNaN(cy)) {
-                g.append("circle")
-                    .attr("cx", cx)
-                    .attr("cy", cy)
-                    .attr("r", 0) // Start with a radius of 0
-                    .style("fill", color(processedTotal[state.properties.NAME].Total))
-                    .transition()
-                    .duration(1000) // Animation duration
-                    .attr("r", 5); // Adjust the scale for appropriate bubble size
             }
         }
 
