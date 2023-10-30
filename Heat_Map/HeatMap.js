@@ -139,7 +139,6 @@ function init() {
                     .style("fill", color(processedTotal[state.properties.NAME].Total))
                     .transition()
                     .duration(1000) // Animation duration
-                    .attr("r", 2); // Adjust the final radius as needed
             }
         }
 
