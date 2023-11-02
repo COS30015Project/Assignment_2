@@ -22,6 +22,8 @@ function init() {
 
     const color = d3.scaleOrdinal().range(colorScheme);
 
+    let selectedState = null;
+
     Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
         d3.csv("us_migration_data.csv") // Load CSV data
@@ -30,6 +32,7 @@ function init() {
         const csvData = data[1];
 
         const processedData = {};
+        const processedTotal = {};
 
         csvData.forEach(function (d) {
             const stateName = d['US States'];
@@ -44,6 +47,10 @@ function init() {
                 Taiwan: +d.Taiwan,
                 Vietnam: +d.Vietnam,
                 Others: +d.Others,
+            };
+
+            processedTotal[stateName] = {
+                Total: +d.Total,
             };
         });
 
@@ -96,9 +103,49 @@ function init() {
             .style("fill", function (d) {
                 return color(d.properties.NAME);
             })
+            .on("click", clicked)
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
+
+        // Reset function
+        function reset() {
+            g.selectAll(".feature").style("fill", function (d) {
+                return color(d.properties.NAME);
+            });
+            selectedState = null; // Reset the selected state
+        }
+
+        // Zooming behavior
+        const zoom = d3.zoom()
+            .scaleExtent([1, 8])
+            .on("zoom", zoomed);
+
+        svg.call(zoom);
+
+        function zoomed(event) {
+            g.attr("transform", event.transform);
+        }
+
+        function clicked(event, d) {
+            if (selectedState !== d) {
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                event.stopPropagation();
+                reset();
+                selectedState = d; // Store the selected state
+                d3.select(this).style("fill", "red");
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                    d3.pointer(event, svg.node())
+                );
+            } else {
+                reset();
+            }
+        }
 
         function formatData(data) {
             const formattedData = [];
