@@ -96,30 +96,6 @@ function init() {
                 return stateName + "\n" + formattedData;
             });
 
-        // Panning behavior
-        svg.call(d3.drag()
-            .subject(() => ({ x: 0, y: 0 }))
-            .on("start", started)
-            .on("drag", dragged));
-
-        function started() {
-            // Disable click event when dragging
-            svg.on(".click", null);
-        }
-
-        function dragged(event) {
-            g.attr("transform", d3.event.transform);
-        }
-
-        // Reset function
-        function reset() {
-            g.selectAll(".feature").style("fill", function (d) {
-                return color(d.properties.NAME);
-            });
-            selectedState = null; // Reset the selected state
-            g.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
-        }
-
         // Zooming behavior
         const zoom = d3.zoom()
             .scaleExtent([1, 8])
@@ -132,19 +108,32 @@ function init() {
         }
 
         function clicked(event, d) {
-            const [[x0, y0], [x1, y1]] = path.bounds(d);
-            event.stopPropagation();
-            reset();
-            selectedState = d; // Store the selected state
-            d3.select(this).style("fill", "red");
-            svg.transition().duration(750).call(
-                zoom.transform,
-                d3.zoomIdentity
-                    .translate(width / 2, height / 2)
-                    .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                    .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-                d3.pointer(event, svg.node())
-            );
+            if (selectedState === d) {
+                reset();
+            } else {
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                event.stopPropagation();
+                selectedState = d; // Store the selected state
+                d3.select(".total-population").text(d.properties.NAME);
+                d3.select(this).style("fill", "red");
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
+                    d3.pointer(event, svg.node())
+                );
+            }
+        }
+
+        function reset() {
+            selectedState = null;
+            d3.select(".total-population").text("Total Migration: " + totalMigration);
+            g.selectAll(".feature").style("fill", function (d) {
+                return color(d.properties.NAME);
+            });
+            svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
         svg.on("click", reset);
