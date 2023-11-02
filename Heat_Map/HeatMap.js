@@ -66,9 +66,6 @@ function init() {
             .style("padding", "5px")
             .style("position", "absolute"); // Set tooltip position to absolute
 
-        var beforeZoomTooltipContent = "Before zoom content"; // Tooltip content before zooming
-        var afterZoomTooltipContent = " "; // Tooltip content after zooming
-
         // Function for mouseover event
         var mouseover = function (event, d) {
             Tooltip.style("opacity", 1);
@@ -81,9 +78,9 @@ function init() {
                 d3.select(this)
                     .style("stroke", "black")
                     .style("opacity", 1);
-                Tooltip.html(beforeZoomTooltipContent);
-            } else {
-                Tooltip.html(afterZoomTooltipContent);
+                const stateName = d.properties.NAME;
+                const total = processedTotal[stateName].Total;
+                Tooltip.html(`State: ${stateName}<br>Total: ${total}`);
             }
         };
 
