@@ -135,8 +135,6 @@ function init() {
             });
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
-
-        svg.on("click", reset);
     });
 
     function displayMigrationInfo(stateName, formattedData) {
