@@ -23,6 +23,7 @@ function init() {
     const color = d3.scaleOrdinal().range(colorScheme);
 
     let selectedState = null;
+    let isZoomed = false;
 
     Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
@@ -74,18 +75,24 @@ function init() {
             Tooltip.style("left", (event.pageX + 10) + "px");
             Tooltip.style("top", (event.pageY + 10) + "px");
 
-            d3.select(this)
-                .style("stroke", "black")
-                .style("opacity", 1);
+            const stateName = d.properties.NAME;
+            let formattedData = "";
+
+            if (isZoomed) {
+                // Show different content when zoomed
+                const data = processedData[stateName];
+                formattedData = formatData(data);
+            } else {
+                // Show initial content before zooming
+                formattedData = "Click to zoom into the state";
+            }
+
+            Tooltip.html(stateName + "<br>" + formattedData);
         };
 
         // Function for mousemove event
         var mousemove = function (event, d) {
-            const stateName = d.properties.NAME;
-            const data = processedData[stateName];
-            const formattedData = formatData(data);
-
-            Tooltip.html(stateName + "<br>" + formattedData);
+            // This can remain the same
         };
 
         // Function for mouseleave event
@@ -112,6 +119,7 @@ function init() {
 
         // Reset function
         function reset() {
+            isZoomed = false; // Reset zoom state
             g.selectAll(".feature").style("fill", function (d) {
                 return color(d.properties.NAME);
             });
@@ -126,6 +134,7 @@ function init() {
         svg.call(zoom);
 
         function zoomed(event) {
+            isZoomed = true; // Set zoom state
             g.attr("transform", event.transform);
         }
 
