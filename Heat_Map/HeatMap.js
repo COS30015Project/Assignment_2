@@ -67,7 +67,7 @@ function init() {
             .style("position", "absolute"); // Set tooltip position to absolute
 
         var beforeZoomTooltipContent = "Before zoom content"; // Tooltip content before zooming
-        var afterZoomTooltipContent = "After zoom content"; // Tooltip content after zooming
+        var afterZoomTooltipContent = " "; // Tooltip content after zooming
 
         // Function for mouseover event
         var mouseover = function (event, d) {
