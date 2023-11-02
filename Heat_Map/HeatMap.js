@@ -92,7 +92,15 @@ function init() {
 
         // Function for mousemove event
         var mousemove = function (event, d) {
-            // This can remain the same
+
+            const stateName = d.properties.NAME;
+            const data = processedData[stateName];
+            const formattedData = formatData(data);
+            Tooltip
+                .html(stateName + "<br>" + formattedData)
+                .style("left", (d3.pointer(event)[0] + 70) + "px")
+                .style("top", (d3.pointer(event)[1]) + "px");
+            
         };
 
         // Function for mouseleave event
