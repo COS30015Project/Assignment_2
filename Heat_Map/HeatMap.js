@@ -24,7 +24,6 @@ function init() {
 
     let selectedState = null;
     let isZoomed = false;
-    let tooltipContent = "Click to zoom into the state"; // Initial tooltip content
 
     Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
@@ -68,6 +67,9 @@ function init() {
             .style("padding", "5px")
             .style("position", "absolute"); // Set tooltip position to absolute
 
+        var beforeZoomTooltipContent = ""; // Store tooltip content before zooming
+        var afterZoomTooltipContent = ""; // Store tooltip content after zooming
+
         // Function for mouseover event
         var mouseover = function (event, d) {
             Tooltip.style("opacity", 1);
@@ -81,13 +83,11 @@ function init() {
             if (isZoomed) {
                 // Show different content when zoomed
                 const data = processedData[stateName];
-                tooltipContent = formatData(data);
+                Tooltip.html(stateName + "<br>" + afterZoomTooltipContent);
             } else {
                 // Show initial content before zooming
-                tooltipContent = "Click to zoom into the state";
+                Tooltip.html(stateName + "<br>" + beforeZoomTooltipContent);
             }
-
-            Tooltip.html(stateName + "<br>" + tooltipContent);
         };
 
         // Function for mousemove event
@@ -120,19 +120,12 @@ function init() {
         // Reset function
         function reset() {
             isZoomed = false; // Reset zoom state
-            tooltipContent = "Click to zoom into the state"; // Reset tooltip content
+            Tooltip.style("opacity", 0); // Hide the tooltip
             g.selectAll(".feature").style("fill", function (d) {
                 return color(d.properties.NAME);
             });
             selectedState = null;
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
-        }
-
-        // Function to reset tooltip content
-        function resetTooltipContent() {
-            isZoomed = false;
-            tooltipContent = "Click to zoom into the state";
-            Tooltip.style("opacity", 0);
         }
 
         const zoom = d3.zoom()
@@ -151,7 +144,6 @@ function init() {
                 const [[x0, y0], [x1, y1]] = path.bounds(d);
                 event.stopPropagation();
                 reset();
-                resetTooltipContent(); // Reset tooltip content
                 selectedState = d;
                 d3.select(this).style("fill", "red");
                 svg.transition().duration(750).call(
@@ -162,19 +154,12 @@ function init() {
                         .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
                     d3.pointer(event, svg.node())
                 );
+                Tooltip.style("opacity", 0); // Hide the tooltip when zooming
             } else {
                 reset();
             }
         }
-
-        function formatData(data) {
-            const formattedData = [];
-            for (const category in data) {
-                formattedData.push(`${category}: ${data[category]}`);
-            }
-            return formattedData.join("<br>");
-        }
     });
-}
 
-window.onload = init;
+    window.onload = init;
+}
