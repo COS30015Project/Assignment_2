@@ -23,7 +23,6 @@ function init() {
     const color = d3.scaleOrdinal().range(colorScheme);
 
     let selectedState = null;
-    let isZoomed = false;
 
     Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
@@ -64,35 +63,19 @@ function init() {
             .style("border", "solid")
             .style("border-width", "2px")
             .style("border-radius", "5px")
-            .style("padding", "5px")
-            .style("position", "absolute"); // Set tooltip position to absolute
-
-        var beforeZoomTooltipContent = ""; // Store tooltip content before zooming
-        var afterZoomTooltipContent = ""; // Store tooltip content after zooming
+            .style("padding", "5px");
 
         // Function for mouseover event
         var mouseover = function (event, d) {
-            Tooltip.style("opacity", 1);
-
-            // Calculate tooltip position next to the mouse cursor
-            Tooltip.style("left", (event.pageX + 10) + "px");
-            Tooltip.style("top", (event.pageY + 10) + "px");
-
-            const stateName = d.properties.NAME;
-
-            if (isZoomed) {
-                // Show different content when zoomed
-                const data = processedData[stateName];
-                Tooltip.html(stateName + "<br>" + afterZoomTooltipContent);
-            } else {
-                // Show initial content before zooming
-                Tooltip.html(stateName + "<br>" + beforeZoomTooltipContent);
-            }
+            Tooltip
+                .style("opacity", 1);
+            d3.select(this)
+                .style("stroke", "black")
+                .style("opacity", 1);
         };
 
         // Function for mousemove event
         var mousemove = function (event, d) {
-
             const stateName = d.properties.NAME;
             const data = processedData[stateName];
             const formattedData = formatData(data);
@@ -100,12 +83,12 @@ function init() {
                 .html(stateName + "<br>" + formattedData)
                 .style("left", (d3.pointer(event)[0] + 70) + "px")
                 .style("top", (d3.pointer(event)[1]) + "px");
-            
         };
 
         // Function for mouseleave event
         var mouseleave = function (event, d) {
-            Tooltip.style("opacity", 0);
+            Tooltip
+                .style("opacity", 0);
             d3.select(this)
                 .style("stroke", "none")
                 .style("opacity", 0.8);
@@ -127,15 +110,14 @@ function init() {
 
         // Reset function
         function reset() {
-            isZoomed = false; // Reset zoom state
-            Tooltip.style("opacity", 0); // Hide the tooltip
             g.selectAll(".feature").style("fill", function (d) {
                 return color(d.properties.NAME);
             });
-            selectedState = null;
+            selectedState = null; // Reset the selected state
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
+        // Zooming behavior
         const zoom = d3.zoom()
             .scaleExtent([1, 8])
             .on("zoom", zoomed);
@@ -143,7 +125,6 @@ function init() {
         svg.call(zoom);
 
         function zoomed(event) {
-            isZoomed = true; // Set zoom state
             g.attr("transform", event.transform);
         }
 
@@ -152,7 +133,7 @@ function init() {
                 const [[x0, y0], [x1, y1]] = path.bounds(d);
                 event.stopPropagation();
                 reset();
-                selectedState = d;
+                selectedState = d; // Store the selected state
                 d3.select(this).style("fill", "red");
                 svg.transition().duration(750).call(
                     zoom.transform,
@@ -162,12 +143,19 @@ function init() {
                         .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
                     d3.pointer(event, svg.node())
                 );
-                Tooltip.style("opacity", 0); // Hide the tooltip when zooming
             } else {
                 reset();
             }
         }
-    });
 
-    window.onload = init;
+        function formatData(data) {
+            const formattedData = [];
+            for (const category in data) {
+                formattedData.push(`${category}: ${data[category]}`);
+            }
+            return formattedData.join("<br>");
+        }
+    });
 }
+
+window.onload = init;
