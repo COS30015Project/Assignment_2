@@ -114,6 +114,7 @@ function init() {
                 return color(d.properties.NAME);
             });
             selectedState = null; // Reset the selected state
+            svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
         // Zooming behavior
