@@ -24,7 +24,7 @@ function init() {
 
     let selectedState = null;
     let isZoomed = false;
-    let tooltipContent = ""; // Store tooltip content
+    let tooltipContent = "Click to zoom into the state"; // Initial tooltip content
 
     Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
@@ -128,6 +128,13 @@ function init() {
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
+        // Function to reset tooltip content
+        function resetTooltipContent() {
+            isZoomed = false;
+            tooltipContent = "Click to zoom into the state";
+            Tooltip.style("opacity", 0);
+        }
+
         const zoom = d3.zoom()
             .scaleExtent([1, 8])
             .on("zoom", zoomed);
@@ -144,6 +151,7 @@ function init() {
                 const [[x0, y0], [x1, y1]] = path.bounds(d);
                 event.stopPropagation();
                 reset();
+                resetTooltipContent(); // Reset tooltip content
                 selectedState = d;
                 d3.select(this).style("fill", "red");
                 svg.transition().duration(750).call(
