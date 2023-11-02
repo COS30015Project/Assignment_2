@@ -24,6 +24,7 @@ function init() {
 
     let selectedState = null;
     let isZoomed = false;
+    let tooltipContent = ""; // Store tooltip content
 
     Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
@@ -76,18 +77,17 @@ function init() {
             Tooltip.style("top", (event.pageY + 10) + "px");
 
             const stateName = d.properties.NAME;
-            let formattedData = "";
 
             if (isZoomed) {
                 // Show different content when zoomed
                 const data = processedData[stateName];
-                formattedData = formatData(data);
+                tooltipContent = formatData(data);
             } else {
                 // Show initial content before zooming
-                formattedData = "Click to zoom into the state";
+                tooltipContent = "Click to zoom into the state";
             }
 
-            Tooltip.html(stateName + "<br>" + formattedData);
+            Tooltip.html(stateName + "<br>" + tooltipContent);
         };
 
         // Function for mousemove event
@@ -120,6 +120,7 @@ function init() {
         // Reset function
         function reset() {
             isZoomed = false; // Reset zoom state
+            tooltipContent = "Click to zoom into the state"; // Reset tooltip content
             g.selectAll(".feature").style("fill", function (d) {
                 return color(d.properties.NAME);
             });
