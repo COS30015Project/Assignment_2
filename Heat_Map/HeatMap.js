@@ -104,21 +104,25 @@ function init() {
             }
         };
 
-        g.selectAll("path")
-            .data(json.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .attr("class", "feature")
-            .style("fill", function (d) {
-                return color(d.properties.NAME);
-            })
-            .on("click", clicked)
-            .on("mouseover", mouseover)
-            .on("mousemove", mousemove)
-            .on("mouseleave", mouseleave);
+        // Define the zoom behavior
+        const zoom = d3.zoom()
+            .scaleExtent([1, 8])
+            .on("zoom", zoomed);
 
-        // Reset function
+        svg.call(zoom);
+
+        const zoomRect = svg.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .style("fill", "none")
+            .style("pointer-events", "all");
+
+        // Function to handle zooming
+        function zoomed(event) {
+            g.attr("transform", event.transform);
+        }
+
+        // Function for resetting the map
         function reset() {
             selectedState = null;
             g.selectAll(".feature").style("fill", function (d) {
@@ -127,16 +131,7 @@ function init() {
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
-        const zoom = d3.zoom()
-            .scaleExtent([1, 8])
-            .on("zoom", zoomed);
-
-        svg.call(zoom);
-
-        function zoomed(event) {
-            g.attr("transform", event.transform);
-        }
-
+        // Function for handling state click
         function clicked(event, d) {
             const [[x0, y0], [x1, y1]] = path.bounds(d);
             event.stopPropagation();
@@ -157,6 +152,7 @@ function init() {
             }
         }
 
+        // Function to format data for tooltip
         function formatData(data) {
             const formattedData = [];
             for (const category in data) {
@@ -164,6 +160,20 @@ function init() {
             }
             return formattedData.join("<br>");
         }
+
+        g.selectAll("path")
+            .data(json.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("class", "feature")
+            .style("fill", function (d) {
+                return color(d.properties.NAME);
+            })
+            .on("click", clicked)
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave);
     });
 }
 
