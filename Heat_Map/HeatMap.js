@@ -66,6 +66,9 @@ function init() {
             .style("padding", "5px")
             .style("position", "absolute"); // Set tooltip position to absolute
 
+        var beforeZoomTooltipContent = "Before zoom content"; // Tooltip content before zooming
+        var afterZoomTooltipContent = "After zoom content"; // Tooltip content after zooming
+
         // Function for mouseover event
         var mouseover = function (event, d) {
             Tooltip.style("opacity", 1);
@@ -74,26 +77,34 @@ function init() {
             Tooltip.style("left", (event.pageX + 10) + "px");
             Tooltip.style("top", (event.pageY + 10) + "px");
 
-            d3.select(this)
-                .style("stroke", "black")
-                .style("opacity", 1);
+            if (selectedState !== d) {
+                d3.select(this)
+                    .style("stroke", "black")
+                    .style("opacity", 1);
+                Tooltip.html(beforeZoomTooltipContent);
+            } else {
+                Tooltip.html(afterZoomTooltipContent);
+            }
         };
 
         // Function for mousemove event
         var mousemove = function (event, d) {
-            const stateName = d.properties.NAME;
-            const data = processedData[stateName];
-            const formattedData = formatData(data);
-
-            Tooltip.html(stateName + "<br>" + formattedData);
+            if (selectedState === d) {
+                const stateName = d.properties.NAME;
+                const data = processedData[stateName];
+                const formattedData = formatData(data);
+                Tooltip.html(stateName + "<br>" + formattedData);
+            }
         };
 
         // Function for mouseleave event
         var mouseleave = function (event, d) {
             Tooltip.style("opacity", 0);
-            d3.select(this)
-                .style("stroke", "none")
-                .style("opacity", 0.8);
+            if (selectedState !== d) {
+                d3.select(this)
+                    .style("stroke", "none")
+                    .style("opacity", 0.8);
+            }
         };
 
         g.selectAll("path")
@@ -112,10 +123,10 @@ function init() {
 
         // Reset function
         function reset() {
+            selectedState = null;
             g.selectAll(".feature").style("fill", function (d) {
                 return color(d.properties.NAME);
             });
-            selectedState = null;
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
@@ -130,9 +141,10 @@ function init() {
         }
 
         function clicked(event, d) {
+            const [[x0, y0], [x1, y1]] = path.bounds(d);
+            event.stopPropagation();
+
             if (selectedState !== d) {
-                const [[x0, y0], [x1, y1]] = path.bounds(d);
-                event.stopPropagation();
                 reset();
                 selectedState = d;
                 d3.select(this).style("fill", "red");
@@ -141,8 +153,7 @@ function init() {
                     d3.zoomIdentity
                         .translate(width / 2, height / 2)
                         .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-                    d3.pointer(event, svg.node())
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
                 );
             } else {
                 reset();
