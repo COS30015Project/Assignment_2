@@ -124,7 +124,7 @@ function init() {
         function reset() {
             selectedState = null;
             g.selectAll(".feature").style("fill", function (d) {
-                return color(d.properties.NAME);
+                return colorScheme(d.properties.NAME); // Reset colors based on the colorScheme
             });
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
@@ -177,7 +177,7 @@ function init() {
 
         const legendColors = colorScheme.range().map(color => color);
 
-        const legendLabels = [d3.min(totalValues), d3.max(totalValues)];
+        const legendLabels = colorScheme.domain(); // Use the colorScheme domain as legend labels
 
         legend.selectAll(".legend-rect")
             .data(legendColors)
