@@ -14,7 +14,15 @@ function init() {
         .attr("width", width)
         .attr("height", height);
 
-    const g = svg.append("g");
+    // Define a clipping path
+    svg.append("defs").append("clipPath")
+        .attr("id", "clip")
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height);
+
+    const g = svg.append("g")
+        .attr("clip-path", "url(#clip)"); // Apply the clipping path
 
     const colorScheme = d3.scaleSequential(d3.interpolateGnBu);
 
@@ -66,18 +74,6 @@ function init() {
             .style("padding", "5px")
             .style("position", "absolute"); // Set tooltip position to absolute
 
-        // Zoom behavior
-        const zoom = d3.zoom()
-            .scaleExtent([1, 8])
-            .on("zoom", zoomed);
-
-        svg.call(zoom);
-
-        function zoomed(event) {
-            g.attr("transform", event.transform);
-        }
-
-
         // Function for mouseover event
         var mouseover = function (event, d) {
             Tooltip.style("opacity", 1);
@@ -106,8 +102,8 @@ function init() {
             }
         };
 
-        // Function for mouseout event
-        var mouseout = function (event, d) {
+        // Function for mouseleave event
+        var mouseleave = function (event, d) {
             Tooltip.style("opacity", 0);
             if (selectedState !== d) {
                 d3.select(this)
@@ -115,43 +111,6 @@ function init() {
                     .style("opacity", 0.8);
             }
         };
-
-        // Clicking the map feature
-        var clicked = function (event, d) {
-            if (selectedState !== d) {
-                reset();
-                selectedState = d;
-                d3.select(this).style("fill", "red");
-                svg.transition().duration(750).call(
-                    zoom.transform,
-                    d3.zoomIdentity
-                        .translate(width / 2, height / 2)
-                        .scale(Math.min(8, 0.9 / Math.max(path.bounds(d)[1][0] - path.bounds(d)[0][0], path.bounds(d)[1][1] - path.bounds(d)[0][1])))
-                        .translate(-(path.bounds(d)[1][0] + path.bounds(d)[0][0]) / 2, -(path.bounds(d)[1][1] + path.bounds(d)[0][1]) / 2)
-                );
-            } else {
-                reset();
-            }
-        };
-
-        // Reset function
-        function reset() {
-            selectedState = null;
-            g.selectAll(".feature").style("fill", function (d) {
-                const stateName = d.properties.NAME;
-                const total = processedTotal[stateName].Total;
-                return colorScheme(total); // Reset colors based on the colorScheme
-            });
-            svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
-        }
-
-        function formatData(data) {
-            const formattedData = [];
-            for (const category in data) {
-                formattedData.push(`${category}: ${data[category]}`);
-            }
-            return formattedData.join("<br>");
-        }
 
         g.selectAll("path")
             .data(json.features)
@@ -167,7 +126,56 @@ function init() {
             .on("click", clicked)
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
-            .on("mouseleave", mouseout);
+            .on("mouseleave", mouseleave);
+
+        // Reset function
+        function reset() {
+            selectedState = null;
+            g.selectAll(".feature").style("fill", function (d) {
+                const stateName = d.properties.NAME;
+                const total = processedTotal[stateName].Total;
+                return colorScheme(total); // Reset colors based on the colorScheme
+            });
+            svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        }
+
+        const zoom = d3.zoom()
+            .scaleExtent([1, 8])
+            .on("zoom", zoomed);
+
+        svg.call(zoom);
+
+        function zoomed(event) {
+            g.attr("transform", event.transform);
+        }
+
+        function clicked(event, d) {
+            const [[x0, y0], [x1, y1]] = path.bounds(d);
+            event.stopPropagation();
+
+            if (selectedState !== d) {
+                reset();
+                selectedState = d;
+                d3.select(this).style("fill", "red");
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
+                );
+            } else {
+                reset();
+            }
+        }
+
+        function formatData(data) {
+            const formattedData = [];
+            for (const category in data) {
+                formattedData.push(`${category}: ${data[category]}`);
+            }
+            return formattedData.join("<br>");
+        }
     });
 }
 
