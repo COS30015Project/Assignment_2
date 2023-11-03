@@ -124,7 +124,9 @@ function init() {
         function reset() {
             selectedState = null;
             g.selectAll(".feature").style("fill", function (d) {
-                return colorScheme(d.properties.NAME); // Reset colors based on the colorScheme
+                const stateName = d.properties.NAME;
+                const total = processedTotal[stateName].Total;
+                return colorScheme(total); // Reset colors based on the colorScheme
             });
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
@@ -166,37 +168,6 @@ function init() {
             }
             return formattedData.join("<br>");
         }
-
-        // Create the legend
-        const legend = svg.append("g")
-            .attr("class", "legend")
-            .attr("transform", "translate(20, " + (height - 30) + ")");
-
-        const legendRectSize = 18;
-        const legendSpacing = 4;
-
-        const legendColors = colorScheme.range().map(color => color);
-
-        const legendLabels = colorScheme.domain(); // Use the colorScheme domain as legend labels
-
-        legend.selectAll(".legend-rect")
-            .data(legendColors)
-            .enter()
-            .append("rect")
-            .attr("class", "legend-rect")
-            .attr("width", legendRectSize)
-            .attr("height", legendRectSize)
-            .attr("x", (d, i) => i * (legendRectSize + legendSpacing))
-            .style("fill", d => d);
-
-        legend.selectAll(".legend-label")
-            .data(legendLabels)
-            .enter()
-            .append("text")
-            .attr("class", "legend-label")
-            .attr("x", (d, i) => i * (legendRectSize + legendSpacing) + legendRectSize + 5)
-            .attr("y", legendRectSize - 4)
-            .text(d => d);
     });
 }
 
