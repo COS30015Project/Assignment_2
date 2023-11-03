@@ -14,15 +14,7 @@ function init() {
         .attr("width", width)
         .attr("height", height);
 
-    // Define a clipping path
-    svg.append("defs").append("clipPath")
-        .attr("id", "clip")
-        .append("rect")
-        .attr("width", width)
-        .attr("height", height);
-
-    const g = svg.append("g")
-        .attr("clip-path", "url(#clip)"); // Apply the clipping path
+    const g = svg.append("g");
 
     const colorScheme = d3.scaleSequential(d3.interpolateGnBu);
 
@@ -73,6 +65,19 @@ function init() {
             .style("border-radius", "5px")
             .style("padding", "5px")
             .style("position", "absolute"); // Set tooltip position to absolute
+
+        // Set up zoom behavior
+        const zoom = d3.zoom()
+            .scaleExtent([1, 8])
+            .translateExtent([[0, 0], [width, height]])
+            .on("zoom", zoomed);
+
+        svg.call(zoom);
+
+        function zoomed(event) {
+            g.style("stroke-width", 1.5 / event.transform.k + "px");
+            g.attr("transform", event.transform);
+        }
 
         // Function for mouseover event
         var mouseover = function (event, d) {
@@ -139,24 +144,12 @@ function init() {
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
-        const zoom = d3.zoom()
-            .scaleExtent([1, 8])
-            .on("zoom", zoomed);
-
-        svg.call(zoom);
-
-        function zoomed(event) {
-            g.attr("transform", event.transform);
-        }
-
         function clicked(event, d) {
-            const [[x0, y0], [x1, y1]] = path.bounds(d);
-            event.stopPropagation();
-
             if (selectedState !== d) {
                 reset();
                 selectedState = d;
                 d3.select(this).style("fill", "red");
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
                 svg.transition().duration(750).call(
                     zoom.transform,
                     d3.zoomIdentity
