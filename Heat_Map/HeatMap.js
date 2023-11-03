@@ -52,7 +52,7 @@ function init() {
 
         // Set the color domain based on the range of total values
         const totalValues = Object.values(processedTotal).map(d => d.Total);
-        colorScheme.domain([d3.min(totalValues), d3.max(totalValues)]);
+        colorScheme.domain([d3.min(totalValues), d3.max(totalValues));
 
         // Create a tooltip
         var Tooltip = d3.select("#chart")
@@ -133,7 +133,7 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
-        // Create a manual legend
+        // Create a dynamic legend based on total migration numbers
         const legendGroup = svg.append("g")
             .attr("transform", "translate(20, 20)");
 
@@ -142,20 +142,24 @@ function init() {
             .attr("font-weight", "bold")
             .attr("y", -5);
 
-        const legendColors = ["#a6611a", "#dfc27d", "#f5f5f5", "#80cdc1", "#018571"];
-        const legendLabels = ["-0.1", "-0.05", "0", "0.05", "0.1"];
+        // Get the minimum and maximum total values
+        const minTotal = d3.min(totalValues);
+        const maxTotal = d3.max(totalValues);
+
+        // Generate dynamic legend labels
+        const legendLabels = generateLegendLabels(minTotal, maxTotal);
 
         const legendRectSize = 18;
         const legendSpacing = 4;
 
         const legends = legendGroup.selectAll(".legends")
-            .data(legendColors)
+            .data(legendLabels)
             .enter()
             .append("g")
             .attr("class", "legends")
             .attr("transform", function (d, i) {
                 const height = legendRectSize + legendSpacing;
-                const offset = height * legendColors.length / 2;
+                const offset = height * legendLabels.length / 2;
                 const horz = 2 * legendRectSize;
                 const vert = i * height - offset;
                 return "translate(" + horz + "," + vert + ")";
@@ -164,12 +168,34 @@ function init() {
         legends.append("rect")
             .attr("width", legendRectSize)
             .attr("height", legendRectSize)
-            .style("fill", function (d, i) { return legendColors[i]; });
+            .style("fill", function (d, i) {
+                return colorScheme(d);
+            });
 
         legends.append("text")
             .attr("x", legendRectSize + legendSpacing)
             .attr("y", legendRectSize - legendSpacing)
-            .text(function (d, i) { return legendLabels[i]; });
+            .text(function (d, i) {
+                return formatLegendLabel(d);
+            });
+
+        // Function to generate dynamic legend labels
+        function generateLegendLabels(minValue, maxValue) {
+            const numSteps = 5; // You can adjust the number of steps in the legend
+            const stepSize = (maxValue - minValue) / numSteps;
+            const legendLabels = [];
+
+            for (let i = 0; i <= numSteps; i++) {
+                legendLabels.push(minValue + i * stepSize);
+            }
+
+            return legendLabels;
+        }
+
+        // Function to format legend labels
+        function formatLegendLabel(value) {
+            return value.toFixed(2); // You can adjust the number of decimal places
+        }
 
         // Reset function
         function reset() {
