@@ -52,7 +52,8 @@ function init() {
 
         // Set the color domain based on the range of total values
         const totalValues = Object.values(processedTotal).map(d => d.Total);
-        colorScheme.domain([d3.min(totalValues), d3.max(totalValues)]);
+        const maxTotal = d3.max(totalValues);
+        colorScheme.domain([0, maxTotal]); // Set the color domain to start from 0 to maxTotal
 
         // Create a tooltip
         var Tooltip = d3.select("#chart")
@@ -142,12 +143,8 @@ function init() {
             .attr("font-weight", "bold")
             .attr("y", -5);
 
-        // Get the minimum and maximum total values
-        const minTotal = d3.min(totalValues);
-        const maxTotal = d3.max(totalValues);
-
-        // Generate dynamic legend labels
-        const legendLabels = generateLegendLabels(minTotal, maxTotal);
+        // Generate dynamic legend labels starting from 0
+        const legendLabels = generateLegendLabels(maxTotal);
 
         const legendRectSize = 18;
         const legendSpacing = 4;
@@ -180,13 +177,13 @@ function init() {
             });
 
         // Function to generate dynamic legend labels
-        function generateLegendLabels(minValue, maxValue) {
+        function generateLegendLabels(maxValue) {
             const numSteps = 5; // You can adjust the number of steps in the legend
-            const stepSize = (maxValue - minValue) / numSteps;
+            const stepSize = maxValue / numSteps;
             const legendLabels = [];
 
             for (let i = 0; i <= numSteps; i++) {
-                legendLabels.push(minValue + i * stepSize);
+                legendLabels.push(i * stepSize);
             }
 
             return legendLabels;
