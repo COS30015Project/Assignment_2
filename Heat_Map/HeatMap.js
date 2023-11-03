@@ -2,9 +2,7 @@ function init() {
     const width = 1200;
     const height = 1000;
 
-    const colorScheme = [
-        "#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"
-    ];
+    const colorScheme = d3.scaleSequential(d3.interpolateGnBu);
 
     const projection = d3.geoAlbersUsa()
         .scale(1000)
