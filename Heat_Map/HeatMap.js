@@ -66,6 +66,9 @@ function init() {
             .style("padding", "5px")
             .style("position", "absolute"); // Set tooltip position to absolute
 
+        // Disable wheel zooming
+        svg.on("wheel.zoom", null);
+
         // Function for mouseover event
         var mouseover = function (event, d) {
             Tooltip.style("opacity", 1);
