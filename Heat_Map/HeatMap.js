@@ -133,6 +133,17 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
+        // Create a legend
+        const legend = Legend(d3.scaleDivergingSqrt([-0.1, 0, 0.1], d3.interpolateRdBu), {
+            title: "Daily change",
+            tickFormat: "+%"
+        });
+
+        // Append the legend to the chart
+        svg.append("g")
+            .attr("transform", "translate(10, 10)") // Adjust the position
+            .call(legend);
+
         // Reset function
         function reset() {
             selectedState = null;
@@ -149,7 +160,7 @@ function init() {
                 reset();
                 selectedState = d;
                 d3.select(this).style("fill", "red");
-                const [[x0, y0], [x1, y1]] = path.bounds(d);A
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
                 svg.transition().duration(750).call(
                     zoom.transform,
                     d3.zoomIdentity
