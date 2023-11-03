@@ -67,7 +67,26 @@ function init() {
             .style("position", "absolute"); // Set tooltip position to absolute
 
         // Disable wheel zooming
-        svg.on("wheel.zoom", null);
+        svg.call(d3.zoom()
+            .on("zoom", null)
+            .on("end", zoomEnd));
+
+        function zoomEnd() {
+            const transform = d3.event.transform;
+            const [[x0, y0], [x1, y1]] = path.bounds(json);
+
+            // Constrain zoom and pan within the visible boundaries
+            const scale = Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height));
+            const translateX = Math.min(0, Math.max(width - (x1 - x0) * scale, transform.x));
+            const translateY = Math.min(0, Math.max(height - (y1 - y0) * scale, transform.y));
+
+            svg.transition().duration(750).call(
+                zoom.transform,
+                d3.zoomIdentity
+                    .translate(translateX, translateY)
+                    .scale(scale)
+            );
+        }
 
         // Function for mouseover event
         var mouseover = function (event, d) {
@@ -134,17 +153,7 @@ function init() {
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
-        const zoom = d3.zoom()
-            .scaleExtent([1, 8])
-            .on("zoom", zoomed);
-
-        svg.call(zoom);
-
-        function zoomed(event) {
-            g.attr("transform", event.transform);
-        }
-
-        function clicked(event, d) {
+        function zoomed(event, d) {
             const [[x0, y0], [x1, y1]] = path.bounds(d);
             event.stopPropagation();
 
