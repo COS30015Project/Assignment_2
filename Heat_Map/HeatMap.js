@@ -2,8 +2,6 @@ function init() {
     const width = 1200;
     const height = 1000;
 
-    const colorScheme = d3.scaleSequential(d3.interpolateGnBu);
-
     const projection = d3.geoAlbersUsa()
         .scale(1000)
         .translate([width / 2, height / 2]);
@@ -18,7 +16,7 @@ function init() {
 
     const g = svg.append("g");
 
-    const color = d3.scaleOrdinal().range(colorScheme);
+    const colorScheme = d3.scaleSequential(d3.interpolateGnBu);
 
     let selectedState = null;
 
@@ -51,6 +49,10 @@ function init() {
                 Total: +d.Total,
             };
         });
+
+        // Set the color domain based on the range of total values
+        const totalValues = Object.values(processedTotal).map(d => d.Total);
+        colorScheme.domain([d3.min(totalValues), d3.max(totalValues)]);
 
         // Create a tooltip
         var Tooltip = d3.select("#chart")
@@ -109,7 +111,9 @@ function init() {
             .attr("d", path)
             .attr("class", "feature")
             .style("fill", function (d) {
-                return color(d.properties.NAME);
+                const stateName = d.properties.NAME;
+                const total = processedTotal[stateName].Total;
+                return colorScheme(total); // Set color based on total value
             })
             .on("click", clicked)
             .on("mouseover", mouseover)
