@@ -52,7 +52,7 @@ function init() {
 
         // Set the color domain based on the range of total values
         const totalValues = Object.values(processedTotal).map(d => d.Total);
-        colorScheme.domain([d3.min(totalValues), d3.max(totalValues));
+        colorScheme.domain([d3.min(totalValues), d3.max(totalValues)]);
 
         // Create a tooltip
         var Tooltip = d3.select("#chart")
