@@ -133,16 +133,43 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
-        // Create a legend
-        const legend = Legend(d3.scaleDivergingSqrt([-0.1, 0, 0.1], d3.interpolateRdBu), {
-            title: "Daily change",
-            tickFormat: "+%"
-        });
+        // Create a manual legend
+        const legendGroup = svg.append("g")
+            .attr("transform", "translate(20, 20)");
 
-        // Append the legend to the chart
-        svg.append("g")
-            .attr("transform", "translate(10, 10)") // Adjust the position
-            .call(legend);
+        const legendTitle = legendGroup.append("text")
+            .text("Legend")
+            .attr("font-weight", "bold")
+            .attr("y", -5);
+
+        const legendColors = ["#a6611a", "#dfc27d", "#f5f5f5", "#80cdc1", "#018571"];
+        const legendLabels = ["-0.1", "-0.05", "0", "0.05", "0.1"];
+
+        const legendRectSize = 18;
+        const legendSpacing = 4;
+
+        const legends = legendGroup.selectAll(".legends")
+            .data(legendColors)
+            .enter()
+            .append("g")
+            .attr("class", "legends")
+            .attr("transform", function (d, i) {
+                const height = legendRectSize + legendSpacing;
+                const offset = height * legendColors.length / 2;
+                const horz = 2 * legendRectSize;
+                const vert = i * height - offset;
+                return "translate(" + horz + "," + vert + ")";
+            });
+
+        legends.append("rect")
+            .attr("width", legendRectSize)
+            .attr("height", legendRectSize)
+            .style("fill", function (d, i) { return legendColors[i]; });
+
+        legends.append("text")
+            .attr("x", legendRectSize + legendSpacing)
+            .attr("y", legendRectSize - legendSpacing)
+            .text(function (d, i) { return legendLabels[i]; });
 
         // Reset function
         function reset() {
