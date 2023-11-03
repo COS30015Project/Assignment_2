@@ -133,21 +133,6 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
-        // Create a legend
-        const legendSvg = d3.select("#chart")
-            .append("svg")
-            .attr("width", 200)
-            .attr("height", 300)
-            .attr("class", "legend");
-
-        const legend = d3.legendColor()
-            .shapeWidth(30)
-            .cells(6)
-            .orient("vertical")
-            .scale(colorScheme);
-
-        legendSvg.call(legend);
-
         // Reset function
         function reset() {
             selectedState = null;
@@ -164,7 +149,7 @@ function init() {
                 reset();
                 selectedState = d;
                 d3.select(this).style("fill", "red");
-                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                const [[x0, y0], [x1, y1]] = path.bounds(d);A
                 svg.transition().duration(750).call(
                     zoom.transform,
                     d3.zoomIdentity
