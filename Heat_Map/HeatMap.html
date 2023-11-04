@@ -33,10 +33,26 @@
     #chart {
         margin: 0 auto;
     }
-    
+
     #legend {
         text-align: left;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
+    #legend-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .legend-axis {
+        font-size: 12px;
+    }
+
 </style>
 
 <body>
@@ -46,7 +62,10 @@
     <br>
     <div id="chart-container">
         <div id="chart"></div>
-        <div id="legend"></div>
+        <div id="legend">
+            <div id="legend-title">Total Migration</div>
+            <svg id="legend-svg" width="180" height="40"></svg>
+        </div>
     </div>
 </body>
 </html>
