@@ -139,9 +139,13 @@ const legendGroup = svg.append("g")
 const legendTitle = legendGroup.append("text")
     .text("Total Migration")
     .attr("font-weight", "bold")
-    .attr("font-size", 18) // Increase font size for the legend title
+    .attr("font-size", 18)
     .attr("y", 15)
-    .attr("x", 0); // Optional: Adjust X position if needed
+    .attr("x", 0);
+
+// Adjust the legend dimensions
+const legendWidth = 220; // Increased width
+const legendHeight = 20;
 
 // Create a color scale using d3.interpolateGnBu
 const colorScale = d3.scaleSequential(d3.interpolateGnBu)
@@ -161,9 +165,9 @@ for (let i = 0; i <= 100; i++) {
 }
 
 legendGroup.append("rect")
-    .attr("width", 180)
-    .attr("height", 20)
-    .style("fill", "url(#colorGradient)");
+    .attr("width", legendWidth) // Use the adjusted width
+    .attr("height", legendHeight)
+    .style("fill", "url(#colorGradient");
 
 const legendAxis = d3.axisBottom(colorScale)
     .tickFormat(d3.format(".0f"))
