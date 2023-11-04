@@ -24,9 +24,17 @@
         font-size: 14px;
     }
 
+    #chart-container {
+        display: flex;
+    }
 
     #chart {
         margin: 0 auto;
+    }
+
+    #legend-container {
+        text-align: right;
+        margin-left: 20px; /* Adjust margin for separation */
     }
 
     #legend {
@@ -47,22 +55,22 @@
     .legend-axis {
         font-size: 14px; /* Increase font size for legend text */
     }
-
 </style>
 
 <body>
     <!-- Title of Chart -->
-    <h1>US Migration - 67</h1>
+    <h1>US Migration - 70</h1>
     
-    <br>
+    <div id="chart-container">
         <div id="chart"></div>
         
-        <!-- Move the legend container to the right -->
-        <div id="legend-container" style="float: right;">
+        <!-- Legend container is inside the chart container -->
+        <div id="legend-container">
             <div id="legend">
                 <div id="legend-title">Total Migration</div>
                 <svg id="legend-svg" width="220" height="40"></svg>
             </div>
         </div>
+    </div>
 </body>
 </html>
