@@ -140,31 +140,60 @@ function init() {
             .attr("font-weight", "bold")
             .attr("y", -5);
 
-        // Add a gradient legend
-        const defs = svg.append("defs");
-        const linearGradient = defs.append("linearGradient")
-            .attr("id", "colorGradient")
-            .attr("x1", "0%")
-            .attr("x2", "100%");
+        // Define your custom color scale and range
+        const customColorScale = d3.scaleSequential(d3.interpolateViridis)
+            .domain([0, maxTotal]); // Set the domain from 0 to maxTotal
 
-        linearGradient.append("stop")
-            .attr("offset", "0%")
-            .style("stop-color", "rgb(247, 251, 255)"); // Start color (light blue)
+        const legendRectSize = 18;
+        const legendSpacing = 4;
 
-        linearGradient.append("stop")
-            .attr("offset", "100%")
-            .style("stop-color", "rgb(8, 48, 107)"); // End color (dark blue)
+        // Generate dynamic legend labels starting from 0
+        const legendLabels = generateLegendLabels(maxTotal);
 
-        legendGroup.append("rect")
-            .attr("width", 180)
-            .attr("height", 20)
-            .style("fill", "url(#colorGradient)");
+        const legends = legendGroup.selectAll(".legends")
+            .data(legendLabels)
+            .enter()
+            .append("g")
+            .attr("class", "legends")
+            .attr("transform", function (d, i) {
+                const height = legendRectSize + legendSpacing;
+                const offset = height * legendLabels.length / 2;
+                const horz = 2 * legendRectSize;
+                const vert = i * height - offset;
+                return "translate(" + horz + "," + vert + ")";
+            });
 
-        const legendAxis = d3.axisBottom(d3.scaleLinear().domain([0, maxTotal]).range([0, 180]));
-        legendGroup.append("g")
-            .attr("class", "legendAxis")
-            .attr("transform", "translate(0, 20)")
-            .call(legendAxis);
+        legends.append("rect")
+            .attr("width", legendRectSize)
+            .attr("height", legendRectSize)
+            .style("fill", function (d, i) {
+                return customColorScale(d);
+            });
+
+        legends.append("text")
+            .attr("x", legendRectSize + legendSpacing)
+            .attr("y", legendRectSize - legendSpacing)
+            .text(function (d, i) {
+                return formatLegendLabel(d);
+            });
+
+        // Function to generate dynamic legend labels
+        function generateLegendLabels(maxValue) {
+            const numSteps = 5; // You can adjust the number of steps in the legend
+            const stepSize = maxValue / numSteps;
+            const legendLabels = [];
+
+            for (let i = 0; i <= numSteps; i++) {
+                legendLabels.push(i * stepSize);
+            }
+
+            return legendLabels;
+        }
+
+        // Function to format legend labels
+        function formatLegendLabel(value) {
+            return value.toFixed(2); // You can adjust the number of decimal places
+        }
 
         // Reset function
         function reset() {
