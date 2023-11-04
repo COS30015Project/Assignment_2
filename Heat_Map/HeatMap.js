@@ -1,6 +1,6 @@
 function init() {
     const width = 1000;
-    const height = 1200;
+    const height = 800;
 
     const projection = d3.geoAlbersUsa()
         .scale(1000)
@@ -130,48 +130,30 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
-// Create a horizontal legend
-const legendGroup = svg.append("g")
-    .attr("transform", `translate(${width - 220}, ${height + 20})`);
+        // Create a horizontal legend
+        const legendGroup = svg.append("g")
+            .attr("transform", `translate(${width - 220}, ${height - 40})`);
 
-const legendWidth = 200;
-const legendHeight = 18;
+        const legendWidth = 200;
+        const legendHeight = 18;
 
-// Define a linear gradient
-const defs = svg.append("defs");
+        const legendScale = d3.scaleLinear()
+            .domain([0, maxTotal])
+            .range([0, legendWidth]);
 
-const linearGradient = defs.append("linearGradient")
-    .attr("id", "colorGradient")
-    .attr("x1", "0%")
-    .attr("x2", "100%");
+        const legendAxis = d3.axisBottom(legendScale)
+            .tickValues(d3.range(0, maxTotal, maxTotal / 4));
 
-linearGradient.append("stop")
-    .attr("offset", "0%")
-    .style("stop-color", d3.interpolateGnBu(0)); // Start color
+        legendGroup.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", legendWidth)
+            .attr("height", legendHeight)
+            .style("fill", "url(#colorGradient");
 
-linearGradient.append("stop")
-    .attr("offset", "100%")
-    .style("stop-color", d3.interpolateGnBu(1)); // End color
-
-legendGroup.append("rect")
-    .attr("x", 0)
-    .attr("width", legendWidth)
-    .attr("height", legendHeight)
-    .style("fill", "url(#colorGradient");
-
-// Modify the legend axis
-const legendScale = d3.scaleLinear()
-    .domain([0, maxTotal])
-    .range([0, legendWidth]);
-
-const legendAxis = d3.axisBottom(legendScale)
-    .ticks(5) // Adjust the number of tick values
-    .tickFormat(d3.format(".0f"));
-
-legendGroup.append("g")
-    .attr("class", "legend-axis")
-    .attr("transform", `translate(0, ${legendHeight})`)
-    .call(legendAxis);
+        legendGroup.append("g")
+            .attr("class", "legend-axis")
+            .call(legendAxis);
 
         // Reset function
         function reset() {
