@@ -131,43 +131,37 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
+        // Create a legend on the right
+        const legendGroup = svg.append("g")
+            .attr("transform", `translate(${width - 200}, 50)`);
 
-// Create a dynamic legend based on total migration numbers
-const legendGroup = svg.append("g")
-    .attr("transform", "translate(20, " + (height - 40) + ")");
+        const legendTitle = legendGroup.append("text")
+            .text("Total Migration Legend")
+            .attr("font-weight", "bold")
+            .attr("font-size", 14)
+            .attr("y", -10);
 
-// Create a color scale using d3.interpolateGnBu
-const colorScale = d3.scaleSequential(d3.interpolateGnBu)
-    .domain([0, maxTotal]);
+        const legendWidth = 18;
+        const legendHeight = maxTotal * 18; // Adjust legend height based on maxTotal
 
-// Add a gradient legend
-const gradient = legendGroup.append("defs")
-    .append("linearGradient")
-    .attr("id", "colorGradient")
-    .attr("x1", "0%")
-    .attr("x2", "100%");
+        const legendScale = d3.scaleLinear()
+            .domain([0, maxTotal])
+            .range([legendHeight, 0]);
 
-for (let i = 0; i <= 100; i++) {
-    gradient.append("stop")
-        .attr("offset", i + "%")
-        .style("stop-color", colorScale(maxTotal * (i / 100)));
-}
+        const legendAxis = d3.axisRight(legendScale)
+            .ticks(5) // Number of ticks on the legend
+            .tickFormat(d3.format(".0f"));
 
-legendGroup.append("rect")
-    .attr("width", legendWidth) // Use the adjusted width
-    .attr("height", legendHeight)
-    .style("fill", "url(#colorGradient");
+        legendGroup.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", legendWidth)
+            .attr("height", legendHeight)
+            .style("fill", "url(#colorGradient");
 
-const legendAxis = d3.axisBottom(colorScale)
-    .tickFormat(d3.format(".0f"))
-    .tickSize(8)
-    .tickPadding(6);
-
-legendGroup.append("g")
-    .attr("class", "legend-axis")
-    .attr("transform", "translate(0, 20)")
-    .call(legendAxis);
-
+        legendGroup.append("g")
+            .attr("class", "legend-axis")
+            .call(legendAxis);
 
         // Reset function
         function reset() {
