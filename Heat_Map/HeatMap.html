@@ -23,14 +23,30 @@
     .legend text {
         font-size: 14px;
     }
+
+    #chart-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #chart {
+        margin: 0 auto;
+    }
+    
+    #legend {
+        text-align: center;
+    }
 </style>
 
 <body>
     <!-- Title of Chart -->
-    <h1>US Migration - 60</h1>
+    <h1>US Migration - 65</h1>
     
     <br>
-    <p id="chart"></p>
-    <div id="chart"></div>
+    <div id="chart-container">
+        <div id="chart"></div>
+        <div id="legend"></div>
+    </div>
 </body>
 </html>

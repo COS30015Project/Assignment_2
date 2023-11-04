@@ -1,6 +1,6 @@
 function init() {
     const width = 1000;
-    const height = 700;
+    const height = 800;
 
     const projection = d3.geoAlbersUsa()
         .scale(1000)
@@ -131,9 +131,11 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
-// Create a dynamic legend based on total migration numbers
-const legendGroup = svg.append("g")
-    .attr("transform", "translate(20, " + (height - 40) + ")"); // Adjust the translate position
+        // Create a dynamic legend based on total migration numbers
+        const legendGroup = d3.select("#legend")
+            .append("svg")
+            .attr("width", 180)
+            .attr("height", 80);
 
 const legendTitle = legendGroup.append("text")
     .text("Total Migration")
