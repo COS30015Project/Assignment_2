@@ -133,12 +133,13 @@ function init() {
 
 // Create a dynamic legend based on total migration numbers
 const legendGroup = svg.append("g")
-    .attr("transform", "translate(20, 20)");
+    .attr("transform", "translate(20, " + (height - 40) + ")"); // Adjust the translate position
 
 const legendTitle = legendGroup.append("text")
-    .text("Legend")
+    .text("Total Migration")
     .attr("font-weight", "bold")
-    .attr("y", -5);
+    .attr("font-size", 14) // Increase font size
+    .attr("y", 15);
 
 // Create a color scale using d3.interpolateGnBu
 const colorScale = d3.scaleSequential(d3.interpolateGnBu)
@@ -163,12 +164,16 @@ legendGroup.append("rect")
     .style("fill", "url(#colorGradient)");
 
 const legendAxis = d3.axisBottom(colorScale)
-    .tickFormat(d3.format(".0f")); // Format the legend ticks as integers
+    .tickFormat(d3.format(".0f")) // Format the legend ticks as integers
+    .tickSize(8) // Increase the size of ticks
+    .tickPadding(6); // Adjust the padding between ticks
 
 legendGroup.append("g")
     .attr("class", "legendAxis")
     .attr("transform", "translate(0, 20)")
-    .call(legendAxis);
+    .call(legendAxis)
+    .selectAll("text")
+    .attr("font-size", 12); // Adjust font size of tick labels
 
 
         // Reset function
