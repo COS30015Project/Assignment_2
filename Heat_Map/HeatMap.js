@@ -1,5 +1,5 @@
 function init() {
-    const width = 1000;
+    const width = 1500;
     const height = 800;
 
     const projection = d3.geoAlbersUsa()
