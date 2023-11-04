@@ -16,8 +16,6 @@ function init() {
 
     const g = svg.append("g");
 
-    const colorScheme = d3.scaleSequential(d3.interpolateGnBu);
-
     let selectedState = null;
 
     Promise.all([
@@ -53,7 +51,6 @@ function init() {
         // Set the color domain based on the range of total values
         const totalValues = Object.values(processedTotal).map(d => d.Total);
         const maxTotal = d3.max(totalValues);
-        colorScheme.domain([0, maxTotal]); // Set the color domain to start from 0 to maxTotal
 
         // Create a tooltip
         var Tooltip = d3.select("#chart")
@@ -127,7 +124,7 @@ function init() {
             .style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return colorScheme(total); // Set color based on total value
+                return d3.interpolateGnBu(total / maxTotal); // Use gradient color based on total value
             })
             .on("click", clicked)
             .on("mouseover", mouseover)
@@ -143,56 +140,31 @@ function init() {
             .attr("font-weight", "bold")
             .attr("y", -5);
 
-        // Generate dynamic legend labels starting from 0
-        const legendLabels = generateLegendLabels(maxTotal);
+        // Add a gradient legend
+        const defs = svg.append("defs");
+        const linearGradient = defs.append("linearGradient")
+            .attr("id", "colorGradient")
+            .attr("x1", "0%")
+            .attr("x2", "100%");
 
-        const legendRectSize = 18;
-        const legendSpacing = 4;
+        linearGradient.append("stop")
+            .attr("offset", "0%")
+            .style("stop-color", "rgb(247, 251, 255)"); // Start color (light blue)
 
-        const legends = legendGroup.selectAll(".legends")
-            .data(legendLabels)
-            .enter()
-            .append("g")
-            .attr("class", "legends")
-            .attr("transform", function (d, i) {
-                const height = legendRectSize + legendSpacing;
-                const offset = height * legendLabels.length / 2;
-                const horz = 2 * legendRectSize;
-                const vert = i * height - offset;
-                return "translate(" + horz + "," + vert + ")";
-            });
+        linearGradient.append("stop")
+            .attr("offset", "100%")
+            .style("stop-color", "rgb(8, 48, 107)"); // End color (dark blue)
 
-        legends.append("rect")
-            .attr("width", legendRectSize)
-            .attr("height", legendRectSize)
-            .style("fill", function (d, i) {
-                return colorScheme(d);
-            });
+        legendGroup.append("rect")
+            .attr("width", 180)
+            .attr("height", 20)
+            .style("fill", "url(#colorGradient)");
 
-        legends.append("text")
-            .attr("x", legendRectSize + legendSpacing)
-            .attr("y", legendRectSize - legendSpacing)
-            .text(function (d, i) {
-                return formatLegendLabel(d);
-            });
-
-        // Function to generate dynamic legend labels
-        function generateLegendLabels(maxValue) {
-            const numSteps = 5; // You can adjust the number of steps in the legend
-            const stepSize = maxValue / numSteps;
-            const legendLabels = [];
-
-            for (let i = 0; i <= numSteps; i++) {
-                legendLabels.push(i * stepSize);
-            }
-
-            return legendLabels;
-        }
-
-        // Function to format legend labels
-        function formatLegendLabel(value) {
-            return value.toFixed(2); // You can adjust the number of decimal places
-        }
+        const legendAxis = d3.axisBottom(d3.scaleLinear().domain([0, maxTotal]).range([0, 180]));
+        legendGroup.append("g")
+            .attr("class", "legendAxis")
+            .attr("transform", "translate(0, 20)")
+            .call(legendAxis);
 
         // Reset function
         function reset() {
@@ -200,7 +172,7 @@ function init() {
             g.selectAll(".feature").style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return colorScheme(total); // Reset colors based on the colorScheme
+                return d3.interpolateGnBu(total / maxTotal); // Reset colors based on the gradient
             });
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
