@@ -141,7 +141,7 @@ function init() {
             .attr("y", -5);
 
         // Define your custom color scale and range
-        const customColorScale = d3.scaleSequential(d3.interpolateViridis)
+        const customColorScale = d3.scaleSequential(d3.interpolateGnBu)
             .domain([0, maxTotal]); // Set the domain from 0 to maxTotal
 
         const legendRectSize = 18;
