@@ -131,31 +131,45 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
-                // Create a dynamic legend based on total migration numbers
-                const legendGroup = svg.append("g")
-                    .attr("transform", "translate(20, 20)");
+// Create a dynamic legend based on total migration numbers
+const legendGroup = svg.append("g")
+    .attr("transform", "translate(20, 20)");
 
-                const legendTitle = legendGroup.append("text")
-                    .text("Legend")
-                    .attr("font-weight", "bold")
-                    .attr("y", -5);
+const legendTitle = legendGroup.append("text")
+    .text("Legend")
+    .attr("font-weight", "bold")
+    .attr("y", -5);
 
-                // Generate a smooth color gradient based on your custom color scale
-                const customColorScale = d3.scaleSequential(interpolateGnBu)
-                    .domain([0, maxTotal]);
+// Create a color scale using d3.interpolateGnBu
+const colorScale = d3.scaleSequential(d3.interpolateGnBu)
+    .domain([0, maxTotal]);
 
-                const defs = svg.append("defs");
-                const linearGradient = defs.append("linearGradient")
-                    .attr("id", "colorGradient")
-                    .attr("x1", "0%")
-                    .attr("x2", "100%");
+// Add a gradient legend
+const gradient = legendGroup.append("defs")
+    .append("linearGradient")
+    .attr("id", "colorGradient")
+    .attr("x1", "0%")
+    .attr("x2", "100%");
 
-                for (let i = 0; i <= 100; i++) {
-                    const offset = (i / 100) * 100;
-                    linearGradient.append("stop")
-                        .attr("offset", offset + "%")
-                        .style("stop-color", customColorScale(maxTotal * (i / 100)));
-                }
+for (let i = 0; i <= 100; i++) {
+    gradient.append("stop")
+        .attr("offset", i + "%")
+        .style("stop-color", colorScale(maxTotal * (i / 100)));
+}
+
+legendGroup.append("rect")
+    .attr("width", 180)
+    .attr("height", 20)
+    .style("fill", "url(#colorGradient)");
+
+const legendAxis = d3.axisBottom(colorScale)
+    .tickFormat(d3.format(".0f")); // Format the legend ticks as integers
+
+legendGroup.append("g")
+    .attr("class", "legendAxis")
+    .attr("transform", "translate(0, 20)")
+    .call(legendAxis);
+
 
         // Reset function
         function reset() {
