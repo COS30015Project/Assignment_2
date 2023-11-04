@@ -24,17 +24,29 @@
         font-size: 14px;
     }
 
+    #chart-container {
+        display: flex; /* Display chart and legend side by side */
+        align-items: center; /* Center vertically */
+    }
+
     #chart {
-        margin-right: 200px; /* Adjust margin for separation from legend */
-        display: inline-block; /* Allow chart and legend to be side by side */
+        flex: 1; /* Take up remaining space */
     }
 
 </style>
 
 <body>
     <!-- Title of Chart -->
-    <h1>US Migration - 74</h1>
+    <h1>US Migration - 75</h1>
     
-    <div id="chart"></div>
+    <div id="chart-container">
+        <div id="chart"></div>
+        <div id="legend-container">
+            <div id="legend">
+                <div id="legend-title">Total Migration</div>
+                <svg id="legend-svg" width="220" height="40"></svg>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

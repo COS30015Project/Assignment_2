@@ -131,26 +131,19 @@ function init() {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
 
-        // Create a legend on the right
+        // Create a horizontal legend
         const legendGroup = svg.append("g")
-            .attr("transform", `translate(${width - 200}, 50)`);
+            .attr("transform", `translate(${width - 200}, ${height - 40})`); // Adjust position
 
-        const legendTitle = legendGroup.append("text")
-            .text("Total Migration Legend")
-            .attr("font-weight", "bold")
-            .attr("font-size", 14)
-            .attr("y", -10);
-
-        const legendWidth = 18;
-        const legendHeight = maxTotal * 18; // Adjust legend height based on maxTotal
+        const legendWidth = 200;
+        const legendHeight = 18;
 
         const legendScale = d3.scaleLinear()
             .domain([0, maxTotal])
-            .range([legendHeight, 0]);
+            .range([0, legendWidth]); // Adjust the range for horizontal display
 
-        const legendAxis = d3.axisRight(legendScale)
-            .ticks(5) // Number of ticks on the legend
-            .tickFormat(d3.format(".0f"));
+        const legendAxis = d3.axisBottom(legendScale)
+            .tickValues(d3.range(0, maxTotal, maxTotal / 4)) // Adjust the tick values
 
         legendGroup.append("rect")
             .attr("x", 0)
