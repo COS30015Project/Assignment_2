@@ -165,7 +165,7 @@ legendGroup.append("rect")
     .attr("y", 0)
     .attr("width", legendWidth)
     .attr("height", legendHeight)
-    .style("fill", "url(#colorGradient"); // Fix the attribute name to "fill"
+    .style("fill", "url(#colorGradient");
 
 legendGroup.append("g")
     .attr("class", "legend-axis")

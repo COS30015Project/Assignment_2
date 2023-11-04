@@ -15,11 +15,11 @@
 <style>
     /* Add your CSS styles here */
     .legend rect {
-        fill: url(#colorGradient); /* Correct the attribute name */
+        fill: url(#colorGradient); /* Place the gradient on top */
         stroke: none;
     }
     .legend text {
-        font-size: 14px;
+        display: none; /* Hide the legend text */
     }
 
     #chart-container {
@@ -36,15 +36,15 @@
 </style>
 
 <body>
-    <h1>US Migration - 77</h1>
+    <h1>US Migration - 78</h1>
     
-
+    <div id="chart-container">
         <div id="chart"></div>
         <div id="legend-container">
             <div id="legend">
-                <div id="legend-title">Total Migration</div>
                 <svg id="legend-svg" width="220" height="40"></svg>
             </div>
         </div>
+    </div>
 </body>
 </html>
