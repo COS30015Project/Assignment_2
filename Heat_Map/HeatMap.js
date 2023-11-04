@@ -62,7 +62,7 @@ function init() {
             .style("border-width", "2px")
             .style("border-radius", "5px")
             .style("padding", "5px")
-            .style("position", "absolute"); // Set tooltip position to absolute
+            .style("position", "absolute");
 
         // Set up zoom behavior
         const zoom = d3.zoom()
@@ -81,7 +81,6 @@ function init() {
         var mouseover = function (event, d) {
             Tooltip.style("opacity", 1);
 
-            // Calculate tooltip position next to the mouse cursor
             Tooltip.style("left", (event.pageX + 10) + "px");
             Tooltip.style("top", (event.pageY + 10) + "px");
 
@@ -124,7 +123,7 @@ function init() {
             .style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return d3.interpolateGnBu(total / maxTotal); // Use gradient color based on total value
+                return d3.interpolateGnBu(total / maxTotal);
             })
             .on("click", clicked)
             .on("mouseover", mouseover)
@@ -133,17 +132,17 @@ function init() {
 
         // Create a horizontal legend
         const legendGroup = svg.append("g")
-            .attr("transform", `translate(${width - 200}, ${height - 40})`); // Adjust position
+            .attr("transform", `translate(${width - 220}, ${height - 40})`);
 
         const legendWidth = 200;
         const legendHeight = 18;
 
         const legendScale = d3.scaleLinear()
             .domain([0, maxTotal])
-            .range([0, legendWidth]); // Adjust the range for horizontal display
+            .range([0, legendWidth]);
 
         const legendAxis = d3.axisBottom(legendScale)
-            .tickValues(d3.range(0, maxTotal, maxTotal / 4)) // Adjust the tick values
+            .tickValues(d3.range(0, maxTotal, maxTotal / 4));
 
         legendGroup.append("rect")
             .attr("x", 0)
@@ -162,7 +161,7 @@ function init() {
             g.selectAll(".feature").style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return d3.interpolateGnBu(total / maxTotal); // Reset colors based on the gradient
+                return d3.interpolateGnBu(total / maxTotal);
             });
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
