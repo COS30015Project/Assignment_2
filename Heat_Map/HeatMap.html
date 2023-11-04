@@ -22,17 +22,27 @@
         display: none; /* Hide the legend text */
     }
 
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f1f1f1;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 20px 0;
+    }
+
     #chart-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        text-align: center;
     }
 
     #chart {
         width: 100%;
     }
-
 </style>
 
 <body>
@@ -41,9 +51,7 @@
     <div id="chart-container">
         <div id="chart"></div>
         <div id="legend-container">
-            <div id="legend">
-                <svg id="legend-svg" width="220" height="40"></svg>
-            </div>
+            <svg id="legend-svg" width="220" height="40"></svg>
         </div>
     </div>
 </body>
