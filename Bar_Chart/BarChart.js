@@ -56,7 +56,7 @@ function init() {
 
     // Add brushing functionality
     const brush = d3.brushX()
-        .extent([[0, 0], [width, height])
+        .extent([[0, 0], [width, height]])
         .on("end", brushed);
 
     svg.append("g")
