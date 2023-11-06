@@ -1,0 +1,5 @@
+Line Chart 
+- color to represent the country 
+- x-axis is using to represent the year 
+- y-axis is to represent the USD rate 
+- the line chart is able to have features of mouseover and mouseout
