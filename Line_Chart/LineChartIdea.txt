@@ -3,3 +3,5 @@ Line Chart
 - x-axis is using to represent the year 
 - y-axis is to represent the USD rate 
 - the line chart is able to have features of mouseover and mouseout
+- the line chart have the legend to show the color of line 
+- the line chart have the features of brushing for certain year and country 
