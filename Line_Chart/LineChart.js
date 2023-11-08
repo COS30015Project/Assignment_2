@@ -46,15 +46,13 @@ function init() {
       const yScale = d3
         .scaleLinear()
         .domain([0, d3.max(data, (d) => d3.max(d.values, (v) => v.value))])
-        .nice()
         .range([height, 0]);
 
       // Create line generator
       const line = d3
         .line()
         .x((d) => xScale(d.year))
-        .y((d) => yScale(d.value))
-        .defined((d) => !isNaN(d.value)); // Skip undefined values
+        .y((d) => yScale(d.value));
 
       // Create a color scale
       const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -72,14 +70,14 @@ function init() {
           .style("fill", color(i));
       });
 
-      // Append a path for each country
+      // Append a path for each country with no visible stroke
       data.forEach((d, i) => {
         svg
           .append("path")
           .datum(d.values)
           .attr("class", "line")
           .attr("d", line)
-          .style("stroke", color(i));
+          .style("stroke", "none");
       });
 
       // Add x and y axis
