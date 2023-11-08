@@ -24,14 +24,14 @@ function init() {
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Extract the data fields you need
-    const years = data.columns.slice(2);
+    const years = data.columns.slice(2).map(year => parseInt(year)); // Parse years to integers
 
     // Define the color scale for lines
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     // Define the x and y scales
     const x = d3.scaleLinear()
-      .domain([0, years.length - 1])
+      .domain([2000, 2022]) // Set the x-axis domain to the desired range
       .range([0, width]);
 
     const y = d3.scaleLinear()
@@ -40,7 +40,7 @@ function init() {
 
     // Create a line generator
     const line = d3.line()
-      .x((d, i) => x(i))
+      .x((d, i) => x(years[i])) // Map years to x-axis values
       .y(d => y(+d));
 
     // Create the lines with different colors
