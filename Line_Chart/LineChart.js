@@ -44,16 +44,17 @@ function init() {
       .x((d, i) => x(2000 + i))
       .y(d => y(d));
 
-    // Create the lines with different colors
-    svg.selectAll(".line")
-      .data(data)
-      .enter()
-      .append("path")
-      .attr("class", "line")
-      .attr("d", d => line(years.map(year => +d[year])))
-      .style("fill", "none")
-      .style("stroke", (d, i) => colorScale(i))
-      .style("stroke-width", 2); // Increase the line width
+// Create the lines with different colors, skipping NaN values
+svg.selectAll(".line")
+  .data(data)
+  .enter()
+  .append("path")
+  .attr("class", "line")
+  .attr("d", d => line(years.map(year => +d[year])))
+  .style("fill", "none")
+  .style("stroke", (d, i) => colorScale(i))
+  .style("stroke-width", 2) // Increase the line width
+  .filter(d => !d3.interpolateNaN(d)); // Skip NaN values
 
     // Create the dots with tooltips
     svg.selectAll(".dot")
