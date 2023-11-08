@@ -26,8 +26,9 @@ function init() {
     // Extract the data fields you need
     const years = data.columns.slice(2).map(year => parseInt(year)); // Parse years to integers
 
-    // Define a color scale with more distinct colors
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory20); // Use schemeCategory20 for more distinct colors
+    // Generate a custom color scale with unique colors for each country
+    const uniqueColors = data.map((d, i) => d3.interpolateSinebow(i / data.length)); // Use a color interpolation
+    const colorScale = d3.scaleOrdinal(data.map(d => d['Asian Country']), uniqueColors);
 
     // Define the x and y scales
     const x = d3.scaleLinear()
@@ -51,7 +52,7 @@ function init() {
       .attr("class", "line")
       .attr("d", d => line(years.map(year => +d[year])))
       .style("fill", "none")
-      .style("stroke", (d, i) => colorScale(d['Asian Country'])) // Use country name as a unique key
+      .style("stroke", (d) => colorScale(d['Asian Country'])) // Use country name as a unique key
       .style("stroke-width", 2);
 
     // Add axes
