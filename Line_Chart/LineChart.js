@@ -6,7 +6,7 @@ function init() {
       const parseDate = d3.timeParse("%Y");
 
       // Define the years (from 2000 to 2022) based on the CSV data
-      const years = d3.range(2000, 2023);
+      const years = d3.range(2000, 2022);
 
       data.forEach(function (d) {
         // Extract Asian Country and Unit of Measure
@@ -76,8 +76,7 @@ function init() {
           .append("path")
           .datum(d.values)
           .attr("class", "line")
-          .attr("d", line)
-          .style("stroke", "none");
+          .attr("d", line);
       });
 
       // Add x and y axis
