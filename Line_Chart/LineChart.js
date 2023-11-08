@@ -77,7 +77,8 @@ function init() {
           .datum(d.values)
           .attr("class", "line")
           .attr("d", line)
-          .style("stroke", "none");
+          .style("stroke", color(i))
+          .style("stroke-width", 0); // Set stroke-width to 0 to remove black space
       });
 
       // Add x and y axis
