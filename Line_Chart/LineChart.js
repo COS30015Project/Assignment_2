@@ -44,47 +44,16 @@ function init() {
       .x((d, i) => x(2000 + i))
       .y(d => y(d));
 
-// Create the lines with different colors, skipping NaN values
-svg.selectAll(".line")
-  .data(data)
-  .enter()
-  .append("path")
-  .attr("class", "line")
-  .attr("d", d => line(years.map(year => +d[year])))
-  .style("fill", "none")
-  .style("stroke", (d, i) => colorScale(i))
-  .style("stroke-width", 2) // Increase the line width
-  .filter(d => !d3.interpolateNaN(d)); // Skip NaN values
-
-    // Create the dots with tooltips
-    svg.selectAll(".dot")
+    // Create the lines with different colors
+    svg.selectAll(".line")
       .data(data)
       .enter()
-      .selectAll("circle")
-      .data((d, i) => years.map(year => ({ year: 2000 + i, value: +d[year] })))
-      .enter()
-      .append("circle")
-      .attr("class", "dot")
-      .attr("cx", d => x(d.year))
-      .attr("cy", d => y(d.value))
-      .attr("r", 6) // Increase the dot size
-      .style("fill", "red")
-      .style("stroke", "white")
-      .style("stroke-width", 2) // Add a white border
-      .on("mouseover", (event, d) => {
-        // Show tooltip on hover
-        tooltip.style("visibility", "visible")
-          .html(`Year: ${d.year}<br>Value: ${d.value}`);
-      })
-      .on("mousemove", (event) => {
-        // Position the tooltip near the mouse pointer
-        tooltip.style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 15) + "px");
-      })
-      .on("mouseout", () => {
-        // Hide tooltip on mouseout
-        tooltip.style("visibility", "hidden");
-      });
+      .append("path")
+      .attr("class", "line")
+      .attr("d", d => line(years.map(year => +d[year])))
+      .style("fill", "none")
+      .style("stroke", (d, i) => colorScale(i))
+      .style("stroke-width", 2); // Increase the line width
 
     // Add axes
     svg.append("g")
@@ -107,17 +76,6 @@ svg.selectAll(".line")
       .attr("dy", "0.35em")
       .attr("dx", "0.5em")
       .attr("font-size", "12px");
-
-    // Add a tooltip element
-    const tooltip = d3.select("body")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("background", "white")
-      .style("border", "1px solid #ccc")
-      .style("padding", "5px")
-      .style("border-radius", "5px")
-      .style("visibility", "hidden");
   }
 }
 
