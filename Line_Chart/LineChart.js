@@ -70,19 +70,24 @@ function init() {
           .style("fill", color(i));
       });
 
-      // Remove x and y axis lines and ticks by applying CSS styles
-      svg.selectAll(".x-axis line, .x-axis path, .y-axis line, .y-axis path").style("display", "none");
-      svg.selectAll(".x-axis text, .y-axis text").style("fill", "none");
-
-      // Append a path for each country
+      // Append a path for each country with transparent stroke color
       data.forEach((d, i) => {
         svg
           .append("path")
           .datum(d.values)
           .attr("class", "line")
           .attr("d", line)
-          .style("stroke", color(i));
+          .style("stroke", "transparent");
       });
+
+      // Add x and y axis
+      svg
+        .append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(xScale).ticks(10).tickFormat(d3.format("d")));
+
+      svg.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
 
       // Add chart title
       svg
