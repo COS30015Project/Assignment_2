@@ -54,7 +54,7 @@ function init() {
         .line()
         .x((d) => xScale(d.year))
         .y((d) => yScale(d.value))
-        .defined((d) => !isNaN(d.value)); // Skip undefined values
+        .defined((d) => !isNaN(d.value)); // Remove gaps by not interpolating null values
 
       // Create a color scale
       const color = d3.scaleOrdinal(d3.schemeCategory10);
