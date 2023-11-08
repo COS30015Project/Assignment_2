@@ -55,6 +55,39 @@ function init() {
       .style("stroke", (d) => colorScale(d['Asian Country'])) // Use country name as a unique key
       .style("stroke-width", 2);
 
+    // Add dots for each year
+    const dots = svg
+      .selectAll(".dot-group")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("class", "dot-group");
+
+    dots.selectAll("circle")
+      .data((d) => years.map(year => ({ year, value: +d[year], name: d['Asian Country'] })))
+      .enter()
+      .append("circle")
+      .attr("class", "dot")
+      .attr("cx", (d) => x(new Date(d.year, 0, 1)))
+      .attr("cy", (d) => y(d.value))
+      .attr("r", 4)
+      .style("fill", (d) => colorScale(d.name))
+      .on("mouseover", (event, d) => {
+        // Show tooltip on mouseover
+        const tooltip = d3.select("body").append("div")
+          .attr("class", "tooltip")
+          .style("position", "absolute")
+          .style("background-color", "white")
+          .style("padding", "8px")
+          .html(`Country: ${d.name}<br>Year: ${d.year}<br>Value: ${d.value}`);
+        tooltip.style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 30) + "px");
+      })
+      .on("mouseout", () => {
+        // Remove tooltip on mouseout
+        d3.select(".tooltip").remove();
+      });
+
     // Add axes
     svg.append("g")
       .attr("transform", `translate(0, ${height})`)
