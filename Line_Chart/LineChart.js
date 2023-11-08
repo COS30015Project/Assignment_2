@@ -63,36 +63,32 @@ function init() {
       .call(d3.axisLeft(y));
 
     // Add legend
-    const legend = svg.append("g")
-      .attr("class", "legend")
-      .attr("transform", `translate(0, ${height + 20})`);
+const legendContainer = d3.select("body").select(".legend-container");
 
-    const legendItems = data.map((d, i) => {
-      return {
+const legendItems = data.map((d, i) => {
+    return {
         color: colorScale(i),
         name: d['Asian Country'],
-      };
-    });
+    };
+});
 
-    legend.selectAll(".legend-item")
-      .data(legendItems)
-      .enter()
-      .append("g")
-      .attr("class", "legend-item")
-      .attr("transform", (d, i) => `translate(${i * 120}, 0)`);
+const legends = legendContainer
+    .selectAll(".legend-item")
+    .data(legendItems)
+    .enter()
+    .append("div")
+    .attr("class", "legend-item");
 
-    legend.selectAll(".legend-item")
-      .append("rect")
-      .attr("width", 20)
-      .attr("height", 20)
-      .style("fill", d => d.color);
+legends
+    .append("div")
+    .style("background-color", d => d.color)
+    .attr("class", "legend-color");
 
-    legend.selectAll(".legend-item")
-      .append("text")
-      .attr("x", 30)
-      .attr("y", 10)
-      .text(d => d.name);
-  }
+legends
+    .append("text")
+    .text(d => d.name);
+}
+
 }
 
 window.onload = init;
