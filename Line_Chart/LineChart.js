@@ -1,17 +1,17 @@
 function init() {
   // Load the data from the CSV file
   d3.csv("CurrencyData.csv")
-     .then(function(data) {
-       visualizeData(data);
-     })
-     .catch(function(error) {
-       console.error("Error loading data:", error);
-     });
+    .then(function(data) {
+      visualizeData(data);
+    })
+    .catch(function(error) {
+      console.error("Error loading data:", error);
+    });
 
   // Function to visualize the data
   function visualizeData(data) {
     // Define the dimensions and margins for the SVG
-    const margin = { top: 30, right: 30, bottom: 60, left: 60 };
+    const margin = { top: 30, right: 30, bottom: 80, left: 60 }; // Increased margin for legend
     const width = 800 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
@@ -24,7 +24,6 @@ function init() {
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Extract the data fields you need
-    const countries = data.map(d => d['Asian Country']);
     const years = data.columns.slice(2);
 
     // Define the color scale for lines
@@ -46,14 +45,14 @@ function init() {
 
     // Create the lines with different colors
     svg.selectAll(".line")
-      .data(countries)
+      .data(data)
       .enter()
       .append("path")
       .attr("class", "line")
-      .attr("d", (d, i) => line(years.map(year => +data[i][year])))
+      .attr("d", d => line(years.map(year => +d[year])))
       .style("fill", "none")
       .style("stroke", (d, i) => colorScale(i))
-      .style("stroke-width", 2); // Increase the line width
+      .style("stroke-width", 2);
 
     // Add axes
     svg.append("g")
@@ -63,20 +62,37 @@ function init() {
     svg.append("g")
       .call(d3.axisLeft(y));
 
-    // Add labels to the lines
-    svg.selectAll(".line-label")
-      .data(countries)
-      .enter()
-      .append("text")
-      .attr("class", "line-label")
-      .attr("x", width)
-      .attr("y", (d, i) => y(+data[i][years[years.length - 1]]))
-      .text(d => d)
-      .style("fill", (d, i) => colorScale(i))
-      .attr("dy", "0.35em")
-      .attr("dx", "0.5em")
-      .style("font-size", "12px"); // Use "style" instead of "attr" for font-size
-  }
- }
+    // Add legend
+    const legend = svg.append("g")
+      .attr("class", "legend")
+      .attr("transform", `translate(0, ${height + 20})`);
 
- window.onload = init;
+    const legendItems = data.map((d, i) => {
+      return {
+        color: colorScale(i),
+        name: d['Asian Country'],
+      };
+    });
+
+    legend.selectAll(".legend-item")
+      .data(legendItems)
+      .enter()
+      .append("g")
+      .attr("class", "legend-item")
+      .attr("transform", (d, i) => `translate(${i * 120}, 0)`);
+
+    legend.selectAll(".legend-item")
+      .append("rect")
+      .attr("width", 20)
+      .attr("height", 20)
+      .style("fill", d => d.color);
+
+    legend.selectAll(".legend-item")
+      .append("text")
+      .attr("x", 30)
+      .attr("y", 10)
+      .text(d => d.name);
+  }
+}
+
+window.onload = init;
