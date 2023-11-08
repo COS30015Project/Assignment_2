@@ -27,6 +27,9 @@ function init() {
     const years = Object.keys(data[0]).slice(2);
     const countries = data.map(d => d['Asian Country']);
 
+    // Define the color scale for lines
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
     // Define the x and y scales
     const x = d3.scaleLinear()
       .domain([2000, 2022])
@@ -41,7 +44,7 @@ function init() {
       .x((d, i) => x(2000 + i))
       .y(d => y(d));
 
-    // Create the lines
+    // Create the lines with different colors
     svg.selectAll(".line")
       .data(data)
       .enter()
@@ -49,7 +52,7 @@ function init() {
       .attr("class", "line")
       .attr("d", d => line(years.map(year => +d[year])))
       .style("fill", "none")
-      .style("stroke", "blue")
+      .style("stroke", (d, i) => colorScale(i))
       .style("stroke-width", 2); // Increase the line width
 
     // Create the dots with tooltips
@@ -85,12 +88,7 @@ function init() {
     // Add axes
     svg.append("g")
       .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x))
-      .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-0.5em")
-      .attr("dy", "0.5em")
-      .attr("transform", "rotate(-45)");
+      .call(d3.axisBottom(x).tickFormat(d3.format("d"))); // Format x-axis labels as integers
 
     svg.append("g")
       .call(d3.axisLeft(y));
@@ -104,7 +102,7 @@ function init() {
       .attr("x", width)
       .attr("y", (d, i) => y(+d[years[years.length - 1]]))
       .text(d => d['Asian Country'])
-      .style("fill", "blue")
+      .style("fill", (d, i) => colorScale(i))
       .attr("dy", "0.35em")
       .attr("dx", "0.5em")
       .attr("font-size", "12px");
