@@ -45,7 +45,7 @@ function init() {
 
       const yScale = d3
         .scaleLinear()
-        .domain([0, d3.max(data, (d) => d3.max(d.values, (v) => v.value)])
+        .domain([0, d3.max(data, (d) => d3.max(d.values, (v) => v.value))])
         .range([height, 0]);
 
       // Create line generator
