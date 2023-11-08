@@ -70,14 +70,14 @@ function init() {
           .style("fill", color(i));
       });
 
-      // Append a path for each country with transparent stroke color
+      // Append a path for each country with no visible stroke
       data.forEach((d, i) => {
         svg
           .append("path")
           .datum(d.values)
           .attr("class", "line")
           .attr("d", line)
-          .style("stroke", "transparent");
+          .style("stroke", "none");
       });
 
       // Add x and y axis
