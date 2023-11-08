@@ -23,19 +23,23 @@ function init() {
           .append("g")
           .attr("transform", `translate(${margin.left},${margin.top})`);
 
+      // Extract years and country names from the data
+      const years = Object.keys(data[0]).slice(2);
+      const countries = data.map(d => d['Asian Country']);
+
       // Define the x and y scales
       const x = d3.scaleLinear()
           .domain([2000, 2022]) // Adjust the domain according to your data
           .range([0, width]);
 
       const y = d3.scaleLinear()
-          .domain([0, d3.max(data, d => d3.max(Object.values(d).slice(2)))])
+          .domain([0, d3.max(data, d => d3.max(years.map(year => +d[year])))])
           .range([height, 0]);
 
       // Create a line generator
       const line = d3.line()
-          .x(d => x(+d.year))
-          .y(d => y(+Object.values(d).slice(2)));
+          .x((d, i) => x(2000 + i))
+          .y(d => y(d));
 
       // Create the lines
       svg.selectAll(".line")
@@ -43,7 +47,7 @@ function init() {
           .enter()
           .append("path")
           .attr("class", "line")
-          .attr("d", d => line(data))
+          .attr("d", d => line(years.map(year => +d[year])))
           .style("fill", "none")
           .style("stroke", "blue"); // Change the line color as needed
 
@@ -52,12 +56,12 @@ function init() {
           .data(data)
           .enter()
           .selectAll("circle")
-          .data(d => data)
+          .data((d, i) => years.map(year => ({ year: 2000 + i, value: +d[year] })))
           .enter()
           .append("circle")
           .attr("class", "dot")
-          .attr("cx", d => x(+d.year))
-          .attr("cy", d => y(+Object.values(d).slice(2)))
+          .attr("cx", d => x(d.year))
+          .attr("cy", d => y(d.value))
           .attr("r", 4)
           .style("fill", "red"); // Change the dot color as needed
 
@@ -68,6 +72,20 @@ function init() {
 
       svg.append("g")
           .call(d3.axisLeft(y));
+
+      // Add labels to the lines
+      svg.selectAll(".line-label")
+          .data(data)
+          .enter()
+          .append("text")
+          .attr("class", "line-label")
+          .attr("x", width)
+          .attr("y", (d, i) => y(+d[years[years.length - 1]]))
+          .text(d => d['Asian Country'])
+          .style("fill", "blue")
+          .attr("dy", "0.35em")
+          .attr("dx", "0.5em")
+          .attr("font-size", "12px");
   }
 }
 
