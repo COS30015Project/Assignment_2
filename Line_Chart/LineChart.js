@@ -44,16 +44,27 @@ function init() {
       .x((d, i) => x(years[i])) // Map years to x-axis values
       .y(d => y(+d));
 
-    // Create the lines with different colors
-    svg.selectAll(".line")
-      .data(data)
-      .enter()
-      .append("path")
-      .attr("class", "line")
-      .attr("d", d => line(years.map(year => +d[year])))
-      .style("fill", "none")
-      .style("stroke", (d) => colorScale(d['Asian Country'])) // Use country name as a unique key
-      .style("stroke-width", 2);
+    // Create the lines with different colors and add dots for each year
+    data.forEach((d) => {
+      const linePath = line(years.map(year => +d[year]));
+      svg.append("path")
+        .attr("class", "line")
+        .attr("d", linePath)
+        .style("fill", "none")
+        .style("stroke", colorScale(d['Asian Country']))
+        .style("stroke-width", 2);
+
+      // Add dots for each year
+      svg.selectAll(".dot")
+        .data(years.map(year => +d[year]))
+        .enter()
+        .append("circle")
+        .attr("class", "dot")
+        .attr("cx", (value, i) => x(years[i]))
+        .attr("cy", value => y(value))
+        .attr("r", 4) // Radius of the dots
+        .style("fill", colorScale(d['Asian Country']));
+    });
 
     // Add axes
     svg.append("g")
