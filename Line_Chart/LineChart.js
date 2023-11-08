@@ -55,23 +55,6 @@ function init() {
       .style("stroke", (d) => colorScale(d['Asian Country'])) // Use country name as a unique key
       .style("stroke-width", 2);
 
-    // Add circles to represent year data
-    svg.selectAll(".dot")
-      .data(data)
-      .enter()
-      .selectAll("circle")
-      .data((d) => years.map(year => ({ year, value: +d[year] })))
-      .enter()
-      .append("circle")
-      .attr("class", "dot")
-      .attr("cx", (d) => x(d.year))
-      .attr("cy", (d) => y(d.value))
-      .attr("r", 3) // Radius of the circles
-      .style("fill", (d, i, nodes) => {
-        const lineColor = colorScale(nodes[i].parentNode.__data__['Asian Country']);
-        return lineColor;
-      });
-
     // Add axes
     svg.append("g")
       .attr("transform", `translate(0, ${height})`)
