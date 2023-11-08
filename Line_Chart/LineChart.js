@@ -23,9 +23,9 @@ function init() {
        .append("g")
        .attr("transform", `translate(${margin.left},${margin.top})`);
  
-     // Extract years and country names from the data
-     const years = Object.keys(data[0]).slice(2);
+     // Extract the data fields you need
      const countries = data.map(d => d['Asian Country']);
+     const years = data.columns.slice(2);
  
      // Define the color scale for lines
      const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -42,15 +42,15 @@ function init() {
      // Create a line generator
      const line = d3.line()
        .x((d, i) => x(i))
-       .y(d => y(d));
+       .y(d => y(+d));
  
      // Create the lines with different colors
      svg.selectAll(".line")
-       .data(data)
+       .data(countries)
        .enter()
        .append("path")
        .attr("class", "line")
-       .attr("d", d => line(years.map(year => +d[year])))
+       .attr("d", (d, i) => line(years.map(year => +data[i][year])))
        .style("fill", "none")
        .style("stroke", (d, i) => colorScale(i))
        .style("stroke-width", 2); // Increase the line width
@@ -65,13 +65,13 @@ function init() {
  
      // Add labels to the lines
      svg.selectAll(".line-label")
-       .data(data)
+       .data(countries)
        .enter()
        .append("text")
        .attr("class", "line-label")
        .attr("x", width)
-       .attr("y", (d, i) => y(+d[years[years.length - 1]]))
-       .text(d => d['Asian Country'])
+       .attr("y", (d, i) => y(+data[i][years[years.length - 1]]))
+       .text(d => d)
        .style("fill", (d, i) => colorScale(i))
        .attr("dy", "0.35em")
        .attr("dx", "0.5em")
