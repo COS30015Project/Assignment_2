@@ -57,7 +57,7 @@ function init() {
       // Create a color scale
       const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-      
+      // Append circles for data points
       data.forEach((d, i) => {
         svg
           .selectAll("dot")
@@ -67,8 +67,7 @@ function init() {
           .attr("r", 5)
           .attr("cx", (d) => xScale(d.year))
           .attr("cy", (d) => yScale(d.value))
-          .style("fill", "none") // Set the fill to "none"
-          .style("stroke", "blue"); // Set the stroke color
+          .style("fill", color(i));
       });
 
       // Append a path for each country with no visible stroke
