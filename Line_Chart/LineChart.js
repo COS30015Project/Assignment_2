@@ -26,8 +26,8 @@ function init() {
     // Extract the data fields you need
     const years = data.columns.slice(2).map(year => parseInt(year)); // Parse years to integers
 
-    // Define the color scale for lines
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    // Define a color scale with more distinct colors
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory20); // Use schemeCategory20 for more distinct colors
 
     // Define the x and y scales
     const x = d3.scaleLinear()
@@ -51,7 +51,7 @@ function init() {
       .attr("class", "line")
       .attr("d", d => line(years.map(year => +d[year])))
       .style("fill", "none")
-      .style("stroke", (d, i) => colorScale(i))
+      .style("stroke", (d, i) => colorScale(d['Asian Country'])) // Use country name as a unique key
       .style("stroke-width", 2);
 
     // Add axes
@@ -63,32 +63,31 @@ function init() {
       .call(d3.axisLeft(y));
 
     // Add legend
-const legendContainer = d3.select("body").select(".legend-container");
+    const legendContainer = d3.select("body").select(".legend-container");
 
-const legendItems = data.map((d, i) => {
-    return {
-        color: colorScale(i),
+    const legendItems = data.map((d) => {
+      return {
+        color: colorScale(d['Asian Country']),
         name: d['Asian Country'],
-    };
-});
+      };
+    });
 
-const legends = legendContainer
-    .selectAll(".legend-item")
-    .data(legendItems)
-    .enter()
-    .append("div")
-    .attr("class", "legend-item");
+    const legends = legendContainer
+      .selectAll(".legend-item")
+      .data(legendItems)
+      .enter()
+      .append("div")
+      .attr("class", "legend-item");
 
-legends
-    .append("div")
-    .style("background-color", d => d.color)
-    .attr("class", "legend-color");
+    legends
+      .append("div")
+      .style("background-color", (d) => d.color)
+      .attr("class", "legend-color");
 
-legends
-    .append("text")
-    .text(d => d.name);
-}
-
+    legends
+      .append("text")
+      .text((d) => d.name);
+  }
 }
 
 window.onload = init;
