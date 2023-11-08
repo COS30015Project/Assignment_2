@@ -4,12 +4,23 @@ function init() {
     .then(function (data) {
       // Data preprocessing
       const parseDate = d3.timeParse("%Y");
-      const columns = data.columns.slice(2); // Exclude the first two columns
+
+      // Define the years (from 2000 to 2022) based on the CSV data
+      const years = d3.range(2000, 2023);
 
       data.forEach(function (d) {
-        for (const col of columns) {
-          d[col] = parseFloat(d[col]);
-        }
+        // Extract Asian Country and Unit of Measure
+        const country = d["Asian Country"];
+        const unitOfMeasure = d["Unit of Measure"];
+
+        // Create an array of objects for each year with year and value properties
+        d.values = years.map((year) => ({
+          year: year,
+          value: parseFloat(d[year].replace(/,/g, "")), // Remove commas and convert to float
+        }));
+
+        d["Asian Country"] = country;
+        d["Unit of Measure"] = unitOfMeasure;
       });
 
       // Set up the chart dimensions
@@ -28,30 +39,29 @@ function init() {
 
       // Define scales
       const xScale = d3
-        .scaleTime()
-        .domain([new Date(2000, 0, 1), new Date(2022, 0, 1)])
+        .scaleLinear()
+        .domain([2000, 2022])
         .range([0, width]);
 
       const yScale = d3
         .scaleLinear()
-        .domain([0, d3.max(data, (d) => d3.max(columns.map((col) => d[col])))])
-        .nice()
+        .domain([0, d3.max(data, (d) => d3.max(d.values, (v) => v.value))])
         .range([height, 0]);
 
       // Create line generator
       const line = d3
         .line()
-        .x((d) => xScale(parseDate(d.Year)))
-        .y((d) => yScale(d.Value));
+        .x((d) => xScale(d.year))
+        .y((d) => yScale(d.value));
 
       // Create a color scale
       const color = d3.scaleOrdinal(d3.schemeCategory10);
 
       // Append a path for each country
-      columns.forEach((col, i) => {
+      data.forEach((d, i) => {
         svg
           .append("path")
-          .datum(data)
+          .datum(d.values)
           .attr("class", "line")
           .attr("d", line)
           .style("stroke", color(i));
@@ -62,12 +72,9 @@ function init() {
         .append("g")
         .attr("class", "x-axis")
         .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(xScale).ticks(10).tickFormat(d3.timeFormat("%Y")));
+        .call(d3.axisBottom(xScale).ticks(10).tickFormat(d3.format("d")));
 
-      svg
-        .append("g")
-        .attr("class", "y-axis")
-        .call(d3.axisLeft(yScale));
+      svg.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale));
 
       // Add chart title
       svg
@@ -80,7 +87,7 @@ function init() {
       // Add legend
       const legend = svg
         .selectAll(".legend")
-        .data(columns)
+        .data(data)
         .enter()
         .append("g")
         .attr("class", "legend")
@@ -99,7 +106,7 @@ function init() {
         .attr("y", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text((d) => d);
+        .text((d) => d["Asian Country"]);
     })
     .catch(function (error) {
       console.log(error);
