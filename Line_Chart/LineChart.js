@@ -65,6 +65,18 @@ function init() {
           .attr("class", "line")
           .attr("d", line)
           .style("stroke", color(i));
+
+        // Add circles for data points
+        svg
+          .selectAll(".dot")
+          .data(d.values)
+          .enter()
+          .append("circle")
+          .attr("class", "dot")
+          .attr("cx", (d) => xScale(d.year))
+          .attr("cy", (d) => yScale(d.value))
+          .attr("r", 3) // Radius of the circles
+          .style("fill", color(i));
       });
 
       // Add x and y axis
