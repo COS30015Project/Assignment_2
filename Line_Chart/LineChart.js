@@ -45,7 +45,7 @@ function init() {
 
       const yScale = d3
         .scaleLinear()
-        .domain([0, d3.max(data, (d) => d3.max(d.values, (v) => v.value))])
+        .domain([0, d3.max(data, (d) => d3.max(d.values, (v) => v.value)])
         .range([height, 0]);
 
       // Create line generator
@@ -57,6 +57,19 @@ function init() {
       // Create a color scale
       const color = d3.scaleOrdinal(d3.schemeCategory10);
 
+      // Append circles for data points
+      data.forEach((d, i) => {
+        svg
+          .selectAll("dot")
+          .data(d.values)
+          .enter()
+          .append("circle")
+          .attr("r", 5)
+          .attr("cx", (d) => xScale(d.year))
+          .attr("cy", (d) => yScale(d.value))
+          .style("fill", color(i));
+      });
+
       // Append a path for each country
       data.forEach((d, i) => {
         svg
@@ -65,18 +78,6 @@ function init() {
           .attr("class", "line")
           .attr("d", line)
           .style("stroke", color(i));
-
-        // Add circles for data points
-        svg
-          .selectAll(".dot")
-          .data(d.values)
-          .enter()
-          .append("circle")
-          .attr("class", "dot")
-          .attr("cx", (d) => xScale(d.year))
-          .attr("cy", (d) => yScale(d.value))
-          .attr("r", 3) // Radius of the circles
-          .style("fill", color(i));
       });
 
       // Add x and y axis
