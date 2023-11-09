@@ -71,22 +71,7 @@ function init() {
       .attr("cx", (d) => x(d.year))
       .attr("cy", (d) => y(d.value))
       .attr("r", 4)
-      .style("fill", (d) => colorScale(d.name))
-      .on("mouseover", (event, d) => {
-        // Show tooltip on mouseover
-        const tooltip = d3.select("body").append("div")
-          .attr("class", "tooltip")
-          .style("position", "absolute")
-          .style("background-color", "white")
-          .style("padding", "8px")
-          .html(`Country: ${d.name}<br>Year: ${d.year}<br>Value: ${d.value}`);
-        tooltip.style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 30) + "px");
-      })
-      .on("mouseout", () => {
-        // Remove tooltip on mouseout
-        d3.select(".tooltip").remove();
-      });
+      .style("fill", (d) => colorScale(d.name));
 
     // Add axes
     svg.append("g")
@@ -142,9 +127,27 @@ function init() {
       svg.selectAll(".line")
         .style("stroke-opacity", (d) => selectedYears[0] <= d[0] && d[d.length - 1] <= selectedYears[1] ? 1 : 0.2);
 
-      svg.selectAll(".dot")
+      dots.selectAll("circle")
         .style("fill-opacity", (d) => selectedYears[0] <= d.year && d.year <= selectedYears[1] ? 1 : 0.2);
     }
+    
+    // Add mouseover and mouseout functionality after brushing
+    dots.selectAll("circle")
+      .on("mouseover", (event, d) => {
+        // Show tooltip on mouseover
+        const tooltip = d3.select("body").append("div")
+          .attr("class", "tooltip")
+          .style("position", "absolute")
+          .style("background-color", "white")
+          .style("padding", "8px")
+          .html(`Country: ${d.name}<br>Year: ${d.year}<br>Value: ${d.value}`);
+        tooltip.style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 30) + "px");
+      })
+      .on("mouseout", () => {
+        // Remove tooltip on mouseout
+        d3.select(".tooltip").remove();
+      });
   }
 }
 
