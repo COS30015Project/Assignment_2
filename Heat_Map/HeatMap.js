@@ -2,13 +2,6 @@ function init() {
     const width = 1000;
     const height = 800;
 
-    const colorArray = ["#0d0887","#41049d","#6a00a8","#8f0da4","#b12a90","#cc4778","#e16462","#f2844b","#fca636","#fcce25","#f0f921"];
-
-    // Use a custom color scale
-    const colorScale = d3.scaleQuantize()
-    .domain([0, maxTotal])
-    .range(colorArray);
-
     const projection = d3.geoAlbersUsa()
         .scale(1000)
         .translate([width / 2, height / 2]);
@@ -58,6 +51,10 @@ function init() {
         // Set the color domain based on the range of total values
         const totalValues = Object.values(processedTotal).map(d => d.Total);
         const maxTotal = d3.max(totalValues);
+
+        const colorScale = d3.scaleQuantize()
+            .domain([0, maxTotal])
+            .range(["#0d0887", "#41049d", "#6a00a8", "#8f0da4", "#b12a90", "#cc4778", "#e16462", "#f2844b", "#fca636", "#fcce25", "#f0f921"]);
 
         // Create a tooltip
         var Tooltip = d3.select("#chart")
@@ -130,7 +127,7 @@ function init() {
             .style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return colorArray(total);
+                return colorScale(total);
             })
             .on("click", clicked)
             .on("mouseover", mouseover)
@@ -184,7 +181,7 @@ function init() {
             g.selectAll(".feature").style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return d3.interpolateGnBu(total / maxTotal);
+                return colorScale(total);
             });
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
