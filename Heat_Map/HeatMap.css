@@ -40,7 +40,7 @@ main {
 
 #chart {
     width: 100%;
-    margin-left: 950px; /* Adjust the margin as needed to move the map to the right */
+    margin-left: 1000px; /* Adjust the margin as needed to move the map to the right */
 }
 
 .legend rect {
@@ -59,7 +59,7 @@ main {
 .legend text {
     display: block;
     font-size: 14px; /* Adjust font size as needed */
-    color: white; /* Text color */
+    color: #000; /* Text color */
 }
 
 footer {
