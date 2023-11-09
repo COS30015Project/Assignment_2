@@ -31,8 +31,8 @@ function init() {
     const colorScale = d3.scaleOrdinal(data.map(d => d['Asian Country']), uniqueColors);
 
     // Define the x and y scales
-    const x = d3.scaleTime() // Use a time scale for the x-axis
-      .domain([new Date(2000, 0, 1), new Date(2022, 0, 1)]) // Set the x-axis domain to the desired date range
+    const x = d3.scaleLinear() // Use a linear scale for the x-axis
+      .domain([d3.min(years), d3.max(years)]) // Set the x-axis domain to the minimum and maximum years
       .range([0, width]);
 
     const y = d3.scaleLinear()
@@ -41,7 +41,7 @@ function init() {
 
     // Create a line generator
     const line = d3.line()
-      .x((d, i) => x(new Date(years[i], 0, 1))) // Map years to x-axis values as dates
+      .x((d, i) => x(years[i])) // Map years to x-axis values as integers
       .y(d => y(+d));
 
     // Create the lines with different colors
@@ -68,7 +68,7 @@ function init() {
       .enter()
       .append("circle")
       .attr("class", "dot")
-      .attr("cx", (d) => x(new Date(d.year, 0, 1)))
+      .attr("cx", (d) => x(d.year))
       .attr("cy", (d) => y(d.value))
       .attr("r", 4)
       .style("fill", (d) => colorScale(d.name))
@@ -91,7 +91,7 @@ function init() {
     // Add axes
     svg.append("g")
       .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%Y"))); // Format x-axis labels as years
+      .call(d3.axisBottom(x).ticks(years.length).tickFormat(d3.format("d"))); // Format x-axis labels as integers
 
     svg.append("g")
       .call(d3.axisLeft(y));
