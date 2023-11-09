@@ -1,7 +1,7 @@
 function init() {
   var data;
   var width = 1000; // Adjusted width
-  var height = 600; // Adjusted height
+  var height = 1200; // Adjusted height
   var margin = { top: 30, right: 40, bottom: 70, left: 70 }; // Adjusted margins
 
   d3.csv("BarChartDataset.csv").then(function (loadedData) {
