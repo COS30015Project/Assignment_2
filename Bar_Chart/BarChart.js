@@ -1,8 +1,8 @@
 function init() {
   var data;
-  var width = 800;
-  var height = 600;
-  var margin = { top: 30, right: 40, bottom: 60, left: 70 };
+  var width = 800; // Increased width
+  var height = 600; // Increased height
+  var margin = { top: 30, right: 40, bottom: 60, left: 70 }; // Increased margins
 
   d3.csv("BarChartDataset.csv").then(function (loadedData) {
     data = loadedData;
@@ -36,7 +36,7 @@ function init() {
         return d["US States"];
       }))
       .range([height - margin.bottom, margin.top])
-      .padding(0.4) // Adjusted padding to control the gap
+      .padding(0.2);
 
     var svgGroup = svg.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
