@@ -2,11 +2,12 @@ function init() {
     const width = 1000;
     const height = 800;
 
+    const colorArray = ["#0d0887","#41049d","#6a00a8","#8f0da4","#b12a90","#cc4778","#e16462","#f2844b","#fca636","#fcce25","#f0f921"];
 
     // Use a custom color scale
-    const colorScale = d3.scaleQuantize() 
+    const colorScale = d3.scaleQuantize()
     .domain([0, maxTotal])
-    .range(["#0d0887","#41049d","#6a00a8","#8f0da4","#b12a90","#cc4778","#e16462","#f2844b","#fca636","#fcce25","#f0f921"]);
+    .range(colorArray);
 
     const projection = d3.geoAlbersUsa()
         .scale(1000)
@@ -129,7 +130,7 @@ function init() {
             .style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return colorScale(total);
+                return colorArray(total);
             })
             .on("click", clicked)
             .on("mouseover", mouseover)
@@ -183,7 +184,7 @@ function init() {
             g.selectAll(".feature").style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return colorScale(total);
+                return d3.interpolateGnBu(total / maxTotal);
             });
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
