@@ -35,7 +35,7 @@ function init() {
         return d["US States"];
       }))
       .range([height - margin.bottom, margin.top])
-      .padding(0.2);
+      .padding(0);
 
     var svgGroup = svg.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
