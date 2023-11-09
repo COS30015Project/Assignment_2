@@ -7,13 +7,13 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: gray;
+    background-image: url('back.jpg'); /* Replace 'your-background-image.jpg' with your image file */
+    background-size: cover; /* Adjust to fit your image size */
     margin: 0;
 }
 
 header {
     text-align: center;
-    background-color: #007BFF;
     color: white;
     padding: 40px 0;
 }
@@ -79,4 +79,3 @@ footer {
     font-weight: bold;
     margin-bottom: 5px;
 }
-
