@@ -122,6 +122,47 @@ function init() {
       .append("text")
       .text((d) => d.name);
   }
+
+  function brushed(event) {
+    const selection = event.selection;
+    if (!selection) return;
+
+    // Convert x and y values of the selection to corresponding data values
+    const [x0, y1] = selection.map(x.invert, x);
+    const [x1, y0] = [x0, y1];
+
+    // Update the chart with the new domain
+    x.domain([x0, x1]);
+    y.domain([y0, y1]);
+
+    // Redraw the lines and dots with the updated scales
+    svg.selectAll(".line")
+        .attr("d", d => line(years.map(year => +d[year])));
+    svg.selectAll(".dot")
+        .attr("cx", (d) => x(d.year))
+        .attr("cy", (d) => y(d.value));
+
+    // Update the axes
+    svg.select(".x-axis").call(d3.axisBottom(x).ticks(10).tickFormat(d3.format("d")));
+    svg.select(".y-axis").call(d3.axisLeft(y));
+
+    // Update the legend items
+    legends.style("opacity", (d) => {
+        const xValue = x(d.year);
+        const yValue = y(d.value);
+        return xValue >= x0 && xValue <= x1 && yValue >= y0 && yValue <= y1 ? 1 : 0.2;
+    });
+}
+
+// Add brushing functionality
+const brush = d3.brush()
+    .extent([[0, 0], [width, height]])
+    .on("end", brushed);
+
+svg.append("g")
+    .attr("class", "brush")
+    .call(brush);
+    
 }
 
 window.onload = init;
