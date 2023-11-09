@@ -1,8 +1,8 @@
 function init() {
   var data;
-  var width = 1500; // Increased width
-  var height = 1000; // Increased height
-  var margin = { top: 30, right: 40, bottom: 60, left: 120 }; // Increased left margin
+  var width = 1000; // Adjusted width
+  var height = 600; // Adjusted height
+  var margin = { top: 30, right: 40, bottom: 70, left: 70 }; // Adjusted margins
 
   d3.csv("BarChartDataset.csv").then(function (loadedData) {
     data = loadedData;
@@ -67,13 +67,13 @@ function init() {
       .attr("class", "y-axis")
       .call(d3.axisLeft(y))
       .selectAll("text")
-      .style("text-anchor", "end") // Adjust text anchor for rotation
-      .attr("transform", "rotate(-45)"); // Rotate y-axis labels
+      .style("text-anchor", "end")
+      .attr("transform", "rotate(-45)");
 
     // X-axis label
     svg.append("text")
       .attr("x", width / 2)
-      .attr("y", height - 5)
+      .attr("y", height - 10) // Adjusted y position
       .style("text-anchor", "middle")
       .text("Value");
 
