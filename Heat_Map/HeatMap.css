@@ -1,0 +1,70 @@
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: gray;
+    margin: 0;
+}
+
+header {
+    text-align: center;
+    background-color: #007BFF;
+    color: white;
+    padding: 40px 0;
+}
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 18px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#chart-container {
+    width: 100%;
+    padding: 20px;
+}
+
+#chart {
+    width: 100%;
+}
+
+.legend rect {
+    fill: url(#colorGradient); /* Place the gradient on top */
+    stroke: none;
+}
+
+.legend text {
+    display: none; /* Hide the legend text */
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+}
+
+#chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#chart {
+    width: 100%;
+}
