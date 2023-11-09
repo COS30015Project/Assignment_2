@@ -68,7 +68,7 @@ function init() {
       .call(d3.axisLeft(y))
       .selectAll("text")
       .style("text-anchor", "end")
-      .attr("transform", "translate(0, 200) rotate(-45)");
+      .attr("transform", " rotate(-45)");
 
     // X-axis label
     svg.append("text")
