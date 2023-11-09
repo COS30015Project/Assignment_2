@@ -1,27 +1,29 @@
-function init() {
-   // Define variables
-   const margin = { top: 30, right: 30, bottom: 80, left: 60 };
-   const width = 800 - margin.left - margin.right;
-   const height = 400 - margin.top - margin.bottom;
+function init() 
+{
+    // Define variables
+    const margin = { top: 30, right: 30, bottom: 80, left: 60 };
+    const width = 800 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
-   const svg = d3.select("#chart")
-       .append("svg")
-       .attr("width", width + margin.left + margin.right)
-       .attr("height", height + margin.top + margin.bottom)
-       .append("g")
-       .attr("transform", `translate(${margin.left},${margin.top})`);
+    const svg = d3.select("#chart")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
-   let x, y, line, legends;
+    let x, y, line, legends, years; // Define years here at a higher scope
 
-   // Load the data from the CSV file
-   d3.csv("CurrencyData.csv")
-       .then(function(data) {
-           visualizeData(data);
-           addBrushing(data);
-       })
-       .catch(function(error) {
-           console.error("Error loading data:", error);
-       });
+    // Load the data from the CSV file
+    d3.csv("CurrencyData.csv")
+        .then(function(data) {
+            years = data.columns.slice(2).map(year => parseInt(year)); // Define years here
+            visualizeData(data);
+            addBrushing(data);
+        })
+        .catch(function(error) {
+            console.error("Error loading data:", error);
+        });
 
    function visualizeData(data) {
        // Extract the data fields you need
