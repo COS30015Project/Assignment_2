@@ -59,7 +59,19 @@ main {
 .legend text {
     display: block;
     font-size: 14px; /* Adjust font size as needed */
-    color: #000; /* Text color */
+    color: white; /* Text color */
+}
+
+/* Add styles for the legend container */
+#legend-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#legend-svg {
+    width: 220px;
 }
 
 footer {
