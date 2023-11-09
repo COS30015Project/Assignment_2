@@ -1,6 +1,4 @@
 function init() {
-    let xDragEnabled = false; // Flag to track if x-axis drag is enabled
-  
     // Load the data from the CSV file
     d3.csv("CurrencyData.csv")
       .then(function(data) {
@@ -124,45 +122,6 @@ function init() {
       legends
         .append("text")
         .text((d) => d.name);
-  
-      // Add button to toggle x-axis drag
-      d3.select("body")
-        .append("button")
-        .text("Toggle X-Axis Drag")
-        .on("click", toggleXDrag);
-  
-      // Define the drag behavior for the x-axis
-      const xDrag = d3.drag()
-        .on("start", () => xDragEnabled = true)
-        .on("drag", draggedX)
-        .on("end", () => xDragEnabled = false);
-  
-      svg.call(xDrag);
-  
-      function draggedX(event) {
-        if (xDragEnabled) {
-          const xValue = x.invert(d3.pointer(event)[0]);
-          const xDomain = x.domain();
-          const xRange = x.range();
-          if (xValue < xDomain[0] || xValue > xDomain[1]) return; // Ensure the value is within the domain
-          x.range([xRange[0] + event.dx, xRange[1] + event.dx]);
-          updateChart();
-        }
-      }
-  
-      function toggleXDrag() {
-        xDragEnabled = !xDragEnabled;
-      }
-  
-      function updateChart() {
-        // Redraw the lines and dots with the updated scales
-        svg.selectAll(".line")
-          .attr("d", d => line(years.map(year => +d[year])));
-        dots.selectAll("circle")
-          .attr("cx", (d) => x(d.year))
-          .attr("cy", (d) => y(d.value));
-        svg.select(".x-axis").call(d3.axisBottom(x).ticks(years.length).tickFormat(d3.format("d")));
-      }
     }
   }
   
