@@ -97,15 +97,10 @@ function init() {
         // Function for mousemove event
         var mousemove = function (event, d) {
             if (selectedState === d) {
-                d3.select(this)
-                .style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
                 Tooltip.html(stateName + "<br>" + formattedData);
-                const total = processedTotal[stateName].Total;
-                return d3.interpolateGnBu(total / maxTotal);
-                });
             }
         };
 
@@ -178,19 +173,22 @@ function init() {
 
         // Reset function
         function reset() {
-            selectedState = null;
-            g.selectAll(".feature").style("fill", function (d) {
-                const stateName = d.properties.NAME;
-                const total = processedTotal[stateName].Total;
-                return d3.interpolateGnBu(total / maxTotal);
-            });
+            if (selectedState) {
+                d3.select(selectedState)
+                    .style("fill", function (d) {
+                        const stateName = d.properties.NAME;
+                        const total = processedTotal[stateName].Total;
+                        return d3.interpolateGnBu(total / maxTotal);
+                    });
+                selectedState = null;
+            }
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
         function clicked(event, d) {
             if (selectedState !== d) {
                 reset();
-                selectedState = d;
+                selectedState = this;
                 d3.select(this).style("fill", "red");
                 const [[x0, y0], [x1, y1]] = path.bounds(d);
                 svg.transition().duration(750).call(
