@@ -88,6 +88,12 @@ function init() {
           // Highlight the selected line and dim others
           lines.style("opacity", 0.2);
           lines.filter((lineData) => lineData['Asian Country'] === d.name).style("opacity", 1);
+          // Show tooltip on click
+          const tooltip = d3.select(".tooltip")
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 30) + "px");
+          tooltip.html(`Country: ${d.name}<br>Year: ${d.year}<br>Value: ${d.value}`);
+          tooltip.style("display", "block");
         });
 
       // Add axes
@@ -100,7 +106,7 @@ function init() {
         .call(d3.axisLeft(y));
 
       // Add legend
-      const legendContainer = d3.select("body").select(".legend-container");
+      const legendContainer = d3.select("body").append("div").attr("class", "legend-container");
 
       const legendItems = data.map((d) => {
         return {
