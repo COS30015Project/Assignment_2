@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,12 +28,32 @@
             margin-right: 5px;
         }
 
+        /* Add background image */
+        body {
+            background-image: url('back.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
+            background-size: cover; /* Cover the entire page */
+            color: white; /* Set text color to white */
+        }
 
+        .axis path,
+        .axis line {
+            fill: none;
+            shape-rendering: crispEdges;
+            stroke: white; /* Set axis lines to white */
+        }
+
+        .axis text {
+            fill: white !important; /* Set axis labels to white */
+        }
+
+        .tooltip {
+            color: black; /* Set tooltip text color to black */
+        }
     </style>
 </head>
-<body>
 
-    <h1 class="chart-title">Line Graph: Currency of Asians countries compared to USA</h1>
+<body>
+    <h1 class="chart-title">Line Graph: Currency of Asian countries compared to USA</h1>
     <div id="chart"></div>
 
     <!-- Add a container for the legend -->
@@ -40,4 +61,5 @@
         <!-- Legend will be placed here dynamically -->
     </div>
 </body>
+
 </html>
