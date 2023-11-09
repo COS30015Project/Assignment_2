@@ -1,0 +1,33 @@
+/* Apply some basic styling to the chart */
+#chart {
+    width: 600px;
+    margin: 20px auto;
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.bar {
+    fill: steelblue;
+}
+
+.bar:hover {
+    fill: orange;
+}
+
+.x-axis text {
+    font-size: 12px;
+}
+
+.y-axis text {
+    font-size: 12px;
+}
+
+.x-axis line, .y-axis line {
+    stroke: #ccc;
+}
+
+.x-axis path, .y-axis path {
+    display: none;
+}
