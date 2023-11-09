@@ -27,7 +27,7 @@ function init() {
     const years = data.columns.slice(2).map(year => parseInt(year)); // Parse years to integers
 
     // Generate a custom color scale with unique colors for each country
-    const uniqueColors = data.map((d, i) => d3.interpolateSinebow(i / data.length));
+    const uniqueColors = data.map((d, i) => d3.interpolateSinebow(i / data.length)); // Use a color interpolation
     const colorScale = d3.scaleOrdinal(data.map(d => d['Asian Country']), uniqueColors);
 
     // Define the x and y scales
@@ -71,9 +71,24 @@ function init() {
       .attr("cx", (d) => x(d.year))
       .attr("cy", (d) => y(d.value))
       .attr("r", 4)
-      .style("fill", (d) => colorScale(d.name));
+      .style("fill", (d) => colorScale(d.name))
+      .on("mouseover", (event, d) => {
+        // Show tooltip on mouseover
+        const tooltip = d3.select("body").append("div")
+          .attr("class", "tooltip")
+          .style("position", "absolute")
+          .style("background-color", "white")
+          .style("padding", "8px")
+          .html(`Country: ${d.name}<br>Year: ${d.year}<br>Value: ${d.value}`);
+        tooltip.style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 30) + "px");
+      })
+      .on("mouseout", () => {
+        // Remove tooltip on mouseout
+        d3.select(".tooltip").remove();
+      });
 
-    // Add axes
+    // Add x-axis and y-axis
     svg.append("g")
       .attr("transform", `translate(0, ${height})`)
       .call(d3.axisBottom(x).ticks(years.length).tickFormat(d3.format("d"))); // Format x-axis labels as integers
@@ -107,47 +122,47 @@ function init() {
       .append("text")
       .text((d) => d.name);
 
-    // Add brushing functionality
-    const brush = d3.brushX()
+    // Add brushing functionality for x-axis and y-axis
+    const xBrush = d3.brushX()
       .extent([[0, 0], [width, height]])
-      .on("end", brushed);
+      .on("end", brushedX);
+
+    const yBrush = d3.brushY()
+      .extent([[0, 0], [width, height]])
+      .on("end", brushedY);
 
     svg.append("g")
-      .attr("class", "brush")
-      .call(brush);
+      .attr("class", "brush-x")
+      .call(xBrush);
 
-    function brushed(event) {
-      const selection = event.selection;
-      if (!selection) return;
+    svg.append("g")
+      .attr("class", "brush-y")
+      .call(yBrush);
 
-      // Convert the selected range to years
-      const selectedYears = selection.map(x.invert, x);
-
-      // Update the chart elements based on the selected range
-      svg.selectAll(".line")
-        .style("stroke-opacity", (d) => selectedYears[0] <= d[0] && d[d.length - 1] <= selectedYears[1] ? 1 : 0.2);
-
-      dots.selectAll("circle")
-        .style("fill-opacity", (d) => selectedYears[0] <= d.year && d.year <= selectedYears[1] ? 1 : 0.2);
+    function brushedX(event) {
+      if (event.selection) {
+        const [x0, x1] = event.selection.map(x.invert);
+        x.domain([x0, x1]);
+        updateChart();
+      }
     }
-    
-    // Add mouseover and mouseout functionality after brushing
-    dots.selectAll("circle")
-      .on("mouseover", (event, d) => {
-        // Show tooltip on mouseover
-        const tooltip = d3.select("body").append("div")
-          .attr("class", "tooltip")
-          .style("position", "absolute")
-          .style("background-color", "white")
-          .style("padding", "8px")
-          .html(`Country: ${d.name}<br>Year: ${d.year}<br>Value: ${d.value}`);
-        tooltip.style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 30) + "px");
-      })
-      .on("mouseout", () => {
-        // Remove tooltip on mouseout
-        d3.select(".tooltip").remove();
-      });
+
+    function brushedY(event) {
+      if (event.selection) {
+        const [y0, y1] = event.selection.map(y.invert);
+        y.domain([y0, y1]);
+        updateChart();
+      }
+    }
+
+    function updateChart() {
+      // Redraw the lines and dots with the updated scales
+      svg.selectAll(".line")
+        .attr("d", d => line(years.map(year => +d[year])));
+      dots.selectAll("circle")
+        .attr("cx", (d) => x(d.year))
+        .attr("cy", (d) => y(d.value));
+    }
   }
 }
 
