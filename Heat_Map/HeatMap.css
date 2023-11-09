@@ -79,3 +79,7 @@ footer {
     font-weight: bold;
     margin-bottom: 5px;
 }
+
+.clicked-tooltip {
+    display: none;
+}
