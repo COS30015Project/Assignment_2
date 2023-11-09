@@ -52,10 +52,6 @@ function init() {
         const totalValues = Object.values(processedTotal).map(d => d.Total);
         const maxTotal = d3.max(totalValues);
 
-        const colorScale = d3.scaleQuantize()
-            .domain([0, maxTotal])
-            .range(["#0d0887", "#41049d", "#6a00a8", "#8f0da4", "#b12a90", "#cc4778", "#e16462", "#f2844b", "#fca636", "#fcce25", "#f0f921"]);
-
         // Create a tooltip
         var Tooltip = d3.select("#chart")
             .append("div")
@@ -127,7 +123,7 @@ function init() {
             .style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return colorScale(total);
+                return d3.interpolateGnBu(total / maxTotal);
             })
             .on("click", clicked)
             .on("mouseover", mouseover)
@@ -181,7 +177,7 @@ function init() {
             g.selectAll(".feature").style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                return colorScale(total);
+                return d3.interpolateGnBu(total / maxTotal);
             });
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
