@@ -1,6 +1,6 @@
 function init() {
   var data;
-  var width = 800; // Increased width
+  var width = 1500; // Increased width
   var height = 1000; // Increased height
   var margin = { top: 30, right: 40, bottom: 60, left: 120 }; // Increased left margin
 
