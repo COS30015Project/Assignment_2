@@ -1,7 +1,7 @@
 function init() {
   var data;
   var width = 800; // Increased width
-  var height = 600; // Increased height
+  var height = 1000; // Increased height
   var margin = { top: 30, right: 40, bottom: 60, left: 120 }; // Increased left margin
 
   d3.csv("BarChartDataset.csv").then(function (loadedData) {
@@ -9,24 +9,23 @@ function init() {
 
     var categories = Object.keys(data[0]).slice(1);
 
+    // Calculate the total for each US state
+    data.forEach(function (d) {
+      d.Total = d3.sum(categories, function (category) {
+        return d[category];
+      });
+    });
+
     var svg = d3
       .select("#chart")
       .append("svg")
       .attr("width", width)
       .attr("height", height);
 
-    data.forEach(function (d) {
-      categories.forEach(function (category) {
-        d[category] = +d[category];
-      });
-    });
-
     var x = d3
       .scaleLinear()
       .domain([0, d3.max(data, function (d) {
-        return d3.max(categories, function (category) {
-          return d[category];
-        });
+        return d.Total;
       })])
       .range([margin.left, width - margin.right]);
 
@@ -51,9 +50,7 @@ function init() {
         return y(d["US States"]);
       })
       .attr("width", function (d) {
-        return x(d3.max(categories, function (category) {
-          return d[category];
-        })) - x(0);
+        return x(d.Total) - x(0);
       })
       .attr("height", y.bandwidth())
       .on("mouseover", handleMouseOver)
@@ -92,10 +89,8 @@ function init() {
     function handleMouseOver(event, d) {
       // Show details when hovering over the bar
       d3.select(this).style("fill", "orange");
-      var details = categories.map(function (category) {
-        return category + ": " + d[category];
-      });
-      tooltip.html(details.join("<br>")).style("opacity", 1);
+      var details = "Total: " + d.Total;
+      tooltip.html(details).style("opacity", 1);
     }
 
     function handleMouseOut(event, d) {
