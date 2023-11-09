@@ -88,7 +88,7 @@ function init() {
         d3.select(".tooltip").remove();
       });
 
-    // Add x-axis and y-axis
+    // Add axes
     svg.append("g")
       .attr("transform", `translate(0, ${height})`)
       .call(d3.axisBottom(x).ticks(years.length).tickFormat(d3.format("d"))); // Format x-axis labels as integers
@@ -156,9 +156,7 @@ function init() {
     }
 
     function updateChart() {
-      // Redraw the lines and dots with the updated scales
-      svg.selectAll(".line")
-        .attr("d", d => line(years.map(year => +d[year])));
+      // Redraw the dots with the updated scales
       dots.selectAll("circle")
         .attr("cx", (d) => x(d.year))
         .attr("cy", (d) => y(d.value));
