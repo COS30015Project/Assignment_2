@@ -27,7 +27,7 @@ function init() {
     const years = data.columns.slice(2).map(year => parseInt(year)); // Parse years to integers
 
     // Generate a custom color scale with unique colors for each country
-    const uniqueColors = data.map((d, i) => d3.interpolateSinebow(i / data.length)); // Use a color interpolation
+    const uniqueColors = data.map((d, i) => d3.interpolateSinebow(i / data.length));
     const colorScale = d3.scaleOrdinal(data.map(d => d['Asian Country']), uniqueColors);
 
     // Define the x and y scales
@@ -121,6 +121,30 @@ function init() {
     legends
       .append("text")
       .text((d) => d.name);
+
+    // Add brushing functionality
+    const brush = d3.brushX()
+      .extent([[0, 0], [width, height]])
+      .on("end", brushed);
+
+    svg.append("g")
+      .attr("class", "brush")
+      .call(brush);
+
+    function brushed(event) {
+      const selection = event.selection;
+      if (!selection) return;
+
+      // Convert the selected range to years
+      const selectedYears = selection.map(x.invert, x);
+
+      // Update the chart elements based on the selected range
+      svg.selectAll(".line")
+        .style("stroke-opacity", (d) => selectedYears[0] <= d[0] && d[d.length - 1] <= selectedYears[1] ? 1 : 0.2);
+
+      svg.selectAll(".dot")
+        .style("fill-opacity", (d) => selectedYears[0] <= d.year && d.year <= selectedYears[1] ? 1 : 0.2);
+    }
   }
 }
 
