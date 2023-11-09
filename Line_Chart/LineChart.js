@@ -142,9 +142,10 @@ function init() {
       function draggedX(event) {
         if (xDragEnabled) {
           const xValue = x.invert(d3.pointer(event)[0]);
+          const xDomain = x.domain();
           const xRange = x.range();
-          const [x0, x1] = d3.bisect(xRange, d3.pointer(event)[0]);
-          x.domain([x.invert(xRange[x0 - 1]), x.invert(xRange[x1])]);
+          if (xValue < xDomain[0] || xValue > xDomain[1]) return; // Ensure the value is within the domain
+          x.range([xRange[0] + event.dx, xRange[1] + event.dx]);
           updateChart();
         }
       }
