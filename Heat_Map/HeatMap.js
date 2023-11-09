@@ -97,10 +97,15 @@ function init() {
         // Function for mousemove event
         var mousemove = function (event, d) {
             if (selectedState === d) {
+                d3.select(this)
+                .style("fill", function (d) {
                 const stateName = d.properties.NAME;
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
                 Tooltip.html(stateName + "<br>" + formattedData);
+                const total = processedTotal[stateName].Total;
+                return d3.interpolateGnBu(total / maxTotal);
+                });
             }
         };
 
