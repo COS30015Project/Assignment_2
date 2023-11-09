@@ -2,7 +2,7 @@ function init() {
   var data;
   var width = 800; // Increased width
   var height = 600; // Increased height
-  var margin = { top: 30, right: 40, bottom: 60, left: 70 }; // Increased margins
+  var margin = { top: 30, right: 40, bottom: 60, left: 120 }; // Increased left margin
 
   d3.csv("BarChartDataset.csv").then(function (loadedData) {
     data = loadedData;
@@ -65,10 +65,13 @@ function init() {
       .attr("transform", "translate(0," + (height - margin.bottom) + ")")
       .call(d3.axisBottom(x).ticks(5).tickSizeOuter(0));
 
-    // Add y-axis to the SVG element
+    // Add rotated y-axis to the SVG element
     svgGroup.append("g")
       .attr("class", "y-axis")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y))
+      .selectAll("text")
+      .style("text-anchor", "end") // Adjust text anchor for rotation
+      .attr("transform", "rotate(-45)"); // Rotate y-axis labels
 
     // X-axis label
     svg.append("text")
@@ -80,7 +83,7 @@ function init() {
     // Y-axis label
     svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 5) // Adjusted y position
+      .attr("y", 10) // Adjusted y position
       .attr("x", 0 - height / 2)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
