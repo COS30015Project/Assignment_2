@@ -136,45 +136,55 @@ function init() {
             .on("mouseleave", mouseleave);
 
         // Create a horizontal legend
-        const legendGroup = svg.append("g")
-            .attr("transform", `translate(${width - 220}, ${height - 40})`);
+const legendGroup = svg.append("g")
+.attr("transform", `translate(${width - 220}, ${height - 40})`);
 
-        const legendWidth = 200;
-        const legendHeight = 18;
+const legendWidth = 200;
+const legendHeight = 18;
 
-        const legendScale = d3.scaleLinear()
-            .domain([0, maxTotal])
-            .range([0, legendWidth]);
+const legendScale = d3.scaleLinear()
+.domain([0, maxTotal])
+.range([0, legendWidth]);
 
-        const legendAxis = d3.axisBottom(legendScale)
-            .tickValues(d3.range(0, maxTotal, maxTotal / 4));
+const legendAxis = d3.axisBottom(legendScale)
+.tickValues(d3.range(0, maxTotal, maxTotal / 4));
 
-        // Create a linear gradient for the legend
-        const defs = svg.append("defs");
+// Create a linear gradient for the legend
+const defs = svg.append("defs");
 
-        const linearGradient = defs.append("linearGradient")
-            .attr("id", "colorGradient")
-            .attr("x1", "0%")
-            .attr("x2", "100%");
+const linearGradient = defs.append("linearGradient")
+.attr("id", "colorGradient")
+.attr("x1", "0%")
+.attr("x2", "100%");
 
-        linearGradient.append("stop")
-            .attr("offset", "0%")
-            .style("stop-color", d3.interpolateGnBu(0));
+linearGradient.append("stop")
+.attr("offset", "0%")
+.style("stop-color", d3.interpolateGnBu(0));
 
-        linearGradient.append("stop")
-            .attr("offset", "100%")
-            .style("stop-color", d3.interpolateGnBu(1));
+linearGradient.append("stop")
+.attr("offset", "100%")
+.style("stop-color", d3.interpolateGnBu(1));
 
-        legendGroup.append("rect")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", legendWidth)
-            .attr("height", legendHeight)
-            .style("fill", "url(#colorGradient");
+legendGroup.append("rect")
+.attr("x", 0)
+.attr("y", 0)
+.attr("width", legendWidth)
+.attr("height", legendHeight)
+.attr("class", "legend rect"); // Changed class name to "legend rect"
 
-        legendGroup.append("g")
-            .attr("class", "legend-axis")
-            .call(legendAxis);
+legendGroup.append("g")
+.attr("class", "legend-axis")
+.call(legendAxis);
+
+// Add legend text
+legendGroup.selectAll(".legend-text") // Changed class name to ".legend-text"
+.data([0, maxTotal])
+.enter()
+.append("text")
+.attr("class", "legend-text")
+.attr("x", (d) => legendScale(d))
+.attr("y", legendHeight + 15)
+.text((d) => d);
 
         // Reset function
         function reset() {
