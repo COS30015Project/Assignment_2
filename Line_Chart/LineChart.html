@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,9 +32,22 @@
         body {
             background-image: url('back.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
             background-size: cover; /* Cover the entire page */
+            color: white; /* Set text color to white */
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            shape-rendering: crispEdges;
+            stroke: white; /* Set axis lines to white */
+        }
+
+        .axis text {
+            fill: white !important; /* Set axis labels to white */
         }
     </style>
 </head>
+
 <body>
     <h1 class="chart-title">Line Graph: Currency of Asian countries compared to USA</h1>
     <div id="chart"></div>
@@ -43,4 +57,5 @@
         <!-- Legend will be placed here dynamically -->
     </div>
 </body>
+
 </html>
