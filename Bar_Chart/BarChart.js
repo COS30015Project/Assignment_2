@@ -72,7 +72,7 @@ function init() {
 
     // X-axis label
     svg.append("text")
-      .attr("x", width / 4)
+      .attr("x", width / 2)
       .attr("y", height - 10) // Adjusted y position
       .style("text-anchor", "middle")
       .text("Value");
@@ -80,7 +80,7 @@ function init() {
     // Y-axis label
     svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 10) // Adjusted y position
+      .attr("y", 20) // Adjusted y position
       .attr("x", 0 - height / 2)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
