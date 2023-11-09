@@ -1,15 +1,4 @@
 function init() {
-
-    let isBrushingEnabled = false;
-    
-    const brushTooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("position", "absolute")
-        .style("background-color", "white")
-        .style("padding", "8px")
-        .style("display", "none");
-
-
     // Load the data from the CSV file
     d3.csv("CurrencyData.csv")
       .then(function(data) {
@@ -133,52 +122,8 @@ function init() {
       legends
         .append("text")
         .text((d) => d.name);
-
-        // Add brushing
-        const brush = d3.brushX()
-            .extent([[0, 0], [width, height]])
-            .on("start brush", brushed)
-            .on("end", brushended);
-
-        const brushContainer = svg.append("g")
-            .attr("class", "brush")
-            .call(brush);
-
-        function brushed(event) {
-            if (!event.selection) return;
-            
-            const [x0, x1] = event.selection.map(x.invert);
-
-            const year = Math.round(x.invert((x1 - x0) / 2 + x0));
-            const tooltipData = data.map(d => ({
-                name: d['Asian Country'],
-                value: +d[year],
-            }));
-
-            if (isBrushingEnabled) {
-                // Show the tooltip with the selected year's data
-                brushTooltip.style("left", x(year) + "px")
-                    .html(`<strong>Year: ${year}</strong><br>` +
-                        tooltipData.map(d => `${d.name}: ${d.value}`).join("<br>"))
-                    .style("display", "block");
-            }
-        }
-
-        function brushended(event) {
-            if (!event.sourceEvent) return;
-
-            if (!event.selection) {
-                isBrushingEnabled = false;
-                brushTooltip.style("display", "none");
-            }
-        }
-
-        d3.select("#toggleBrushButton").on("click", () => {
-            isBrushingEnabled = !isBrushingEnabled;
-        });
     }
-}
-    
+  }
   
   window.onload = init;
   
