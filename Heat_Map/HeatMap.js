@@ -76,34 +76,12 @@ function init() {
             g.attr("transform", event.transform);
         }
 
-        // Create a tooltip for hover events
-    var hoverTooltip = d3.select("body")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
-    .style("background-color", "rgba(255, 255, 255, 0.9)")
-    .style("border", "1px solid #000")
-    .style("border-radius", "5px")
-    .style("padding", "10px")
-    .style("position", "absolute");
-
-    // Create a tooltip for clicked state
-    var clickedTooltip = d3.select("body")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip clicked-tooltip")
-    .style("background-color", "rgba(255, 255, 255, 0.9)")
-    .style("border", "1px solid #000")
-    .style("border-radius", "5px")
-    .style("padding", "10px")
-    .style("position", "absolute");
-
         // Function for mouseover event
         var mouseover = function (event, d) {
-            hoverTooltip.style("opacity", 1);
+            Tooltip.style("opacity", 1);
 
-            hoverTooltip.style("left", (event.pageX + 10) + "px");
-            hoverTooltip.style("top", (event.pageY + 10) + "px");
+            Tooltip.style("left", (event.pageX + 10) + "px");
+            Tooltip.style("top", (event.pageY + 10) + "px");
 
             if (selectedState !== d) {
                 d3.select(this)
@@ -112,7 +90,7 @@ function init() {
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
                 
-                hoverTooltip.html(
+                Tooltip.html(
                     `<div class="tooltip-title">${stateName}</div><div>Total: ${total}</div>`
                 );
             }
@@ -124,7 +102,10 @@ function init() {
                 const stateName = d.properties.NAME;
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
-                Tooltip.html(stateName + "<br>" + formattedData);
+                //Tooltip.html(stateName + "<br>" + formattedData);
+                Tooltip.html(
+                    `<div class="tooltip-title">${stateName}</div><div>Total: ${formattedData}</div>`
+                );
             }
         };
 
@@ -206,34 +187,23 @@ function init() {
             svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         }
 
-        // Function for clicked state
-function clicked(event, d) {
-    if (selectedState !== d) {
-        reset();
-        selectedState = d;
-        d3.select(this).style("fill", "red");
-        const stateName = d.properties.NAME;
-        const total = processedTotal[stateName].Total;
-
-        clickedTooltip.style("opacity", 1);
-        clickedTooltip.style("left", "10px");
-        clickedTooltip.style("top", "10px");
-        clickedTooltip.html(
-            `<div class="tooltip-title">${stateName}</div><div>Total: ${total}</div>`
-        );
-
-        const [[x0, y0], [x1, y1]] = path.bounds(d);
-        svg.transition().duration(750).call(
-            zoom.transform,
-            d3.zoomIdentity
-                .translate(width / 2, height / 2)
-                .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-                .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
-        );
-    } else {
-        reset();
-    }
-}
+        function clicked(event, d) {
+            if (selectedState !== d) {
+                reset();
+                selectedState = d;
+                d3.select(this).style("fill", "red");
+                const [[x0, y0], [x1, y1]] = path.bounds(d);
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+                        .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
+                );
+            } else {
+                reset();
+            }
+        }
 
         function formatData(data) {
             const formattedData = [];
