@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #888888; /* Gray background color */
+    background-color: gray;
     margin: 0;
 }
 
@@ -15,15 +15,16 @@ header {
     text-align: center;
     background-color: #007BFF;
     color: white;
-    padding: 20px 0;
+    padding: 40px 0;
 }
 
 h1 {
-    font-size: 28px;
+    font-size: 32px;
+    margin-bottom: 10px;
 }
 
 p {
-    font-size: 16px;
+    font-size: 18px;
 }
 
 main {
@@ -45,17 +46,17 @@ main {
     fill: url(#colorGradient); /* Place the gradient on top */
     stroke: none;
 }
+
 .legend text {
     display: none; /* Hide the legend text */
 }
 
-
 footer {
     text-align: center;
-    padding: 10px;
-    background-color: #f1f1f1;
-    font-size: 14px;
-    border-top: 1px solid #ccc;
+    padding: 20px;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
 }
 
 #chart-container {
