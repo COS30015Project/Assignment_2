@@ -52,17 +52,16 @@ function init() {
         const totalValues = Object.values(processedTotal).map(d => d.Total);
         const maxTotal = d3.max(totalValues);
 
-        // Create a tooltip
-        var Tooltip = d3.select("#chart")
-            .append("div")
-            .style("opacity", 0)
-            .attr("class", "tooltip")
-            .style("background-color", "white")
-            .style("border", "solid")
-            .style("border-width", "2px")
-            .style("border-radius", "5px")
-            .style("padding", "5px")
-            .style("position", "absolute");
+       // Create a tooltip
+    var Tooltip = d3.select("body")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "rgba(255, 255, 255, 0.9)") // Add transparency to the background color
+    .style("border", "1px solid #000") // Add a border
+    .style("border-radius", "5px")
+    .style("padding", "10px") // Increase padding
+    .style("position", "absolute");
 
         // Set up zoom behavior
         const zoom = d3.zoom()
@@ -90,7 +89,10 @@ function init() {
                     .style("opacity", 1);
                 const stateName = d.properties.NAME;
                 const total = processedTotal[stateName].Total;
-                Tooltip.html(`State: ${stateName}<br>Total: ${total}`);
+                
+                Tooltip.html(
+                    `<div class="tooltip-title">${stateName}</div><div>Total: ${total}</div>`
+                );
             }
         };
 
