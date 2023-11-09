@@ -35,7 +35,7 @@ function init() {
         return d["US States"];
       }))
       .range([height - margin.bottom, margin.top])
-      .padding(0);
+      .padding(0.02);
 
     var svgGroup = svg.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -68,7 +68,7 @@ function init() {
       .call(d3.axisLeft(y))
       .selectAll("text")
       .style("text-anchor", "end")
-      .attr("transform", "translate(0, 10) rotate(-45)");
+      .attr("transform", "translate(0, 200) rotate(-45)");
 
     // X-axis label
     svg.append("text")
