@@ -45,7 +45,7 @@ function init() {
         .y(d => y(+d));
 
       // Create the lines with different colors
-      svg.selectAll(".line")
+      const lines = svg.selectAll(".line")
         .data(data)
         .enter()
         .append("path")
@@ -53,11 +53,7 @@ function init() {
         .attr("d", d => line(years.map(year => +d[year])))
         .style("fill", "none")
         .style("stroke", (d) => colorScale(d['Asian Country'])) // Use country name as a unique key
-        .style("stroke-width", 2)
-        .on("click", (event, d) => {
-          // Show details on line click
-          showDetails(d);
-        });
+        .style("stroke-width", 2);
 
       // Add dots for each year with tooltips
       const dots = svg
@@ -89,8 +85,9 @@ function init() {
           d3.select(".tooltip").style("display", "none");
         })
         .on("click", (event, d) => {
-          // Show details on dot click
-          showDetails(d);
+          // Highlight the selected line and dim others
+          lines.style("opacity", 0.2);
+          lines.filter((lineData) => lineData['Asian Country'] === d.name).style("opacity", 1);
         });
 
       // Add axes
@@ -127,15 +124,6 @@ function init() {
       legends
         .append("text")
         .text((d) => d.name);
-    }
-
-    // Function to show details based on data, year, and country
-    function showDetails(details) {
-      const detailsString = `Country: ${details.name}<br>Year: ${details.year}<br>Value: ${details.value}`;
-      const tooltip = d3.select(".tooltip");
-      tooltip.style("left", "10px").style("top", "10px"); // Position the tooltip at the top-left corner
-      tooltip.html(detailsString);
-      tooltip.style("display", "block");
     }
   }
 
