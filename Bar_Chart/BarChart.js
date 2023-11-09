@@ -68,7 +68,7 @@ function init() {
       .call(d3.axisLeft(y))
       .selectAll("text")
       .style("text-anchor", "end")
-      .attr("transform", "rotate(-45)");
+      .attr("transform", "translate(0, 10) rotate(-45)");
 
     // X-axis label
     svg.append("text")
@@ -80,7 +80,7 @@ function init() {
     // Y-axis label
     svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 100) // Adjusted y position
+      .attr("y", 0) // Adjusted y position
       .attr("x", 0 - height / 2)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
