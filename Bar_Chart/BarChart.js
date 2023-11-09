@@ -1,8 +1,8 @@
 function init() {
   var data;
-  var width = 600;
-  var height = 400;
-  var margin = { top: 30, right: 20, bottom: 50, left: 60 };
+  var width = 800; // Increased width
+  var height = 600; // Increased height
+  var margin = { top: 30, right: 40, bottom: 60, left: 70 }; // Increased margins
 
   d3.csv("BarChartDataset.csv").then(function (loadedData) {
     data = loadedData;
@@ -80,7 +80,7 @@ function init() {
     // Y-axis label
     svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0)
+      .attr("y", 5) // Adjusted y position
       .attr("x", 0 - height / 2)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
