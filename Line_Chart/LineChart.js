@@ -1,4 +1,6 @@
 function init() {
+  let xDragEnabled = false; // Flag to track if x-axis drag is enabled
+
   // Load the data from the CSV file
   d3.csv("CurrencyData.csv")
     .then(function(data) {
@@ -122,44 +124,47 @@ function init() {
       .append("text")
       .text((d) => d.name);
 
-    // Add brushing functionality for x-axis and y-axis
-    const xBrush = d3.brushX()
-      .extent([[0, 0], [width, height]])
-      .on("end", brushedX);
+    // Add button to toggle x-axis drag
+    d3.select("body")
+      .append("button")
+      .text("Toggle X-Axis Drag")
+      .on("click", toggleXDrag);
 
-    const yBrush = d3.brushY()
-      .extent([[0, 0], [width, height]])
-      .on("end", brushedY);
+    // Define the drag behavior for the x-axis
+    const xDrag = d3.drag()
+      .on("start", () => xDragEnabled = true)
+      .on("drag", draggedX)
+      .on("end", () => xDragEnabled = false);
 
-    svg.append("g")
-      .attr("class", "brush-x")
-      .call(xBrush);
+    svg.call(xDrag);
 
-    svg.append("g")
-      .attr("class", "brush-y")
-      .call(yBrush);
-
-    function brushedX(event) {
-      if (event.selection) {
-        const [x0, x1] = event.selection.map(x.invert);
-        x.domain([x0, x1]);
+    function draggedX(event) {
+      if (xDragEnabled) {
+        const xValue = x.invert(d3.pointer(event)[0]);
+        const xRange = x.range();
+        const [x0, x1] = d3.bisect(xRange, d3.pointer(event)[0]);
+        x.domain([x.invert(xRange[x0 - 1]), x.invert(xRange[x1])]);
         updateChart();
       }
     }
 
-    function brushedY(event) {
-      if (event.selection) {
-        const [y0, y1] = event.selection.map(y.invert);
-        y.domain([y0, y1]);
-        updateChart();
+    function toggleXDrag() {
+      if (xDragEnabled) {
+        xDrag.on("start", null).on("drag", null).on("end", null);
+        xDragEnabled = false;
+      } else {
+        xDrag.on("start", () => xDragEnabled = true).on("drag", draggedX).on("end", () => xDragEnabled = false);
       }
     }
 
     function updateChart() {
-      // Redraw the dots with the updated scales
+      // Redraw the lines and dots with the updated scales
+      svg.selectAll(".line")
+        .attr("d", d => line(years.map(year => +d[year])));
       dots.selectAll("circle")
         .attr("cx", (d) => x(d.year))
         .attr("cy", (d) => y(d.value));
+      svg.select(".x-axis").call(d3.axisBottom(x).ticks(years.length).tickFormat(d3.format("d")));
     }
   }
 }
