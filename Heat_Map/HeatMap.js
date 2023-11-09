@@ -102,7 +102,7 @@ function init() {
                 const stateName = d.properties.NAME;
                 const data = processedData[stateName];
                 const formattedData = formatData(data);
-                //Tooltip.html(stateName + "<br>" + formattedData);
+                Tooltip.html(stateName + "<br>" + formattedData);
                 Tooltip.html(
                     `<div class="tooltip-title">${stateName}</div><div>Total: ${formattedData}</div>`
                 );

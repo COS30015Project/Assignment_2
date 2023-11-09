@@ -7,13 +7,13 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: gray;
+    background-image: url('back.jpg');
+    background-size: cover;
     margin: 0;
 }
 
 header {
     text-align: center;
-    background-color: #007BFF;
     color: white;
     padding: 40px 0;
 }
@@ -40,15 +40,26 @@ main {
 
 #chart {
     width: 100%;
+    margin-left: 1000px; /* Adjust the margin as needed to move the map to the right */
 }
 
 .legend rect {
-    fill: url(#colorGradient); /* Place the gradient on top */
+    fill: url(#colorGradient);
     stroke: none;
 }
 
+.legend {
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+}
+
 .legend text {
-    display: none; /* Hide the legend text */
+    display: block;
+    font-size: 14px; /* Adjust font size as needed */
+    color: #000; /* Text color */
 }
 
 footer {
@@ -65,18 +76,13 @@ footer {
     align-items: center;
 }
 
-#chart {
-    width: 100%;
-}
-
 .tooltip {
-    font-size: 16px; /* Customize the tooltip font size */
-    max-width: 200px; /* Set a maximum width for the tooltip */
+    font-size: 16px;
+    max-width: 200px;
 }
 
 .tooltip-title {
-    font-size: 20px; /* Customize the state name font size */
+    font-size: 20px;
     font-weight: bold;
     margin-bottom: 5px;
 }
-
