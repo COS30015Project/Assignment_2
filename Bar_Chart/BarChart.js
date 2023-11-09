@@ -72,7 +72,7 @@ function init() {
 
     // X-axis label
     svg.append("text")
-      .attr("x", width / 2)
+      .attr("x", width / 4)
       .attr("y", height - 10) // Adjusted y position
       .style("text-anchor", "middle")
       .text("Value");
