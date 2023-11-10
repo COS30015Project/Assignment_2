@@ -1,4 +1,3 @@
-
 function init() {
   let data; // Define a global variable to hold the data
 
@@ -16,8 +15,8 @@ function init() {
   function visualizeData(data) {
       // Define the dimensions and margins for the SVG
       const margin = { top: 30, right: 30, bottom: 80, left: 60 };
-      const width = 800 - margin.left - margin.right;
-      const height = 560 - margin.top - margin.bottom;
+      const width = 1000 - margin.left - margin.right; // Increase the width
+      const height = 600 - margin.top - margin.bottom; // Increase the height
 
       // Create an SVG element
       const svg = d3.select("#chart")
@@ -69,6 +68,7 @@ function init() {
       // Add axes
       svg.append("g")
           .attr("class", "x-axis")
+          .attr("transform", `translate(0, ${height})`) // Move x-axis to the bottom
           .call(d3.axisBottom(x));
 
       svg.append("g")
