@@ -100,8 +100,8 @@ function init() {
       svg.append("g")
         .call(d3.axisLeft(y));
 
-      // Add legend
-const legendContainer = d3.select("#legend-container"); // Use the updated ID
+      // Add legend to the legend container
+const legendContainer = d3.select(".legend-container");
 
 const legendItems = data.map((d) => {
     return {
