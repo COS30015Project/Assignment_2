@@ -11,10 +11,8 @@
         /* Add CSS to style the legend container */
         .legend-container {
             display: flex;
+            justify-content: center;
             flex-wrap: wrap; /* Allow legends to wrap to the next line */
-            justify-content: center; /* Center legends horizontally */
-            align-items: center; /* Center legends vertically */
-            padding: 10px; /* Add padding for better spacing */
         }
 
         .legend-item {
@@ -35,12 +33,6 @@
             background-image: url('back.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
             background-size: cover; /* Cover the entire page */
             color: white; /* Set text color to white */
-            display: flex; /* Enable flexbox layout */
-            flex-wrap: wrap; /* Allow content to wrap to the next line */
-            justify-content: space-around; /* Space elements around the center */
-            align-items: center; /* Center items vertically */
-            height: 100vh; /* Set the height of the body to 100% of the viewport height */
-            margin: 0; /* Remove default margin */
         }
 
         .axis path,
@@ -64,10 +56,6 @@
     <h1 class="chart-title">Line Graph: Currency of Asian countries compared to USA</h1>
     <div id="chart"></div>
 
-    <!-- Add a container for the legend to the right of the chart -->
-    <div class="legend-container">
-        <!-- Legend will be placed here dynamically -->
-    </div>
     <!-- Add a container for the legend -->
     <div class="legend-container">
         <!-- Legend will be placed here dynamically -->
