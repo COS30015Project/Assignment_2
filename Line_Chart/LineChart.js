@@ -101,30 +101,30 @@ function init() {
         .call(d3.axisLeft(y));
 
       // Add legend
-const legendContainer = d3.select("#legend-container"); // Use the updated ID
+      const legendContainer = d3.select("body").select(".legend-container");
 
-const legendItems = data.map((d) => {
-    return {
-        color: colorScale(d['Asian Country']),
-        name: d['Asian Country'],
-    };
-});
+      const legendItems = data.map((d) => {
+        return {
+          color: colorScale(d['Asian Country']),
+          name: d['Asian Country'],
+        };
+      });
 
-const legends = legendContainer
-    .selectAll(".legend-item")
-    .data(legendItems)
-    .enter()
-    .append("div")
-    .attr("class", "legend-item");
+      const legends = legendContainer
+        .selectAll(".legend-item")
+        .data(legendItems)
+        .enter()
+        .append("div")
+        .attr("class", "legend-item");
 
-legends
-    .append("div")
-    .style("background-color", (d) => d.color)
-    .attr("class", "legend-color");
+      legends
+        .append("div")
+        .style("background-color", (d) => d.color)
+        .attr("class", "legend-color");
 
-legends
-    .append("text")
-    .text((d) => d.name);
+      legends
+        .append("text")
+        .text((d) => d.name);
 
       // Handle country selection
       d3.select("#country-select")
