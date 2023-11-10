@@ -11,8 +11,9 @@
         /* Add CSS to style the legend container */
         .legend-container {
             display: flex;
-            justify-content: center;
             flex-wrap: wrap; /* Allow legends to wrap to the next line */
+            justify-content: center;
+            margin-top: 20px; /* Add margin at the top for spacing */
         }
 
         .legend-item {
@@ -33,6 +34,9 @@
             background-image: url('back.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
             background-size: cover; /* Cover the entire page */
             color: white; /* Set text color to white */
+            display: flex;
+            flex-direction: column; /* Stack elements vertically */
+            align-items: center; /* Center elements horizontally */
         }
 
         .axis path,
@@ -49,6 +53,12 @@
         .tooltip {
             color: black; /* Set tooltip text color to black */
         }
+
+        .legend-title {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -58,6 +68,7 @@
 
     <!-- Add a container for the legend -->
     <div class="legend-container">
+        <div class="legend-title">Legend</div>
         <!-- Legend will be placed here dynamically -->
     </div>
 
