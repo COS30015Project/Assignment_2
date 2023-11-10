@@ -11,14 +11,13 @@
         /* Add CSS to style the legend container */
         .legend-container {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap; /* Allow legends to wrap to the next line */
+            flex-direction: column; /* Display legend items in a column */
+            align-items: center; /* Center the legend items */
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            margin-right: 20px;
             margin-bottom: 10px; /* Add margin at the bottom for spacing */
         }
 
@@ -33,6 +32,13 @@
             background-image: url('back.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
             background-size: cover; /* Cover the entire page */
             color: white; /* Set text color to white */
+            display: flex; /* Set display to flex for layout */
+            flex-direction: column; /* Display elements in a column */
+            align-items: center; /* Center elements horizontally */
+        }
+
+        #chart {
+            margin-bottom: 20px; /* Add margin at the bottom of the chart */
         }
 
         .axis path,
@@ -49,6 +55,10 @@
         .tooltip {
             color: black; /* Set tooltip text color to black */
         }
+
+        .chart-title {
+            text-align: center; /* Center-align the chart title */
+        }
     </style>
 </head>
 
@@ -56,10 +66,35 @@
     <h1 class="chart-title">Line Graph: Currency of Asian countries compared to USA</h1>
     <div id="chart"></div>
 
-    <!-- Add a container for the legend -->
-    <div class="legend-container">
+    <!-- Add a container for the legend to the right of the chart -->
+    <div class="legend-container" id="legend-container">
         <!-- Legend will be placed here dynamically -->
     </div>
+
+    <select id="country-select">
+        <option value="Afghanistan">Afghanistan</option>
+        <option value="Sri Lanka">Sri Lanka</option>
+        <option value="Turkmenistan">Turkmenistan</option>
+        <option value="Azerbaijan">Azerbaijan</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Pakistan">Pakistan</option>
+        <option value="Tajikistan">Tajikistan</option>
+        <option value="Hong Kong, China">Hong Kong, China</option>
+        <option value="Korea">Korea</option>
+        <option value="Bangladesh">Bangladesh</option>
+        <option value="India">India</option>
+        <option value="Nepal">Nepal</option>
+        <option value="Brunei Darussalam">Brunei Darussalam</option>
+        <option value="Cambodia">Cambodia</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Malaysia">Malaysia</option>
+        <option value="Philippines">Philippines</option>
+        <option value="Singapore">Singapore</option>
+        <option value="Thailand">Thailand</option>
+        <option value="Viet Nam">Viet Nam</option>
+        <option value="Japan">Japan</option>
+    </select>
+    
 </body>
 
 </html>
