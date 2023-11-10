@@ -13,7 +13,7 @@ function init() {
       // Define the dimensions and margins for the SVG
       const margin = { top: 30, right: 30, bottom: 80, left: 60 }; // Increased margin for legend
       const width = 800 - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
+      const height = 560 - margin.top - margin.bottom;
   
       // Create an SVG element
       const svg = d3.select("#chart")
