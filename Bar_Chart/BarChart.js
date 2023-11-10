@@ -1,108 +1,106 @@
 function init() {
-  var data;
-  var width = 1000; // Adjusted width
-  var height = 1200; // Adjusted height
-  var margin = { top: 30, right: 40, bottom: 70, left: 70 }; // Adjusted margins
+  let data; // Define a global variable to hold the data
 
-  d3.csv("BarChartDataset.csv").then(function (loadedData) {
-    data = loadedData;
-
-    var categories = Object.keys(data[0]).slice(1);
-
-    // Calculate the total for each US state
-    data.forEach(function (d) {
-      d.Total = d3.sum(categories, function (category) {
-        return d[category];
-      });
+  // Load the data from the CSV file
+  d3.csv("BarChartDataset.csv")
+    .then(function(csvData) {
+      data = csvData; // Store the loaded data in the global variable
+      visualizeData(data);
+    })
+    .catch(function(error) {
+      console.error("Error loading data:", error);
     });
 
-    var svg = d3
-      .select("#chart")
+  // Function to visualize the data
+  function visualizeData(data) {
+    // Define the dimensions and margins for the SVG
+    const margin = { top: 30, right: 30, bottom: 80, left: 60 };
+    const width = 800 - margin.left - margin.right;
+    const height = 560 - margin.top - margin.bottom;
+
+    // Create an SVG element
+    const svg = d3.select("#chart")
       .append("svg")
-      .attr("width", width)
-      .attr("height", height);
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    var x = d3
-      .scaleLinear()
-      .domain([0, d3.max(data, function (d) {
-        return d.Total;
-      })])
-      .range([margin.left, width - margin.right]);
+    // Extract US state names from the dataset
+    const states = data.map(d => d['US States']);
 
-    var y = d3
-      .scaleBand()
-      .domain(data.map(function (d) {
-        return d["US States"];
-      }))
-      .range([height - margin.bottom, margin.top])
-      .padding(0.02);
+    // Extract country names from the headers
+    const countries = data.columns.slice(1);
 
-    var svgGroup = svg.append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // Define color scale
+    const colorScale = d3.scaleOrdinal()
+      .domain(countries)
+      .range(d3.schemeCategory10);
 
-    svgGroup.selectAll(".bar")
+    // Define x and y scales
+    const x = d3.scaleBand()
+      .domain(states)
+      .range([0, width])
+      .padding(0.1);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d3.max(countries, c => +d[c]))])
+      .range([height, 0]);
+
+    // Create bars
+    svg.selectAll(".bar-group")
       .data(data)
+      .enter()
+      .append("g")
+      .attr("class", "bar-group")
+      .attr("transform", d => `translate(${x(d['US States'])}, 0)`)
+      .selectAll("rect")
+      .data(d => countries.map(c => ({ country: c, value: +d[c] })))
       .enter()
       .append("rect")
       .attr("class", "bar")
-      .attr("x", x(0))
-      .attr("y", function (d) {
-        return y(d["US States"]);
-      })
-      .attr("width", function (d) {
-        return x(d.Total) - x(0);
-      })
-      .attr("height", y.bandwidth())
-      .on("mouseover", handleMouseOver)
-      .on("mouseout", handleMouseOut);
+      .attr("x", d => x.bandwidth() / 4 * countries.indexOf(d.country))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth() / 2)
+      .attr("height", d => height - y(d.value))
+      .attr("fill", d => colorScale(d.country));
 
-    // Add x-axis to the SVG element
-    svgGroup.append("g")
+    // Add axes
+    svg.append("g")
       .attr("class", "x-axis")
-      .attr("transform", "translate(0," + (height - margin.bottom) + ")")
-      .call(d3.axisBottom(x).ticks(5).tickSizeOuter(0));
-
-    // Add rotated y-axis to the SVG element
-    svgGroup.append("g")
-      .attr("class", "y-axis")
-      .call(d3.axisLeft(y))
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(x))
       .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("transform", " rotate(-45)");
+      .attr("transform", "rotate(-45)")
+      .style("text-anchor", "end");
 
-    // X-axis label
-    svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", height - 10) // Adjusted y position
-      .style("text-anchor", "middle")
-      .text("Value");
+    svg.append("g")
+      .attr("class", "y-axis")
+      .call(d3.axisLeft(y));
 
-    // Y-axis label
-    svg.append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 0) // Adjusted y position
-      .attr("x", 0 - height / 2)
-      .attr("dy", "1em")
-      .style("text-anchor", "middle")
-      .text("US States");
+    // Add legend
+    const legend = svg.append("g")
+      .attr("class", "legend")
+      .attr("transform", `translate(${width + 20}, 0)`);
 
-    function handleMouseOver(event, d) {
-      // Show details when hovering over the bar
-      d3.select(this).style("fill", "orange");
-      var details = "Total: " + d.Total;
-      tooltip.html(details).style("opacity", 1);
-    }
+    const legendItems = legend.selectAll(".legend-item")
+      .data(countries)
+      .enter()
+      .append("g")
+      .attr("class", "legend-item")
+      .attr("transform", (d, i) => `translate(0, ${i * 20})`);
 
-    function handleMouseOut(event, d) {
-      // Reset the bar color and hide details when not hovering
-      d3.select(this).style("fill", "steelblue");
-      tooltip.style("opacity", 0);
-    }
+    legendItems.append("rect")
+      .attr("width", 15)
+      .attr("height", 15)
+      .attr("fill", colorScale);
 
-    var tooltip = d3.select("body").append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-  });
+    legendItems.append("text")
+      .text(d => d)
+      .attr("x", 20)
+      .attr("y", 10);
+
+  }
 }
 
 window.onload = init;
