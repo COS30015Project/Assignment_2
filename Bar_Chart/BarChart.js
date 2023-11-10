@@ -1,3 +1,4 @@
+
 function init() {
   let data; // Define a global variable to hold the data
 
@@ -38,14 +39,14 @@ function init() {
           .range(d3.schemeCategory10);
 
       // Define x and y scales
-      const x = d3.scaleBand()
-          .domain(states)
-          .range([0, width])
-          .padding(0.1);
-
-      const y = d3.scaleLinear()
+      const x = d3.scaleLinear()
           .domain([0, d3.max(data, d => d3.sum(countries, c => +d[c]))])
-          .range([height, 0]);
+          .range([0, width]);
+
+      const y = d3.scaleBand()
+          .domain(states)
+          .range([height, 0])
+          .padding(0.1);
 
       // Create bars
       svg.selectAll(".bar-group")
@@ -53,31 +54,26 @@ function init() {
           .enter()
           .append("g")
           .attr("class", "bar-group")
-          .attr("transform", d => `translate(${x(d['US States'])}, 0)`)
+          .attr("transform", d => `translate(0, ${y(d['US States'])})`)
           .selectAll("rect")
           .data(d => countries.map(c => ({ country: c, value: +d[c] })))
           .enter()
           .append("rect")
           .attr("class", "bar")
-          .attr("x", d => x.bandwidth() / 4 * countries.indexOf(d.country))
-          .attr("y", d => y(d.value))
-          .attr("width", x.bandwidth() / 2)
-          .attr("height", d => height - y(d.value))
+          .attr("x", 0)
+          .attr("y", d => y.bandwidth() / 4 * countries.indexOf(d.country))
+          .attr("width", d => x(d.value))
+          .attr("height", y.bandwidth() / 2)
           .attr("fill", d => colorScale(d.country));
 
       // Add axes
       svg.append("g")
           .attr("class", "x-axis")
-          .attr("transform", `translate(0, ${height})`)
-          .call(d3.axisBottom(x))
-          .selectAll("text")
-          .attr("transform", "rotate(-45)")
-          .style("text-anchor", "end");
+          .call(d3.axisBottom(x));
 
       svg.append("g")
           .attr("class", "y-axis")
-          .call(d3.axisLeft(y)
-              .tickFormat(d3.format("d"))); // Format y-axis labels as integers
+          .call(d3.axisLeft(y));
   }
 }
 
