@@ -1,6 +1,6 @@
 function init()
 {
-    d3.csv("BarChart.csv")
+    d3.csv("BarChartDataset.csv")
     .then(function (data) {
         visualizeData(data);
     })
