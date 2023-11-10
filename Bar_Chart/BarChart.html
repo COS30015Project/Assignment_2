@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -7,31 +7,47 @@
     <title>Interactive Bar Chart</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="BarChart.js"></script>
-    
     <style>
         body {
-            font-family: 'Arial', sans-serif;
             background-color: #f0f0f0;
-            color: #333;
-            margin: 20px;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         #chart {
             width: 80%;
-            margin: 20px auto;
+            max-width: 800px;
+            height: 400px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .bar {
-            fill-opacity: 0.8;
+            fill: steelblue;
         }
 
         .bar:hover {
-            fill-opacity: 1;
+            fill: darkblue;
+        }
+
+        .axis text {
+            font-size: 12px;
+        }
+
+        .axis .tick line {
+            display: none;
         }
     </style>
 </head>
 
 <body>
+    <h1>Interactive Bar Chart: Total Values by Country</h1>
     <div id="chart"></div>
 
 </body>
