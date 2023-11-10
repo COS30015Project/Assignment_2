@@ -101,7 +101,7 @@ function init() {
         .call(d3.axisLeft(y));
 
       // Add legend
-      const legendContainer = d3.select(".legend-container");
+      const legendContainer = d3.select("body").select(".legend-container");
 
       const legendItems = data.map((d) => {
         return {
