@@ -4,18 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Bar Chart</title>
+    <title>Interactive Line Chart</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="BarChart.js"></script>
+    <script src="LineChart.js"></script>
     <style>
-        /* Add CSS to style the chart container */
-        #chart {
-            margin: 20px;
+        /* Add CSS to style the legend container */
+        .legend-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Allow legends to wrap to the next line */
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 10px; /* Add margin at the bottom for spacing */
+        }
+
+        .legend-item div {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
         }
 
         /* Add background image */
         body {
-            background-image: url('your-background-image.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
+            background-image: url('back.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
             background-size: cover; /* Cover the entire page */
             color: white; /* Set text color to white */
         }
@@ -30,14 +45,46 @@
         .axis text {
             fill: white !important; /* Set axis labels to white */
         }
+
+        .tooltip {
+            color: black; /* Set tooltip text color to black */
+        }
     </style>
 </head>
 
 <body>
-    <h1 class="chart-title">Interactive Bar Chart: Population by Country in US States</h1>
+    <h1 class="chart-title">Line Graph: Currency of Asian countries compared to USA</h1>
     <div id="chart"></div>
 
-    <script src="BarChart.js"></script>
+    <!-- Add a container for the legend -->
+    <div class="legend-container">
+        <!-- Legend will be placed here dynamically -->
+    </div>
+
+    <select id="country-select">
+        <option value="Afghanistan">Afghanistan</option>
+        <option value="Sri Lanka">Sri Lanka</option>
+        <option value="Turkmenistan">Turkmenistan</option>
+        <option value="Azerbaijan">Azerbaijan</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Pakistan">Pakistan</option>
+        <option value="Tajikistan">Tajikistan</option>
+        <option value="Hong Kong, China">Hong Kong, China</option>
+        <option value="Korea">Korea</option>
+        <option value="Bangladesh">Bangladesh</option>
+        <option value="India">India</option>
+        <option value="Nepal">Nepal</option>
+        <option value="Brunei Darussalam">Brunei Darussalam</option>
+        <option value="Cambodia">Cambodia</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Malaysia">Malaysia</option>
+        <option value="Philippines">Philippines</option>
+        <option value="Singapore">Singapore</option>
+        <option value="Thailand">Thailand</option>
+        <option value="Viet Nam">Viet Nam</option>
+        <option value="Japan">Japan</option>
+    </select>
+    
 </body>
 
 </html>
