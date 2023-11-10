@@ -8,21 +8,33 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="LineChart.js"></script>
     <style>
-        /* Add CSS to style the legend container */
+       .chart-container {
+            position: relative;
+            display: inline-block;
+            width: 60%;
+            height: 600px;
+            margin-right: 10%;
+        }
+
         .legend-container {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30%;
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap; /* Allow legends to wrap to the next line */
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-around;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            margin-right: 20px;
-            margin-bottom: 10px; /* Add margin at the bottom for spacing */
+            margin-bottom: 10px;
         }
 
-        .legend-item div {
+        .legend-color {
             width: 20px;
             height: 20px;
             margin-right: 5px;
