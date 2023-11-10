@@ -11,14 +11,14 @@
         /* Add CSS to style the legend container */
         .legend-container {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap; /* Allow legends to wrap to the next line */
+            flex-direction: column; /* Display legends in a column */
+            align-items: center; /* Center the legends vertically */
+            margin-left: 20px; /* Add margin to the left to separate from the chart */
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            margin-right: 20px;
             margin-bottom: 10px; /* Add margin at the bottom for spacing */
         }
 
@@ -33,6 +33,19 @@
             background-image: url('back.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
             background-size: cover; /* Cover the entire page */
             color: white; /* Set text color to white */
+            display: flex; /* Make the body a flex container */
+        }
+
+        .chart-container {
+            flex: 1; /* Expand to fill available space */
+        }
+
+        .chart-title {
+            text-align: center; /* Center the chart title */
+        }
+
+        .chart {
+            margin: 20px auto; /* Center the chart horizontally */
         }
 
         .axis path,
@@ -49,10 +62,16 @@
         .tooltip {
             color: black; /* Set tooltip text color to black */
         }
+
+        /* Style for the country selection dropdown */
+        #country-select {
+            margin: 20px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="chart-container">
     <h1 class="chart-title">Line Graph: Currency of Asian countries compared to USA</h1>
     <div id="chart"></div>
 
@@ -84,7 +103,7 @@
         <option value="Viet Nam">Viet Nam</option>
         <option value="Japan">Japan</option>
     </select>
-    
+
 </body>
 
 </html>
