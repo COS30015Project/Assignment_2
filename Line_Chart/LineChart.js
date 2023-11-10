@@ -101,7 +101,9 @@ function init() {
         .call(d3.axisLeft(y));
 
       // Add legend
-      const legendContainer = d3.select("body").select(".legend-container");
+      const legendContainer = svg.append("g")
+  .attr("class", "legend-container")
+  .attr("transform", `translate(${width + 20}, 0)`);
 
       const legendItems = data.map((d) => {
         return {
@@ -110,21 +112,26 @@ function init() {
         };
       });
 
-      const legends = legendContainer
-        .selectAll(".legend-item")
-        .data(legendItems)
-        .enter()
-        .append("div")
-        .attr("class", "legend-item");
+   // Add legend
+const legends = legendContainer
+.selectAll(".legend-item")
+.data(legendItems)
+.enter()
+.append("g")
+.attr("class", "legend-item")
+.attr("transform", (d, i) => `translate(0, ${i * 25})`); // Adjust the spacing between legend items
 
-      legends
-        .append("div")
-        .style("background-color", (d) => d.color)
-        .attr("class", "legend-color");
+legends
+.append("rect")
+.style("fill", (d) => d.color)
+.attr("width", 20)
+.attr("height", 20);
 
-      legends
-        .append("text")
-        .text((d) => d.name);
+legends
+.append("text")
+.text((d) => d.name)
+.attr("x", 30)
+.attr("y", 10);
 
       // Handle country selection
       d3.select("#country-select")
@@ -165,7 +172,7 @@ function init() {
           .attr("r", 4)
           .style("fill", (d) => colorScale(d.name))
           .on("mouseover", (event, d) => {
-            // Show tooltip on mouseover
+            // Show tooltip on mouseover  
             const tooltip = d3.select("body").append("div")
               .attr("class", "tooltip")
               .style("position", "absolute")
