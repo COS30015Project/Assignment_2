@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -7,34 +7,26 @@
     <title>Interactive Bar Chart</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="BarChart.js"></script>
+
     <style>
-        /* Add CSS to style the chart container */
-        #chart {
-            margin: 20px;
-        }
-
-        /* Add background image */
         body {
-            background-image: url('background.jpg'); /* Replace 'your-background-image.jpg' with the image URL */
-            background-size: cover; /* Cover the entire page */
-            color: white; /* Set text color to white */
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
         }
 
-        .axis path,
-        .axis line {
-            fill: none;
-            shape-rendering: crispEdges;
-            stroke: white; /* Set axis lines to white */
+        #chart {
+            width: 800px;
+            margin: 20px auto;
         }
 
-        .axis text {
-            fill: white !important; /* Set axis labels to white */
+        .bar {
+            transition: fill 0.3s ease-in-out;
         }
     </style>
 </head>
 
 <body>
-    <h1 class="chart-title">Interactive Bar Chart: Population by Country in US States</h1>
+    <h1>Interactive Bar Chart</h1>
     <div id="chart"></div>
 
 </body>
