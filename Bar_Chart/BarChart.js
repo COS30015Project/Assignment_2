@@ -61,7 +61,7 @@ function init() {
             tooltip.transition()
                 .duration(200)
                 .style("opacity", 0.9);
-            tooltip.html(`${d.data['Country Name']}<br>${d3.format(",")(d[1] - d[0])}`)
+            tooltip.html(`Male: ${d.data['Male']}<br>Female: ${d.data['Female']}`)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY - 28) + "px");
         }
