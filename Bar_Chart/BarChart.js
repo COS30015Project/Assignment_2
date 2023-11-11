@@ -47,26 +47,24 @@ function init() {
             .range([height, 0])
             .padding(0.1);
 
-        // Define color scale for states
-        const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+        // Define color scale for US states
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
 
         // Create bars
         svg.selectAll(".bar")
             .data(countryData)
             .enter()
             .append("g")
-            .attr("class", "bar-group")
+            .attr("class", "bar")
             .selectAll("rect")
             .data(d => d.states)
             .enter()
             .append("rect")
-            .attr("class", "bar")
-            .attr("x", 0)
-            .attr("y", d => y(d.state))
+            .attr("x", d => 0)
+            .attr("y", d => y(d.country))
             .attr("width", d => x(d.value))
             .attr("height", y.bandwidth())
-            .style("fill", (d, i) => colorScale(i)) // Assign color based on the index
-
+            .attr("fill", (d, i) => color(i))
             .on("mouseover", function (event, d) {
                 // Show tooltip on mouseover
                 d3.select(this).style("fill", "darkblue");
@@ -74,7 +72,7 @@ function init() {
             })
             .on("mouseout", function (event, d) {
                 // Remove tooltip on mouseout
-                d3.select(this).style("fill", colorScale(d.states.indexOf(d)));
+                d3.select(this).style("fill", color(d.index));
                 hideTooltip();
             });
 
@@ -95,7 +93,7 @@ function init() {
                 .style("position", "absolute")
                 .style("background-color", "white")
                 .style("padding", "8px")
-                .html(`State: ${data.state}<br>Value: ${data.value.toLocaleString()}`);
+                .html(`Country: ${data.country}<br>State: ${data.state}<br>Value: ${data.value.toLocaleString()}`);
 
             tooltip.style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 30) + "px");
