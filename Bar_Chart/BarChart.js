@@ -45,7 +45,7 @@ function init() {
         .attr('class', 'bar')
         .attr('x', d => (d.gender === 'Male') ? 0 : xScale(d.value)) // Adjust x position
         .attr('y', d => yScale(countries[d.index]))
-        .attr('width', d => (d.gender === 'Male') ? xScale(d.value) : xScale(0)) // Adjust width
+        .attr('width', d => xScale(d.value))
         .attr('height', yScale.bandwidth())
         .attr('fill', d => colorScale(d.gender));
   
