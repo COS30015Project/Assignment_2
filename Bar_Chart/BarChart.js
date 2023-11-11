@@ -44,7 +44,18 @@ function init() {
         .attr('y', d => yScale(d['Total']))
         .attr('width', xScale.bandwidth())
         .attr('height', d => height - yScale(d['Total']))
-        .attr('fill', (d, i) => colorScale(d['Gender'])); // Use color scale here
+        .attr('fill', (d, i) => colorScale('Male')); // Use 'Male' color for maleValues
+  
+      svg.selectAll('.bar')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('x', d => xScale(d['Country Name']))
+        .attr('y', d => yScale(d['Total'] - d['Male'])) // Adjust y position for femaleValues
+        .attr('width', xScale.bandwidth())
+        .attr('height', d => height - yScale(d['Total']))
+        .attr('fill', (d, i) => colorScale('Female')); // Use 'Female' color for femaleValues
   
       // Create X axis
       svg.append('g')
