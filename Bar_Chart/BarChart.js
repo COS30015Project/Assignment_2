@@ -52,11 +52,20 @@ function visualizeData(data) {
         .attr("transform", d => `translate(0, ${y(d.country)})`);
 
     // Create total bars
-    countryGroups.append("rect")
+    const bars = countryGroups.append("rect")
         .attr("class", "bar-total")
         .attr("x", 0)
         .attr("width", d => x(d.value))
         .attr("height", y.bandwidth());
+
+    // Add text inside each bar
+    countryGroups.append("text")
+        .attr("class", "bar-label")
+        .attr("x", d => x(d.value) / 2)
+        .attr("y", y.bandwidth() / 2)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", "middle")
+        .text(d => d.value.toLocaleString());
 
     // Create male bars
     countryGroups.append("rect")
