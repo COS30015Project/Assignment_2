@@ -58,10 +58,13 @@ function init() {
             .style("opacity", 0);
 
         function showTooltip(event, d) {
+            const gender = colorScale.domain()[d.index];
+            const value = d.data[gender];
+
             tooltip.transition()
                 .duration(200)
                 .style("opacity", 0.9);
-            tooltip.html(`Male: ${d.data['Male']}<br>Female: ${d.data['Female']}`)
+            tooltip.html(`${gender}: ${d3.format(",")(value)}`)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY - 28) + "px");
         }
