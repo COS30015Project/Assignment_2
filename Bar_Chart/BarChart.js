@@ -23,14 +23,14 @@ function init() {
         .attr('transform', `translate(${margin.left},${margin.top})`);
   
       // Create scales
-      const xScale = d3.scaleBand()
-        .domain(countries)
-        .range([0, width])
-        .padding(0.1);
-  
-      const yScale = d3.scaleLinear()
+      const xScale = d3.scaleLinear()
         .domain([0, d3.max(values, d => d.value)])
-        .range([height, 0]);
+        .range([0, width]);
+  
+      const yScale = d3.scaleBand()
+        .domain(countries)
+        .range([0, height])
+        .padding(0.1);
   
       // Create color scale
       const colorScale = d3.scaleOrdinal()
@@ -43,16 +43,16 @@ function init() {
         .enter()
         .append('rect')
         .attr('class', 'bar')
-        .attr('x', d => xScale(countries[d.index]))
-        .attr('y', d => yScale(d.value))
-        .attr('width', xScale.bandwidth())
-        .attr('height', d => height - yScale(d.value))
+        .attr('x', 0) // Bar starts from the left edge
+        .attr('y', d => yScale(countries[d.index]))
+        .attr('width', d => xScale(d.value))
+        .attr('height', yScale.bandwidth())
         .attr('fill', d => colorScale(d.gender)); // Use color scale here
   
       // Create X axis
       svg.append('g')
-        .attr('transform', `translate(0,${height})`)
-        .call(d3.axisBottom(xScale));
+        .call(d3.axisBottom(xScale))
+        .attr('transform', `translate(0,${height})`);
   
       // Create Y axis
       svg.append('g')
