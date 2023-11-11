@@ -16,8 +16,8 @@ function init() {
 function visualizeData(data) {
     // Extract country names and their corresponding male, female, and total values
     const countryNames = data.map(d => d['Country Name']);
-    const maleData = data.map(d => ({ country: d['Country Name'], value: +d['Male'] }));
-    const femaleData = data.map(d => ({ country: d['Country Name'], value: +d['Female'] }));
+    const maleData = data.map(d => ({ country: d['Country Name'], value: +d['Male'], gender: 'Male' }));
+    const femaleData = data.map(d => ({ country: d['Country Name'], value: +d['Female'], gender: 'Female' }));
     const totalData = data.map(d => ({ country: d['Country Name'], value: +d['Total'] }));
 
     // Define the dimensions and margins for the SVG
@@ -33,16 +33,6 @@ function visualizeData(data) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Define x and y scales
-    const x = d3.scaleLinear()
-        .domain([0, d3.max(totalData, d => d.value)])
-        .range([0, width]);
-
-    const y = d3.scaleBand()
-        .domain(countryNames)
-        .range([height, 0])
-        .padding(0.1);
-
     // Create a group for each country
     const countryGroups = svg.selectAll(".country-group")
         .data(totalData)
@@ -51,53 +41,31 @@ function visualizeData(data) {
         .attr("class", "country-group")
         .attr("transform", d => `translate(0, ${y(d.country)})`);
 
-    // Create total bars
-    const bars = countryGroups.append("rect")
-        .attr("class", "bar-total")
-        .attr("x", 0)
-        .attr("width", d => x(d.value))
-        .attr("height", y.bandwidth());
+    // Define a color scale for male and female
+    const colorScale = d3.scaleOrdinal()
+        .domain(['Male', 'Female'])
+        .range(['steelblue', 'pink']);
 
-    // Add text inside each bar
-    countryGroups.append("text")
-        .attr("class", "bar-label")
-        .attr("x", d => x(d.value) / 2)
-        .attr("y", y.bandwidth() / 2)
-        .attr("dy", "0.35em")
-        .attr("text-anchor", "middle")
-        .text(d => d.value.toLocaleString());
-
-    // Create male bars
-    countryGroups.append("rect")
-        .attr("class", "bar-male")
-        .attr("x", 0)
-        .attr("width", d => x(d.value))
+    // Create stacked bars
+    countryGroups.selectAll(".bar-segment")
+        .data(d => [maleData.find(item => item.country === d.country), femaleData.find(item => item.country === d.country)])
+        .enter()
+        .append("rect")
+        .attr("class", "bar-segment")
+        .attr("x", d => x(d[0].value))
+        .attr("width", d => x(d[1].value) - x(d[0].value))
+        .attr("y", 0)
         .attr("height", y.bandwidth())
+        .attr("fill", (d, i) => colorScale(i === 0 ? 'Male' : 'Female'))
         .on("mouseover", function (event, d) {
             // Show tooltip on mouseover
-            d3.select(this).style("fill", "darkblue");
-            showTooltip(d, 'Male');
+            d3.select(this).style("opacity", 0.7);
+            showTooltip(d[0], 'Male');
+            showTooltip(d[1], 'Female');
         })
         .on("mouseout", function () {
             // Remove tooltip on mouseout
-            d3.select(this).style("fill", "steelblue");
-            hideTooltip();
-        });
-
-    // Create female bars
-    countryGroups.append("rect")
-        .attr("class", "bar-female")
-        .attr("x", d => x(d.value))
-        .attr("width", d => width - x(d.value))
-        .attr("height", y.bandwidth())
-        .on("mouseover", function (event, d) {
-            // Show tooltip on mouseover
-            d3.select(this).style("fill", "red");
-            showTooltip(d, 'Female');
-        })
-        .on("mouseout", function () {
-            // Remove tooltip on mouseout
-            d3.select(this).style("fill", "pink");
+            d3.select(this).style("opacity", 1);
             hideTooltip();
         });
 
