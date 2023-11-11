@@ -1,14 +1,11 @@
 function init() {
-    // Specify the CSV files for each country
-    const files = ['BangladeshSex.csv', 'ChinaSex.csv'];
+    // Specify the CSV file
+    const file = 'BarChartDataset.csv';
 
-    // Load data from multiple CSV files
-    Promise.all(files.map(file => d3.csv(file)))
-        .then(function (dataArray) {
-            // Visualize data for each file
-            dataArray.forEach(function (data, index) {
-                visualizeData(data, index);
-            });
+    // Load data from the CSV file
+    d3.csv(file)
+        .then(function (data) {
+            visualizeData(data);
         })
         .catch(function (error) {
             console.error("Error loading data:", error);
@@ -16,17 +13,12 @@ function init() {
 }
 
 // Function to visualize the data
-function visualizeData(data, index) {
-    // Extract country names and their corresponding male and female values
-    const countries = data.columns.slice(1);
-    const maleData = data.map(d => ({ country: d[''], value: +d['Male'] }));
-    const femaleData = data.map(d => ({ country: d[''], value: +d['Female'] }));
-
-    // Calculate total values for each country
-    const totalData = data.map(d => ({
-        country: d[''],
-        total: +d['Male'] + +d['Female'],
-    }));
+function visualizeData(data) {
+    // Extract country names and their corresponding male, female, and total values
+    const countryNames = data.map(d => d['Country Name']);
+    const maleData = data.map(d => ({ country: d['Country Name'], value: +d['Male'] }));
+    const femaleData = data.map(d => ({ country: d['Country Name'], value: +d['Female'] }));
+    const totalData = data.map(d => ({ country: d['Country Name'], value: +d['Total'] }));
 
     // Define the dimensions and margins for the SVG
     const margin = { top: 20, right: 20, bottom: 30, left: 80 };
@@ -43,11 +35,11 @@ function visualizeData(data, index) {
 
     // Define x and y scales
     const x = d3.scaleLinear()
-        .domain([0, d3.max(totalData, d => d.total)])
+        .domain([0, d3.max(totalData, d => d.value)])
         .range([0, width]);
 
     const y = d3.scaleBand()
-        .domain(countries)
+        .domain(countryNames)
         .range([height, 0])
         .padding(0.1);
 
@@ -59,7 +51,7 @@ function visualizeData(data, index) {
         .attr("class", "bar-total")
         .attr("x", 0)
         .attr("y", d => y(d.country))
-        .attr("width", d => x(d.total))
+        .attr("width", d => x(d.value))
         .attr("height", y.bandwidth());
 
     // Create male bars
