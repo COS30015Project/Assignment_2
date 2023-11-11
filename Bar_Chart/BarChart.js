@@ -83,7 +83,7 @@ function visualizeData(data) {
         .attr("height", y.bandwidth())
         .on("mouseover", function (event, d) {
             // Show tooltip on mouseover
-            d3.select(this).style("fill", "darkpink");
+            d3.select(this).style("fill", "red");
             showTooltip(d, 'Female');
         })
         .on("mouseout", function () {
