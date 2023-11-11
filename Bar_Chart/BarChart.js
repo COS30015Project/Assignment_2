@@ -58,7 +58,7 @@ function init() {
             .style("opacity", 0);
 
         function showTooltip(event, d) {
-            const gender = colorScale.domain()[d.index];
+            const gender = d3.select(this).datum().key;
             const value = d.data[gender];
 
             tooltip.transition()
