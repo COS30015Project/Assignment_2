@@ -22,6 +22,12 @@ function visualizeData(data, index) {
     const maleData = data.map(d => ({ country: d[''], value: +d['Male'] }));
     const femaleData = data.map(d => ({ country: d[''], value: +d['Female'] }));
 
+    // Calculate total values for each country
+    const totalData = data.map(d => ({
+        country: d[''],
+        total: +d['Male'] + +d['Female'],
+    }));
+
     // Define the dimensions and margins for the SVG
     const margin = { top: 20, right: 20, bottom: 30, left: 80 };
     const width = 800 - margin.left - margin.right;
@@ -37,13 +43,24 @@ function visualizeData(data, index) {
 
     // Define x and y scales
     const x = d3.scaleLinear()
-        .domain([0, d3.max(maleData.concat(femaleData), d => d.value)])
+        .domain([0, d3.max(totalData, d => d.total)])
         .range([0, width]);
 
     const y = d3.scaleBand()
         .domain(countries)
         .range([height, 0])
         .padding(0.1);
+
+    // Create total bars
+    svg.selectAll(".bar-total")
+        .data(totalData)
+        .enter()
+        .append("rect")
+        .attr("class", "bar-total")
+        .attr("x", 0)
+        .attr("y", d => y(d.country))
+        .attr("width", d => x(d.total))
+        .attr("height", y.bandwidth());
 
     // Create male bars
     svg.selectAll(".bar-male")
