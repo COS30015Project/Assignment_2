@@ -23,14 +23,14 @@ function init() {
         .attr('transform', `translate(${margin.left},${margin.top})`);
   
       // Create scales
-      const xScale = d3.scaleLinear()
-        .domain([0, d3.max(values, d => d.value)])
-        .range([0, width]);
-  
-      const yScale = d3.scaleBand()
+      const xScale = d3.scaleBand()
         .domain(countries)
-        .range([0, height])
-        .padding(0.1);
+        .range([0, width])
+        .padding(0.2); // Adjust the padding for the gap between bars
+  
+      const yScale = d3.scaleLinear()
+        .domain([0, d3.max(values, d => d.value)])
+        .range([height, 0]);
   
       // Create color scale
       const colorScale = d3.scaleOrdinal()
@@ -43,16 +43,16 @@ function init() {
         .enter()
         .append('rect')
         .attr('class', 'bar')
-        .attr('x', d => (d.gender === 'Male') ? 0 : xScale(d.value)) // Adjust x position
-        .attr('y', d => yScale(countries[d.index]))
-        .attr('width', d => xScale(d.value))
-        .attr('height', yScale.bandwidth())
+        .attr('x', d => xScale(countries[d.index]) + xScale.bandwidth() / 2 * (d.gender === 'Male' ? -1 : 1))
+        .attr('y', d => yScale(d.value))
+        .attr('width', xScale.bandwidth() / 2) // Adjust width
+        .attr('height', d => height - yScale(d.value))
         .attr('fill', d => colorScale(d.gender));
   
       // Create X axis
       svg.append('g')
-        .call(d3.axisBottom(xScale))
-        .attr('transform', `translate(0,${height})`);
+        .attr('transform', `translate(0,${height})`)
+        .call(d3.axisBottom(xScale));
   
       // Create Y axis
       svg.append('g')
