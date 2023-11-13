@@ -1,57 +1,57 @@
-﻿US States,Male,Female
-Alabama,377,300
-Alaska,40,18
-Arizona,400,543
-Arkansas,140,102
-California,15426,14000
-Colorado,494,400
-Connecticut,960,1000
-Delaware,500,79
-District of Columbia,40,108
-Florida,2000,2424
-Georgia,2000,1617
-Hawaii,33,33
-Idaho,20,99
-Illinois,6129,8000
-Indiana,1000,538
-Iowa,400,129
-Kansas,400,355
-Kentucky,200,288
-Louisiana,200,329
-Maine,99,70
-Maryland,2000,2543
-Massachusetts,2000,1928
-Michigan,3085,3000
-Minnesota,900,966
-Mississippi,200,186
-Missouri,312,800
-Montana,20,13
-Nebraska,200,161
-Nevada,200,395
-New Hampshire,200,174
-New Jersey,10000,7565
-New Mexico,200,276
-New York,6470,10000
-North Carolina,1000,1534
-North Dakota,100,69
-Ohio,2000,1690
-Oklahoma,300,537
-Oregon,700,280
-Pennsylvania,2000,2621
-Rhode Island,200,55
-South Carolina,400,347
-South Dakota,3,30
-Tennessee,294,900
-Texas,6000,4919
-Utah,300,115
-Vermont,200,18
-Virginia,2000,1731
-Washington,456,2000
-West Virginia,161,106
-Wisconsin,400,888
-Wyoming,50,12
-Guam,21,20
-Northern Mariana Islands,2,3
-Puerto Rico,1,0
-U.S. Virgin Islands,2,10
+﻿,Male,Female
+,377,300
+,40,18
+,400,543
+,140,102
+,15426,14000
+,494,400
+,960,1000
+,500,79
+,40,108
+,2000,2424
+,2000,1617
+,33,33
+,20,99
+,6129,8000
+,1000,538
+,400,129
+,400,355
+,200,288
+,200,329
+,99,70
+,2000,2543
+,2000,1928
+,3085,3000
+,900,966
+,200,186
+,312,800
+,20,13
+,200,161
+,200,395
+,200,174
+,10000,7565
+,200,276
+,6470,10000
+,1000,1534
+,100,69
+,2000,1690
+,300,537
+,700,280
+,2000,2621
+,200,55
+,400,347
+,3,30
+,294,900
+,6000,4919
+,300,115
+,200,18
+,2000,1731
+,456,2000
+,161,106
+,400,888
+,50,12
+,21,20
+,2,3
+,1,0
+,2,10
 Total,73235,76324
