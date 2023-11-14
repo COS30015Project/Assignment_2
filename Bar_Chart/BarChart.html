@@ -37,19 +37,27 @@
             color: #333;
         }
 
-  .bar {
-    cursor: pointer;
-  }
+        .bar {
+      fill: green;
+    }
 
-  .tooltip {
-    position: absolute;
-    background-color: white;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    pointer-events: none;
-    font-size: 12px;
-  }
+    .bar.male {
+      fill: blue;
+    }
+
+    .bar.female {
+      fill: pink;
+    }
+
+    .tooltip {
+      position: absolute;
+      background-color: #f9f9f9;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      pointer-events: none;
+      opacity: 0;
+    }
     </style>
 </head>
 

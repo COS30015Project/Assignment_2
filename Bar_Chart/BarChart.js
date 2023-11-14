@@ -1,9 +1,9 @@
 // D3.js code
 function init() {
-  // Load data from CSV
-  d3.csv("BarChartDataset.csv").then(function(data) {
-    // Set up SVG and dimensions
-    const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+  // Load data from CSV file
+  d3.csv("BarChartDataset.csv").then(function (data) {
+    // Set up variables
+    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
@@ -12,101 +12,57 @@ function init() {
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // Set up scales
-    const xScale = d3.scaleBand()
+    const x = d3.scaleBand()
       .domain(data.map(d => d['Country Name']))
       .range([0, width])
       .padding(0.1);
 
-    const yScale = d3.scaleLinear()
+    const y = d3.scaleLinear()
       .domain([0, d3.max(data, d => +d['Total'])])
       .range([height, 0]);
 
-    // Set up colors
-    const colorScale = d3.scaleOrdinal()
-      .domain(['total', 'male', 'female'])
-      .range(['green', 'blue', 'pink']);
-
-    // Draw bars
-    svg.selectAll(".bar")
+    const bars = svg.selectAll(".bar")
       .data(data)
       .enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", d => xScale(d['Country Name']))
-      .attr("y", d => yScale(+d['Total']))
-      .attr("width", xScale.bandwidth())
-      .attr("height", d => height - yScale(+d['Total']))
-      .attr("fill", d => colorScale('total'))
-      .on("mouseover", function(event, d) {
-        const selectedClass = document.querySelector('input[name="class"]:checked').value;
-        const tooltipText = `${d['Country Name']}: ${d[selectedClass]}`;
-        
-        tooltip.transition()
-          .duration(200)
-          .style("opacity", 0.9);
-        
-        tooltip.html(tooltipText)
-          .style("left", `${event.pageX}px`)
-          .style("top", `${event.pageY - 28}px`);
-        
-        d3.select(this).attr("fill", colorScale(selectedClass));
-      })
-      .on("mouseout", function() {
+      .attr("class", "bar total")
+      .attr("x", d => x(d['Country Name']))
+      .attr("width", x.bandwidth())
+      .attr("y", d => y(+d['Total']))
+      .attr("height", d => height - y(+d['Total']));
+
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip");
+
+    bars.on("mouseover", function (event, d) {
+      const gender = d3.select('input[name="gender"]:checked').node().value;
+      const value = gender === 'total' ? +d['Total'] : gender === 'male' ? +d['Male'] : +d['Female'];
+
+      tooltip.transition()
+        .duration(200)
+        .style("opacity", .9);
+
+      tooltip.html(`<strong>${d['Country Name']}</strong><br>${gender}: ${value}`)
+        .style("left", (event.pageX) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+      .on("mouseout", function (d) {
         tooltip.transition()
           .duration(500)
           .style("opacity", 0);
-        
-        const selectedClass = document.querySelector('input[name="class"]:checked').value;
-        d3.select(this).attr("fill", colorScale(selectedClass));
       });
 
-    // Add x-axis
-    svg.append("g")
-      .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(xScale))
-      .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("transform", "rotate(-45)");
+    d3.selectAll('input[name="gender"]').on("change", updateBars);
 
-    // Add y-axis
-    svg.append("g")
-      .call(d3.axisLeft(yScale));
-
-    // Add tooltip
-    const tooltip = d3.select("body")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-
-    // Update chart based on selected radio button
-    d3.selectAll('input[name="class"]').on("change", function() {
-      const selectedClass = this.value;
-
-      svg.selectAll(".bar")
+    function updateBars() {
+      const gender = d3.select('input[name="gender"]:checked').node().value;
+      bars.attr("class", d => `bar ${gender}`)
         .transition()
         .duration(500)
-        .attr("fill", d => colorScale(selectedClass))
-        .attr("y", d => yScale(+d[selectedClass]))
-        .attr("height", d => height - yScale(+d[selectedClass]));
-
-      // Update tooltip text
-      svg.selectAll(".bar")
-        .on("mouseover", function(event, d) {
-          const tooltipText = `${d['Country Name']}: ${d[selectedClass]}`;
-          
-          tooltip.transition()
-            .duration(200)
-            .style("opacity", 0.9);
-          
-          tooltip.html(tooltipText)
-            .style("left", `${event.pageX}px`)
-            .style("top", `${event.pageY - 28}px`);
-          
-          d3.select(this).attr("fill", colorScale(selectedClass));
-        });
-    });
+        .attr("y", d => y(+d[gender]))
+        .attr("height", d => height - y(+d[gender]));
+    }
   });
 }
 
