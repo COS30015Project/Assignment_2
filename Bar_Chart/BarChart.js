@@ -1,13 +1,11 @@
 function init() {
-  // Define constants
-  const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+  const margin = {top: 20, right: 20, bottom: 30, left: 40};
   const width = 960 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
+
   const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-  // Read the CSV file
   d3.csv("BarChartDataset.csv").then(function (data) {
-      // Create scales
       const x = d3.scaleBand()
           .domain(data.map(d => d["Country Name"]))
           .range([0, width])
@@ -18,7 +16,6 @@ function init() {
           .nice()
           .range([height, 0]);
 
-      // Create tooltip
       const tooltip = d3.select("body")
           .append("div")
           .style("position", "absolute")
@@ -28,7 +25,6 @@ function init() {
           .style("border-radius", "4px")
           .style("visibility", "hidden");
 
-      // Create chart
       const chart = d3.select("#chart")
           .append("svg")
           .attr("width", width + margin.left + margin.right)
@@ -36,23 +32,20 @@ function init() {
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-      // Add x-axis
       chart.append("g")
           .attr("transform", "translate(0," + height + ")")
           .call(d3.axisBottom(x));
 
-      // Add y-axis
       chart.append("g")
           .call(d3.axisLeft(y));
 
-      // Add bars
       chart.selectAll(".bar")
           .data(data)
           .enter().append("rect")
           .attr("class", "bar")
           .attr("x", d => x(d["Country Name"]))
-          .attr("y", d => y(+d["Total"]))
           .attr("width", x.bandwidth())
+          .attr("y", d => y(+d["Total"]))
           .attr("height", d => height - y(+d["Total"]))
           .attr("fill", d => color(d["Class"]))
           .on("mouseover", function (event, d) {
@@ -61,9 +54,9 @@ function init() {
                   .style("top", (event.pageY - 10) + "px")
                   .style("left", (event.pageX + 10) + "px");
           })
-          .on("mousemove", function () {
-              tooltip.style("top", (d3.event.pageY - 10) + "px")
-                  .style("left", (d3.event.pageX + 10) + "px");
+          .on("mousemove", function (event, d) {
+              tooltip.style("top", (event.pageY - 10) + "px")
+                  .style("left", (event.pageX + 10) + "px");
           })
           .on("mouseout", function () {
               tooltip.style("visibility", "hidden");
