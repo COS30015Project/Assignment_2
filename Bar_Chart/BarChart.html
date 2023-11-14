@@ -4,17 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Bar Chart</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #chart-container {
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .bar {
+            transition: fill 0.5s;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            visibility: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="BarChart.js"></script>
 </head>
 <body>
-    <div id="chart"></div>
-    <input type="radio" id="male" name="class" value="Male" checked>
-    <label for="male">Male</label>
-    <input type="radio" id="female" name="class" value="Female">
-    <label for="female">Female</label>
-    <input type="radio" id="total" name="class" value="Total">
-    <label for="total">Total</label>
-    
+    <div id="chart-container">
+        <div id="chart"></div>
+        <input type="radio" id="male" name="class" value="Male" checked>
+        <label for="male">Male</label>
+        <input type="radio" id="female" name="class" value="Female">
+        <label for="female">Female</label>
+        <input type="radio" id="total" name="class" value="Total">
+        <label for="total">Total</label>
+    </div>
 </body>
 </html>
