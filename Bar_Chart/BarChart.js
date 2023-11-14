@@ -1,4 +1,4 @@
-function inti()
+function init()
 {
  // Define constants
 const margin = { top: 20, right: 20, bottom: 30, left: 40 };
