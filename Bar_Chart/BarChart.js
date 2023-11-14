@@ -9,12 +9,13 @@ function init() {
 
         const width = 800;
         const height = 500;
-        const padding = 40;
+        const padding = 20; // Adjusted padding
 
         const xScale = d3.scaleBand()
             .domain(data.map(d => d['Country Name']))
             .range([padding, width - padding])
-            .padding(0.1);
+            .padding(0.1)
+            .align(0.1); // Use align to position bars without gaps
 
         const yScale = d3.scaleLinear()
             .domain([0, d3.max(series, d => d3.max(d, d => d.data.Total))])
@@ -30,10 +31,8 @@ function init() {
             .enter()
             .append("g");
 
-        // Define a color for each bar type
-        const colorScale = d3.scaleOrdinal()
-            .domain(keys)
-            .range(['#3498db', '#e74c3c']); // Add more colors if needed
+        // Define a single color for all bars
+        const barColor = '#3498db';
 
         const rects = groups.selectAll("rect")
             .data(d => d)
@@ -43,7 +42,7 @@ function init() {
             .attr("y", d => yScale(d[1]))
             .attr("height", d => yScale(d[0]) - yScale(d[1]))
             .attr("width", xScale.bandwidth())
-            .attr("fill", d => colorScale(d.key)) // Use colorScale to set the fill color
+            .attr("fill", barColor) // Set a single color for all bars
             .on("mouseover", showTooltip)
             .on("mouseout", hideTooltip);
 
