@@ -28,8 +28,7 @@ function init() {
         const groups = svg.selectAll("g")
             .data(series)
             .enter()
-            .append("g")
-            .attr("class", d => `${d.key.toLowerCase()}-bar`);
+            .append("g");
 
         const rects = groups.selectAll("rect")
             .data(d => d)
