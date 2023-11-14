@@ -1,108 +1,79 @@
 // D3.js code
 function init() {
-  d3.csv("BarChartDataset.csv").then(function (data) {
-      // Set up SVG and chart dimensions
-      const width = 800;
-      const height = 400;
-      const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-
-      const svg = d3.select("#chart")
-          .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      // Parse data
-      data.forEach(function (d) {
-          d.Male = +d.Male;
-          d.Female = +d.Female;
-          d.Total = +d.Total;
-      });
-
-      // Initial class selection
-      let selectedClass = "Total";
-
-      // Create scales
-      const xScale = d3.scaleBand()
-          .domain(data.map(d => d["Country Name"]))
-          .range([0, width])
-          .padding(0.1);
-
-      const yScale = d3.scaleLinear()
-          .domain([0, d3.max(data, d => d[selectedClass])])
-          .range([height, 0]);
-
-      const colorScale = d3.scaleOrdinal()
-          .domain(["Male", "Female", "Total"])
-          .range(["blue", "pink", "green"]);
-
-      // Create bars
-      const bars = svg.selectAll("rect")
-          .data(data)
-          .enter()
-          .append("rect")
-          .attr("x", d => xScale(d["Country Name"]))
-          .attr("y", d => yScale(d[selectedClass]))
-          .attr("width", xScale.bandwidth())
-          .attr("height", d => height - yScale(d[selectedClass]))
-          .attr("class", "bar")
-          .on("mouseover", handleMouseOver)
-          .on("mouseout", handleMouseOut);
-
-      // Create axes
-      const xAxis = d3.axisBottom(xScale);
-      const yAxis = d3.axisLeft(yScale);
-
-      svg.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(xAxis);
-
-      svg.append("g")
-          .call(yAxis);
-
-      // Add radio buttons
-      d3.selectAll("input[name='gender']")
-          .on("change", updateChart);
-
-      function updateChart() {
-          selectedClass = this.value;
-
-          // Update scales
-          yScale.domain([0, d3.max(data, d => d[selectedClass])]);
-
-          // Update bars
-          bars.transition()
-              .duration(500)
-              .attr("y", d => yScale(d[selectedClass]))
-              .attr("height", d => height - yScale(d[selectedClass]))
-              .attr("fill", colorScale(selectedClass));
-      }
-
-      // Tooltip functions
-      function handleMouseOver(event, d) {
-          const tooltip = d3.select("#chart").append("div")
-              .attr("class", "tooltip")
-              .style("opacity", 0);
-
-          tooltip.transition()
-              .duration(200)
-              .style("opacity", 0.9);
-
-          tooltip.html(
-              `<strong>${d["Country Name"]}</strong><br/>${selectedClass}: ${d[selectedClass]}`
-          )
-              .style("left", (event.pageX) + "px")
-              .style("top", (event.pageY - 28) + "px");
-      }
-
-      function handleMouseOut() {
-          d3.select(".tooltip").transition()
-              .duration(500)
-              .style("opacity", 0)
-              .remove();
-      }
+ // Read the CSV file
+d3.csv("BarChartDataset.csv").then(function(data) {
+  // Create scales
+  const x = d3.scaleBand()
+     .domain(data.map(d => d["Country Name"]))
+     .range([0, width])
+     .padding(0.2);
+ 
+  const y = d3.scaleLinear()
+     .domain([0, d3.max(data, d => d["Total"])]).nice()
+     .range([height, 0]);
+ 
+  // Create tooltip
+  const tooltip = d3.select("body")
+     .append("div")
+     .style("position", "absolute")
+     .style("background", "#fff")
+     .style("padding", "5px")
+     .style("border", "1px solid #ccc")
+     .style("border-radius", "4px")
+     .style("visibility", "hidden");
+ 
+  // Create chart
+  const chart = d3.select("#chart")
+     .append("svg")
+     .attr("width", width + margin.left + margin.right)
+     .attr("height", height + margin.top + margin.bottom)
+     .append("g")
+     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+ 
+  // Add x-axis
+  chart.append("g")
+     .attr("transform", "translate(0," + height + ")")
+     .call(d3.axisBottom(x));
+ 
+  // Add y-axis
+  chart.append("g")
+     .call(d3.axisLeft(y));
+ 
+  // Add bars
+  chart.selectAll(".bar")
+     .data(data)
+     .enter().append("rect")
+     .attr("class", "bar")
+     .attr("x", d => x(d["Country Name"]))
+     .attr("y", d => y(d["Total"]))
+     .attr("width", x.bandwidth())
+     .attr("height", d => height - y(d["Total"]))
+     .attr("fill", d => color(d["Class"]))
+     .on("mouseover", function(d) {
+         tooltip.style("visibility", "visible")
+             .text(`Country: ${d["Country Name"]}\nValue: ${d["Total"]}`);
+     })
+     .on("mousemove", function() {
+         tooltip.style("top", (d3.event.pageY - 10) + "px")
+             .style("left", (d3.event.pageX + 10) + "px");
+     })
+     .on("mouseout", function() {
+         tooltip.style("visibility", "hidden");
+     });
+ 
+  // Update bars on radio button change
+  d3.selectAll("input[name='class']").on("change", function() {
+     const selectedClass = this.value;
+ 
+     chart.selectAll(".bar")
+         .data(data)
+         .transition()
+         .duration(500)
+         .attr("y", d => y(d[selectedClass]))
+         .attr("height", d => height - margin.bottom - y(d[selectedClass]))
+         .attr("fill", d => color(selectedClass));
   });
+ });
 }
 
 window.onload = init;

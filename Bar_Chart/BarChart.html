@@ -1,87 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Bar Chart</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-
-        #chart {
-            width: 80%;
-            max-width: 800px;
-            height: 500px;
-            background-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .bar {
-            fill: green;
-        }
-
-        .bar.male {
-            fill: blue;
-        }
-
-        .bar.female {
-            fill: pink;
-        }
-
-        .tooltip {
-            position: absolute;
-            background-color: #f9f9f9;
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            pointer-events: none;
-            opacity: 0;
-        }
-
-        .radio-container {
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .radio-label {
-            margin-right: 10px;
-        }
-    </style>
 </head>
-
 <body>
-    <h1>Interactive Bar Chart: Male and Female Data by Country</h1>
-
-    <div class="radio-container">
-        <label class="radio-label"><input type="radio" name="gender" value="total" checked>Total</label>
-        <label class="radio-label"><input type="radio" name="gender" value="male">Male</label>
-        <label class="radio-label"><input type="radio" name="gender" value="female">Female</label>
-    </div>
-
     <div id="chart"></div>
-
+    <input type="radio" id="male" name="class" value="Male" checked>
+    <label for="male">Male</label>
+    <input type="radio" id="female" name="class" value="Female">
+    <label for="female">Female</label>
+    <input type="radio" id="total" name="class" value="Total">
+    <label for="total">Total</label>
     <script src="BarChart.js"></script>
 </body>
-
 </html>
