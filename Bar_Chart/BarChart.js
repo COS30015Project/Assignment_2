@@ -1,5 +1,5 @@
 function init() {
-  const margin = {top: 20, right: 20, bottom: 30, left: 40};
+  const margin = { top: 20, right: 20, bottom: 30, left: 40 };
   const width = 960 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
@@ -39,7 +39,7 @@ function init() {
       chart.append("g")
           .call(d3.axisLeft(y));
 
-      chart.selectAll(".bar")
+      const bars = chart.selectAll(".bar")
           .data(data)
           .enter().append("rect")
           .attr("class", "bar")
@@ -66,9 +66,7 @@ function init() {
       d3.selectAll("input[name='class']").on("change", function () {
           const selectedClass = this.value;
 
-          chart.selectAll(".bar")
-              .data(data)
-              .transition()
+          bars.transition()
               .duration(500)
               .attr("y", d => y(+d[selectedClass]))
               .attr("height", d => height - y(+d[selectedClass]));
