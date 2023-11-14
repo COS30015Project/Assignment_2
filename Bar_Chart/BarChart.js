@@ -15,7 +15,7 @@ d3.csv("BarChartDataset.csv").then(function(data) {
     const height = 400 - margin.top - margin.bottom;
   
     // Create SVG container
-    const svg = d3.select("#chart-container")
+    const svg = d3.select("#chart")
       .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
