@@ -14,11 +14,11 @@ function init() {
         const xScale = d3.scaleBand()
             .domain(data.map(d => d['Country Name']))
             .range([padding, width - padding])
-            .padding(0.05)  
-            .align(0.1);  
+            .padding(0.05)  // Adjust the padding to reduce the gap between bars
+            .align(0.1);  // Use align to position bars without gaps
 
         const yScale = d3.scaleLinear()
-            .domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
+            .domain([0, d3.max(series, d => d3.max(d, d => d.data.Total))])
             .range([height - padding, padding]);
 
         const svg = d3.select("#chart")
@@ -39,7 +39,6 @@ function init() {
             .attr("y", d => yScale(d[1]))
             .attr("height", d => yScale(d[0]) - yScale(d[1]))
             .attr("width", xScale.bandwidth())
-            .attr("class", (d, i) => keys[i].toLowerCase() + '-bar')
             .on("mouseover", showTooltip)
             .on("mouseout", hideTooltip);
 
@@ -77,12 +76,12 @@ function init() {
         };
 
         function showTooltip(event, d) {
-            const value = d.data['Male'] + '\n' + d.data['Female'] + '\n' + d.data['Total'];
+            const value = d.data[selectedGender];
 
             tooltip.transition()
                 .duration(200)
                 .style("opacity", 0.9);
-            tooltip.html(value)
+            tooltip.html(`${selectedGender}: ${d3.format(",")(value)}`)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY - 28) + "px");
         }
