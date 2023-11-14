@@ -37,36 +37,33 @@
             color: #333;
         }
 
-        #controls {
-            text-align: center;
-            margin-top: 10px;
-        }
+  .bar {
+    cursor: pointer;
+  }
 
-        label {
-            margin-right: 10px;
-        }
+  .tooltip {
+    position: absolute;
+    background-color: white;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    pointer-events: none;
+    font-size: 12px;
+  }
     </style>
 </head>
 
 <body>
     <h1>Interactive Bar Chart: Male and Female Data by Country</h1>
+
+    <div>
+      <label><input type="radio" name="class" value="total" checked>Total</label>
+      <label><input type="radio" name="class" value="male">Male</label>
+      <label><input type="radio" name="class" value="female">Female</label>
+    </div>
+    
     <div id="chart"></div>
 
-    <div id="controls">
-        <label>
-            <input type="radio" name="class" value="total" checked> Total
-        </label>
-        <label>
-            <input type="radio" name="class" value="male"> Male
-        </label>
-        <label>
-            <input type="radio" name="class" value="female"> Female
-        </label>
-    </div>
-
-    <script>
-        window.onload = init;
-    </script>
 </body>
 
 </html>
