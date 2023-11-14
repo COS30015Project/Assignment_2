@@ -20,10 +20,6 @@ function init() {
             .domain([0, d3.max(series, d => d3.max(d, d => d.data.Total))])
             .range([height - padding, padding]);
 
-        const colorScale = d3.scaleOrdinal()
-            .domain(keys)
-            .range(['#3498db', '#e74c3c']);
-
         const svg = d3.select("#chart")
             .append("svg")
             .attr("width", width)
@@ -33,8 +29,7 @@ function init() {
             .data(series)
             .enter()
             .append("g")
-            .attr("class", d => `${d.key.toLowerCase()}-bar`)
-            .style("fill", (d, i) => colorScale(i));
+            .attr("class", d => `${d.key.toLowerCase()}-bar`);
 
         const rects = groups.selectAll("rect")
             .data(d => d)
