@@ -26,6 +26,22 @@ function init() {
             .attr("width", width)
             .attr("height", height);
 
+        // Add X-axis
+        svg.append("g")
+            .attr("transform", `translate(0, ${height - padding})`)
+            .call(d3.axisBottom(xScale).tickSizeOuter(0))  // Remove outer ticks
+            .selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .style("text-anchor", "end")
+            .attr("fill", "#555");
+
+        // Add Y-axis
+        svg.append("g")
+            .attr("transform", `translate(${padding}, 0)`)
+            .call(d3.axisLeft(yScale).ticks(5).tickSizeOuter(0))  // Remove outer ticks
+            .selectAll("text")
+            .attr("fill", "#555");
+
         const groups = svg.selectAll("g")
             .data(series)
             .enter()
@@ -36,25 +52,12 @@ function init() {
             .enter()
             .append("rect")
             .attr("x", (d, i) => xScale(data[i]['Country Name']))
-            .attr("y", d => yScale(d[0]))  // Adjusted y position
-            .attr("height", d => yScale(d[1]) - yScale(d[0]))  // Adjusted height
+            .attr("y", d => yScale(d[0]))
+            .attr("height", d => yScale(d[1]) - yScale(d[0]))
             .attr("width", xScale.bandwidth())
+            .attr("class", (d, i) => `${keys[i].toLowerCase()}-bar`)  // Add class for styling
             .on("mouseover", showTooltip)
             .on("mouseout", hideTooltip);
-
-        svg.append("g")
-            .attr("transform", `translate(0, ${height - padding})`)
-            .call(d3.axisBottom(xScale))
-            .selectAll("text")
-            .attr("transform", "rotate(-45)")
-            .style("text-anchor", "end")
-            .attr("fill", "#555");
-
-        svg.append("g")
-            .attr("transform", `translate(${padding}, 0)`)
-            .call(d3.axisLeft(yScale))
-            .selectAll("text")
-            .attr("fill", "#555");
 
         const tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
@@ -72,7 +75,13 @@ function init() {
             svg.select(".y-axis")
                 .transition()
                 .duration(500)
-                .call(d3.axisLeft(yScale));
+                .call(d3.axisLeft(yScale).ticks(5).tickSizeOuter(0));
+
+            // Additional transition for X-axis if needed
+            svg.select(".x-axis")
+                .transition()
+                .duration(500)
+                .call(d3.axisBottom(xScale).tickSizeOuter(0));
         };
 
         function showTooltip(event, d) {
