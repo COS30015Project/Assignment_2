@@ -14,33 +14,17 @@ function init() {
         const xScale = d3.scaleBand()
             .domain(data.map(d => d['Country Name']))
             .range([padding, width - padding])
-            .padding(0.05)
-            .align(0.1);
+            .padding(0.05)  
+            .align(0.1);  
 
         const yScale = d3.scaleLinear()
-            .domain([0, d3.max(series, d => d3.max(d, d => d.data.Total))])
+            .domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
             .range([height - padding, padding]);
 
         const svg = d3.select("#chart")
             .append("svg")
             .attr("width", width)
             .attr("height", height);
-
-        // Add X-axis
-        svg.append("g")
-            .attr("transform", `translate(0, ${height - padding})`)
-            .call(d3.axisBottom(xScale).tickSizeOuter(0))  // Remove outer ticks
-            .selectAll("text")
-            .attr("transform", "rotate(-45)")
-            .style("text-anchor", "end")
-            .attr("fill", "#555");
-
-        // Add Y-axis
-        svg.append("g")
-            .attr("transform", `translate(${padding}, 0)`)
-            .call(d3.axisLeft(yScale).ticks(5).tickSizeOuter(0))  // Remove outer ticks
-            .selectAll("text")
-            .attr("fill", "#555");
 
         const groups = svg.selectAll("g")
             .data(series)
@@ -52,12 +36,26 @@ function init() {
             .enter()
             .append("rect")
             .attr("x", (d, i) => xScale(data[i]['Country Name']))
-            .attr("y", d => yScale(d[0]))
-            .attr("height", d => yScale(d[1]) - yScale(d[0]))
+            .attr("y", d => yScale(d[1]))
+            .attr("height", d => yScale(d[0]) - yScale(d[1]))
             .attr("width", xScale.bandwidth())
-            .attr("class", (d, i) => `${keys[i].toLowerCase()}-bar`)  // Add class for styling
+            .attr("class", (d, i) => keys[i].toLowerCase() + '-bar')
             .on("mouseover", showTooltip)
             .on("mouseout", hideTooltip);
+
+        svg.append("g")
+            .attr("transform", `translate(0, ${height - padding})`)
+            .call(d3.axisBottom(xScale))
+            .selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .style("text-anchor", "end")
+            .attr("fill", "#555");
+
+        svg.append("g")
+            .attr("transform", `translate(${padding}, 0)`)
+            .call(d3.axisLeft(yScale))
+            .selectAll("text")
+            .attr("fill", "#555");
 
         const tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
@@ -69,28 +67,22 @@ function init() {
             yScale.domain([0, d3.max(series, d => d3.max(d, d => d.data[selectedGender]))]);
             rects.transition()
                 .duration(500)
-                .attr("y", d => yScale(d[0]))
-                .attr("height", d => yScale(d[1]) - yScale(d[0]));
+                .attr("y", d => yScale(d[1]))
+                .attr("height", d => yScale(d[0]) - yScale(d[1]));
 
             svg.select(".y-axis")
                 .transition()
                 .duration(500)
-                .call(d3.axisLeft(yScale).ticks(5).tickSizeOuter(0));
-
-            // Additional transition for X-axis if needed
-            svg.select(".x-axis")
-                .transition()
-                .duration(500)
-                .call(d3.axisBottom(xScale).tickSizeOuter(0));
+                .call(d3.axisLeft(yScale));
         };
 
         function showTooltip(event, d) {
-            const value = d.data[selectedGender];
+            const value = d.data['Male'] + '\n' + d.data['Female'] + '\n' + d.data['Total'];
 
             tooltip.transition()
                 .duration(200)
                 .style("opacity", 0.9);
-            tooltip.html(`${selectedGender}: ${d3.format(",")(value)}`)
+            tooltip.html(value)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY - 28) + "px");
         }
