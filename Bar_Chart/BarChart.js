@@ -15,7 +15,7 @@ function init() {
             .domain(data.map(d => d['Country Name']))
             .range([padding, width - padding])
             .padding(0.05)  // Adjust the padding to reduce the gap between bars
-            .align(0.1);  // Use align to position bars without gaps
+            .align(0);  // Use align to position bars without gaps
 
         const yScale = d3.scaleLinear()
             .domain([0, d3.max(series, d => d3.max(d, d => d.data.Total))])
