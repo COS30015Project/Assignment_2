@@ -22,7 +22,7 @@ function init() {
 
         const colorScale = d3.scaleOrdinal()
             .domain(keys)
-            .range(['#3498db', '#e74c3c', '#2ecc71']);
+            .range(['#3498db', '#e74c3c']);
 
         const svg = d3.select("#chart")
             .append("svg")
@@ -41,7 +41,7 @@ function init() {
             .enter()
             .append("rect")
             .attr("x", (d, i) => xScale(data[i]['Country Name']))
-            .attr("y", d => yScale(d.data[selectedGender]))
+            .attr("y", d => yScale(d[1]))
             .attr("height", d => yScale(d[0]) - yScale(d[1]))
             .attr("width", xScale.bandwidth())
             .on("mouseover", showTooltip)
@@ -71,7 +71,7 @@ function init() {
             yScale.domain([0, d3.max(series, d => d3.max(d, d => d.data[selectedGender]))]);
             rects.transition()
                 .duration(500)
-                .attr("y", d => yScale(d.data[selectedGender]))
+                .attr("y", d => yScale(d[1]))
                 .attr("height", d => yScale(d[0]) - yScale(d[1]));
 
             svg.select(".y-axis")
