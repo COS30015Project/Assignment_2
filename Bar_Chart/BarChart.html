@@ -22,7 +22,7 @@
         #chart {
             width: 80%;
             max-width: 800px;
-            height: 500px;
+            height: 700px;
             background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -36,62 +36,32 @@
             color: #333;
         }
 
-        .axis text {
-            font-size: 12px;
-            fill: #555;
-        }
+        #controls {
+  text-align: center;
+  margin-top: 10px;
+}
 
-        .axis .tick line {
-            stroke: #ccc;
-        }
-
-        .tooltip {
-            position: absolute;
-            text-align: center;
-            padding: 8px;
-            font: 12px sans-serif;
-            background: lightsteelblue;
-            border: 0.5px solid steelblue;
-            border-radius: 8px;
-            pointer-events: none;
-            opacity: 0;
-        }
-
-        .radio-group {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .radio-group input {
-            margin-right: 5px;
-        }
-
-        /* Define colors for bars */
-        .male-bar {
-            fill: #3498db;
-        }
-
-        .female-bar {
-            fill: #e74c3c;
-        }
-
-        .total-bar {
-            fill: #2ecc71;
-        }
+label {
+  margin-right: 10px;
+}
     </style>
 </head>
 
 <body>
     <h1>Interactive Bar Chart: Male and Female Data by Country</h1>
     <div id="chart"></div>
-    <div class="radio-group">
-        <input type="radio" name="gender" id="male" onclick="updateChart('Male')" checked>
-        <label for="male">Male</label>
-        <input type="radio" name="gender" id="female" onclick="updateChart('Female')">
-        <label for="female">Female</label>
-        <input type="radio" name="gender" id="total" onclick="updateChart('Total')">
-        <label for="total">Total</label>
-    </div>
+    
+    <div id="controls">
+        <label>
+          <input type="radio" name="class" value="total" checked> Total
+        </label>
+        <label>
+          <input type="radio" name="class" value="male"> Male
+        </label>
+        <label>
+          <input type="radio" name="class" value="female"> Female
+        </label>
+      </div>
 
 </body>
 
