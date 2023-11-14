@@ -22,7 +22,7 @@ function init() {
 
         const colorScale = d3.scaleOrdinal()
             .domain(keys)
-            .range(['#3498db', '#e74c3c']);
+            .range(['#3498db', '#e74c3c', '#2ecc71']);
 
         const svg = d3.select("#chart")
             .append("svg")
@@ -33,6 +33,7 @@ function init() {
             .data(series)
             .enter()
             .append("g")
+            .attr("class", d => `${d.key.toLowerCase()}-bar`)
             .style("fill", (d, i) => colorScale(i));
 
         const rects = groups.selectAll("rect")
@@ -51,11 +52,14 @@ function init() {
             .call(d3.axisBottom(xScale))
             .selectAll("text")
             .attr("transform", "rotate(-45)")
-            .style("text-anchor", "end");
+            .style("text-anchor", "end")
+            .attr("fill", "#555");
 
         svg.append("g")
             .attr("transform", `translate(${padding}, 0)`)
-            .call(d3.axisLeft(yScale));
+            .call(d3.axisLeft(yScale))
+            .selectAll("text")
+            .attr("fill", "#555");
 
         const tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")

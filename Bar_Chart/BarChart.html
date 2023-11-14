@@ -8,8 +8,6 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
-            background: url('background.jpg') no-repeat center center fixed;
-            background-size: cover;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -18,30 +16,33 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            color: black; /* Default text color */
+            background-color: #f4f4f4;
         }
 
         #chart {
             width: 80%;
-            max-width: 1000px;
-            height: 600px;
-            background-color: white;
+            max-width: 800px;
+            height: 500px;
+            background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         h1 {
-            color: white; /* Text color for h1 element */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Adding a text shadow for better visibility */
-            text-align: center; /* Center-align the text */
-            margin-bottom: 20px; /* Add some space below the h1 element */
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
         }
 
         .axis text {
             font-size: 12px;
+            fill: #555;
         }
 
         .axis .tick line {
-            display: none;
+            stroke: #ccc;
         }
 
         .tooltip {
@@ -65,6 +66,17 @@
             margin-right: 5px;
         }
 
+        .male-bar {
+            fill: #3498db;
+        }
+
+        .female-bar {
+            fill: #e74c3c;
+        }
+
+        .total-bar {
+            fill: #2ecc71;
+        }
     </style>
 </head>
 
@@ -79,7 +91,6 @@
         <input type="radio" name="gender" id="total" onclick="updateChart('Total')">
         <label for="total">Total</label>
     </div>
-    <script src="BarChart.js"></script>
     <script src="BarChart.js"></script>
 </body>
 
