@@ -30,6 +30,11 @@ function init() {
             .enter()
             .append("g");
 
+        // Define a color for each bar type
+        const colorScale = d3.scaleOrdinal()
+            .domain(keys)
+            .range(['#3498db', '#e74c3c']); // Add more colors if needed
+
         const rects = groups.selectAll("rect")
             .data(d => d)
             .enter()
@@ -38,6 +43,7 @@ function init() {
             .attr("y", d => yScale(d[1]))
             .attr("height", d => yScale(d[0]) - yScale(d[1]))
             .attr("width", xScale.bandwidth())
+            .attr("fill", d => colorScale(d.key)) // Use colorScale to set the fill color
             .on("mouseover", showTooltip)
             .on("mouseout", hideTooltip);
 
