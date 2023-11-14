@@ -56,12 +56,30 @@
             opacity: 0;
         }
 
+        .radio-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .radio-group input {
+            margin-right: 5px;
+        }
+
     </style>
 </head>
 
 <body>
     <h1>Interactive Bar Chart: Male and Female Data by Country</h1>
     <div id="chart"></div>
+    <div class="radio-group">
+        <input type="radio" name="gender" id="male" onclick="updateChart('Male')" checked>
+        <label for="male">Male</label>
+        <input type="radio" name="gender" id="female" onclick="updateChart('Female')">
+        <label for="female">Female</label>
+        <input type="radio" name="gender" id="total" onclick="updateChart('Total')">
+        <label for="total">Total</label>
+    </div>
+    <script src="BarChart.js"></script>
     <script src="BarChart.js"></script>
 </body>
 

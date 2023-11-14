@@ -1,13 +1,14 @@
 function init() {
     d3.csv('BarChartDataset.csv').then(data => {
+        // Initial gender selection
+        let selectedGender = 'Male';
+
         const keys = ["Male", "Female"];
-
         const stack = d3.stack().keys(keys);
-
         const series = stack(data);
 
-        const width = 600;
-        const height = 400;
+        const width = 800;
+        const height = 500;
         const padding = 40;
 
         const xScale = d3.scaleBand()
@@ -16,12 +17,12 @@ function init() {
             .padding(0.1);
 
         const yScale = d3.scaleLinear()
-            .domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
+            .domain([0, d3.max(series, d => d3.max(d, d => d.data.Total))])
             .range([height - padding, padding]);
 
         const colorScale = d3.scaleOrdinal()
             .domain(keys)
-            .range(['blue', 'pink']);
+            .range(['#3498db', '#e74c3c']);
 
         const svg = d3.select("#chart")
             .append("svg")
@@ -39,7 +40,7 @@ function init() {
             .enter()
             .append("rect")
             .attr("x", (d, i) => xScale(data[i]['Country Name']))
-            .attr("y", d => yScale(d[1]))
+            .attr("y", d => yScale(d.data[selectedGender]))
             .attr("height", d => yScale(d[0]) - yScale(d[1]))
             .attr("width", xScale.bandwidth())
             .on("mouseover", showTooltip)
@@ -47,7 +48,10 @@ function init() {
 
         svg.append("g")
             .attr("transform", `translate(0, ${height - padding})`)
-            .call(d3.axisBottom(xScale));
+            .call(d3.axisBottom(xScale))
+            .selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .style("text-anchor", "end");
 
         svg.append("g")
             .attr("transform", `translate(${padding}, 0)`)
@@ -57,14 +61,28 @@ function init() {
             .attr("class", "tooltip")
             .style("opacity", 0);
 
+        // Update chart based on selected gender
+        window.updateChart = function(gender) {
+            selectedGender = gender;
+            yScale.domain([0, d3.max(series, d => d3.max(d, d => d.data[selectedGender]))]);
+            rects.transition()
+                .duration(500)
+                .attr("y", d => yScale(d.data[selectedGender]))
+                .attr("height", d => yScale(d[0]) - yScale(d[1]));
+
+            svg.select(".y-axis")
+                .transition()
+                .duration(500)
+                .call(d3.axisLeft(yScale));
+        };
+
         function showTooltip(event, d) {
-            const gender = d3.select(this.parentNode).datum().key;
-            const value = d.data[gender];
+            const value = d.data[selectedGender];
 
             tooltip.transition()
                 .duration(200)
                 .style("opacity", 0.9);
-            tooltip.html(`${gender}: ${d3.format(",")(value)}`)
+            tooltip.html(`${selectedGender}: ${d3.format(",")(value)}`)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY - 28) + "px");
         }
