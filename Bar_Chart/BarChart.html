@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Bar Chart</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="BarChart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,40 +37,51 @@
         }
 
         .bar {
-      fill: green;
-    }
+            fill: green;
+        }
 
-    .bar.male {
-      fill: blue;
-    }
+        .bar.male {
+            fill: blue;
+        }
 
-    .bar.female {
-      fill: pink;
-    }
+        .bar.female {
+            fill: pink;
+        }
 
-    .tooltip {
-      position: absolute;
-      background-color: #f9f9f9;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      pointer-events: none;
-      opacity: 0;
-    }
+        .tooltip {
+            position: absolute;
+            background-color: #f9f9f9;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .radio-container {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .radio-label {
+            margin-right: 10px;
+        }
     </style>
 </head>
 
 <body>
     <h1>Interactive Bar Chart: Male and Female Data by Country</h1>
 
-    <div>
-      <label><input type="radio" name="class" value="total" checked>Total</label>
-      <label><input type="radio" name="class" value="male">Male</label>
-      <label><input type="radio" name="class" value="female">Female</label>
+    <div class="radio-container">
+        <label class="radio-label"><input type="radio" name="gender" value="total" checked>Total</label>
+        <label class="radio-label"><input type="radio" name="gender" value="male">Male</label>
+        <label class="radio-label"><input type="radio" name="gender" value="female">Female</label>
     </div>
-    
+
     <div id="chart"></div>
 
+    <script src="BarChart.js"></script>
 </body>
 
 </html>
