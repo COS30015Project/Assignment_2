@@ -77,17 +77,20 @@ function init() {
               .attr("fill", d => colorScale[selectedClass]);
       });
 
-      function getTooltipText(d) {
-          const selectedClass = d3.select("input[name='class']:checked").node().value;
-          if (selectedClass === "Male") {
-              return `Male: ${d["Male"]}`;
-          } else if (selectedClass === "Female") {
-              return `Female: ${d["Female"]}`;
-          } else {
-              return `Total: ${d["Total"]}`;
-          }
-      }
+      // Set "Total" radio button as default
+      d3.select("input[value='Total']").property("checked", true);
   });
+
+  function getTooltipText(d) {
+      const selectedClass = d3.select("input[name='class']:checked").node().value;
+      if (selectedClass === "Male") {
+          return `Male: ${d["Male"]}`;
+      } else if (selectedClass === "Female") {
+          return `Female: ${d["Female"]}`;
+      } else {
+          return `Total: ${d["Total"]}`;
+      }
+  }
 }
 
 window.onload = init;
