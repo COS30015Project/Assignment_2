@@ -104,7 +104,7 @@ function init() {
                 const formattedData = formatData(data);
                 Tooltip.html(stateName + "<br>" + formattedData);
                 Tooltip.html(
-                    `<div class="tooltip-title">${stateName}</div><div>Total: ${formattedData}</div>`
+                    `<div class="tooltip-title">${stateName}</div><div>${formattedData}</div>`
                 );
             }
         };
