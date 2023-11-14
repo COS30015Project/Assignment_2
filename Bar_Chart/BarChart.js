@@ -14,8 +14,8 @@ function init() {
         const xScale = d3.scaleBand()
             .domain(data.map(d => d['Country Name']))
             .range([padding, width - padding])
-            .padding(0.05)  // Adjust the padding to reduce the gap between bars
-            .align(0.1);  // Use align to position bars without gaps
+            .padding(0.05)
+            .align(0.1);
 
         const yScale = d3.scaleLinear()
             .domain([0, d3.max(series, d => d3.max(d, d => d.data.Total))])
@@ -31,14 +31,14 @@ function init() {
             .enter()
             .append("g");
 
-            const rects = groups.selectAll("rect")
+        const rects = groups.selectAll("rect")
             .data(d => d)
             .enter()
             .append("rect")
             .attr("x", (d, i) => xScale(data[i]['Country Name']))
-            .attr("y", d => yScale(d[1]))
-            .attr("height", d => yScale(d[0]) - yScale(d[1]))
-            .attr("width", d => xScale.bandwidth() + xScale.padding()) // Adjust the width to include padding
+            .attr("y", d => yScale(d[0]))  // Adjusted y position
+            .attr("height", d => yScale(d[1]) - yScale(d[0]))  // Adjusted height
+            .attr("width", xScale.bandwidth())
             .on("mouseover", showTooltip)
             .on("mouseout", hideTooltip);
 
@@ -66,8 +66,8 @@ function init() {
             yScale.domain([0, d3.max(series, d => d3.max(d, d => d.data[selectedGender]))]);
             rects.transition()
                 .duration(500)
-                .attr("y", d => yScale(d[1]))
-                .attr("height", d => yScale(d[0]) - yScale(d[1]));
+                .attr("y", d => yScale(d[0]))
+                .attr("height", d => yScale(d[1]) - yScale(d[0]));
 
             svg.select(".y-axis")
                 .transition()
