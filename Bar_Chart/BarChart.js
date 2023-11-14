@@ -14,8 +14,8 @@ function init() {
         const xScale = d3.scaleBand()
             .domain(data.map(d => d['Country Name']))
             .range([padding, width - padding])
-            .padding(0.05)
-            .align(0.1);
+            .padding(0.05)  // Adjust the padding to reduce the gap between bars
+            .align(0.1);  // Use align to position bars without gaps
 
         const yScale = d3.scaleLinear()
             .domain([0, d3.max(series, d => d3.max(d, d => d.data.Total))])
@@ -31,16 +31,14 @@ function init() {
             .enter()
             .append("g");
 
-        const rects = groups.selectAll("rect")
+            const rects = groups.selectAll("rect")
             .data(d => d)
             .enter()
             .append("rect")
             .attr("x", (d, i) => xScale(data[i]['Country Name']))
             .attr("y", d => yScale(d[1]))
             .attr("height", d => yScale(d[0]) - yScale(d[1]))
-            .attr("width", xScale.bandwidth())
-            .attr("fill", d => d3.select(this.parentNode).datum().key === "Male" ? "#3498db" : "#e74c3c") // Adjust fill color
-            .attr("stroke", "none") // Remove stroke (white lines)
+            .attr("width", d => xScale.bandwidth() + xScale.padding()) // Adjust the width to include padding
             .on("mouseover", showTooltip)
             .on("mouseout", hideTooltip);
 
