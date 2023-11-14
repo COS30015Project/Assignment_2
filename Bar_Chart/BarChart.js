@@ -24,7 +24,7 @@ function init() {
           .append("div")
           .style("position", "absolute")
           .style("background", "#fff")
-          .style("padding", "5px")
+          .style("padding", "10px")
           .style("border", "1px solid #ccc")
           .style("border-radius", "4px")
           .style("visibility", "hidden");
@@ -54,7 +54,7 @@ function init() {
           .attr("fill", d => colorScale["Total"]) // Default color for Total
           .on("mouseover", function (event, d) {
               tooltip.style("visibility", "visible")
-                  .text(`Country: ${d["Country Name"]}\n${getTooltipText(d)}`)
+                  .html(`Country: <strong>${d["Country Name"]}</strong><br>Value: <strong>${getTooltipText(d)}</strong>`)
                   .style("top", (event.pageY - 10) + "px")
                   .style("left", (event.pageX + 10) + "px");
           })
@@ -83,13 +83,9 @@ function init() {
 
   function getTooltipText(d) {
       const selectedClass = d3.select("input[name='class']:checked").node().value;
-      if (selectedClass === "Male") {
-          return `Male: ${d["Male"]}`;
-      } else if (selectedClass === "Female") {
-          return `Female: ${d["Female"]}`;
-      } else {
-          return `Total: ${d["Total"]}`;
-      }
+      return selectedClass === "Male" ? d["Male"] :
+             selectedClass === "Female" ? d["Female"] :
+             d["Total"];
   }
 }
 
