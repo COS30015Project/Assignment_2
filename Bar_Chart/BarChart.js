@@ -50,7 +50,7 @@ function init() {
           .attr("fill", d => color(d["Class"]))
           .on("mouseover", function (event, d) {
               tooltip.style("visibility", "visible")
-                  .text(`Country: ${d["Country Name"]}\nTotal: ${d["Total"]}`)
+                  .text(`Country: ${d["Country Name"]}\n${getTooltipText(d)}`)
                   .style("top", (event.pageY - 10) + "px")
                   .style("left", (event.pageX + 10) + "px");
           })
@@ -71,6 +71,17 @@ function init() {
               .attr("y", d => y(+d[selectedClass]))
               .attr("height", d => height - y(+d[selectedClass]));
       });
+
+      function getTooltipText(d) {
+          const selectedClass = d3.select("input[name='class']:checked").node().value;
+          if (selectedClass === "Male") {
+              return `Male: ${d["Male"]}`;
+          } else if (selectedClass === "Female") {
+              return `Female: ${d["Female"]}`;
+          } else {
+              return `Total: ${d["Total"]}`;
+          }
+      }
   });
 }
 
