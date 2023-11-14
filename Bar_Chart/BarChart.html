@@ -23,7 +23,7 @@
         #chart {
             width: 80%;
             max-width: 800px;
-            height: 700px;
+            height: 500px;
             background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -38,13 +38,13 @@
         }
 
         #controls {
-  text-align: center;
-  margin-top: 10px;
-}
+            text-align: center;
+            margin-top: 10px;
+        }
 
-label {
-  margin-right: 10px;
-}
+        label {
+            margin-right: 10px;
+        }
     </style>
 </head>
 
@@ -54,16 +54,19 @@ label {
 
     <div id="controls">
         <label>
-          <input type="radio" name="class" value="total" checked> Total
+            <input type="radio" name="class" value="total" checked> Total
         </label>
         <label>
-          <input type="radio" name="class" value="male"> Male
+            <input type="radio" name="class" value="male"> Male
         </label>
         <label>
-          <input type="radio" name="class" value="female"> Female
+            <input type="radio" name="class" value="female"> Female
         </label>
-      </div>
+    </div>
 
+    <script>
+        window.onload = init;
+    </script>
 </body>
 
 </html>
