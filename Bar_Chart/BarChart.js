@@ -56,9 +56,11 @@ d3.csv("BarChartDataset.csv").then(function (data) {
         .attr("width", x.bandwidth())
         .attr("height", d => height - y(+d["Total"]))
         .attr("fill", d => color(d["Class"]))
-        .on("mouseover", function (d) {
+        .on("mouseover", function (event, d) {
             tooltip.style("visibility", "visible")
-                .text(`Country: ${d["Country Name"]}\nValue: ${d["Total"]}`);
+                .text(`Country: ${d["Country Name"]}\nTotal: ${d["Total"]}`)
+                .style("top", (event.pageY - 10) + "px")
+                .style("left", (event.pageX + 10) + "px");
         })
         .on("mousemove", function () {
             tooltip.style("top", (d3.event.pageY - 10) + "px")
