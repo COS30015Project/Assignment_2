@@ -3,7 +3,11 @@ function init() {
   const width = 960 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
-  const color = d3.scaleOrdinal(d3.schemeCategory10);
+  const colorScale = {
+      "Male": "blue",
+      "Female": "pink",
+      "Total": "green"
+  };
 
   d3.csv("BarChartDataset.csv").then(function (data) {
       const x = d3.scaleBand()
@@ -47,7 +51,7 @@ function init() {
           .attr("width", x.bandwidth())
           .attr("y", d => y(+d["Total"]))
           .attr("height", d => height - y(+d["Total"]))
-          .attr("fill", d => color(d["Class"]))
+          .attr("fill", d => colorScale["Total"]) // Default color for Total
           .on("mouseover", function (event, d) {
               tooltip.style("visibility", "visible")
                   .text(`Country: ${d["Country Name"]}\n${getTooltipText(d)}`)
@@ -62,14 +66,15 @@ function init() {
               tooltip.style("visibility", "hidden");
           });
 
-      // Update bars on radio button change
+      // Update bars and colors on radio button change
       d3.selectAll("input[name='class']").on("change", function () {
           const selectedClass = this.value;
 
           bars.transition()
               .duration(500)
               .attr("y", d => y(+d[selectedClass]))
-              .attr("height", d => height - y(+d[selectedClass]));
+              .attr("height", d => height - y(+d[selectedClass]))
+              .attr("fill", d => colorScale[selectedClass]);
       });
 
       function getTooltipText(d) {
