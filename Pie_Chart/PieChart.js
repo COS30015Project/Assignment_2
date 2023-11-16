@@ -9,8 +9,8 @@ function init() {
   
       // Define colors for each country
       const customColors = {
-        'Country1': '#ff0000', 
-        'Country2': '#00ff00', 
+        'Country1': 'white', 
+        'Country2': 'pink', 
       };
   
       // Create color scale for countries using custom colors
