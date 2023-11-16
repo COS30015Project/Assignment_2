@@ -10,7 +10,7 @@ function init() {
       // Create color scale for countries
       const colorScale = d3.scaleOrdinal()
         .domain(countries)
-        .range(d3.schemeCategory10);
+        .range(d3.schemeSet2);
   
       // Set up the pie chart layout
       const pie = d3.pie();
