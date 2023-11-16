@@ -23,8 +23,8 @@ function init() {
       // Create SVG container for the pie chart
       const svg = d3.select("#chart")
         .append("svg")
-        .attr("width", 800) // Increase the width
-        .attr("height", 800) // Increase the height
+        .attr("width", 400) // Increase the width
+        .attr("height", 400) // Increase the height
         .append("g")
         .attr("transform", "translate(200,200)"); // Adjust the translate for centering
   
