@@ -20,7 +20,7 @@ function init() {
 
     Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
-        d3.csv("us_migration_data.csv") // Load CSV data
+        d3.csv("2022.csv") // Load CSV data
     ]).then(function (data) {
         const json = data[0];
         const csvData = data[1];
@@ -104,7 +104,7 @@ function init() {
                 const formattedData = formatData(data);
                 Tooltip.html(stateName + "<br>" + formattedData);
                 Tooltip.html(
-                    `<div class="tooltip-title">${stateName}</div><div>Total: ${formattedData}</div>`
+                    `<div class="tooltip-title">${stateName}</div><div>${formattedData}</div>`
                 );
             }
         };

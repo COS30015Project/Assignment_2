@@ -1,80 +1,92 @@
 function init() {
-    d3.csv('BarChartDataset.csv').then(data => {
-        const keys = ["Male", "Female"];
+  const margin = { top: 20, right: 20, bottom: 50, left: 60 }; // Increased left margin for y-axis labels
+  const width = 960 - margin.left - margin.right;
+  const height = 500 - margin.top - margin.bottom;
 
-        const stack = d3.stack().keys(keys);
+  const colorScale = {
+      "Male": "blue",
+      "Female": "pink",
+      "Total": "green"
+  };
 
-        const series = stack(data);
+  d3.csv("BarChartDataset.csv").then(function (data) {
+      const x = d3.scaleBand()
+          .domain(data.map(d => d["Country Name"]))
+          .range([0, width])
+          .padding(0.2);
 
-        const width = 600;
-        const height = 400;
-        const padding = 40;
+      const y = d3.scaleLinear()
+          .domain([0, d3.max(data, d => +d["Total"])])
+          .nice()
+          .range([height, 0]);
 
-        const xScale = d3.scaleBand()
-            .domain(data.map(d => d['Country Name']))
-            .range([padding, width - padding])
-            .padding(0.1);
+      const tooltip = d3.select("body")
+          .append("div")
+          .style("position", "absolute")
+          .style("background", "#fff")
+          .style("padding", "10px")
+          .style("border", "1px solid #ccc")
+          .style("border-radius", "4px")
+          .style("visibility", "hidden");
 
-        const yScale = d3.scaleLinear()
-            .domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
-            .range([height - padding, padding]);
+      const chart = d3.select("#chart")
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        const colorScale = d3.scaleOrdinal()
-            .domain(keys)
-            .range(['blue', 'pink']);
+      chart.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
 
-        const svg = d3.select("#chart")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+      chart.append("g")
+          .call(d3.axisLeft(y));
 
-        const groups = svg.selectAll("g")
-            .data(series)
-            .enter()
-            .append("g")
-            .style("fill", (d, i) => colorScale(i));
+      const bars = chart.selectAll(".bar")
+          .data(data)
+          .enter().append("rect")
+          .attr("class", "bar")
+          .attr("x", d => x(d["Country Name"]))
+          .attr("width", x.bandwidth())
+          .attr("y", d => y(+d["Total"]))
+          .attr("height", d => height - y(+d["Total"]))
+          .attr("fill", d => colorScale["Total"]) // Default color for Total
+          .on("mouseover", function (event, d) {
+              tooltip.style("visibility", "visible")
+                  .html(`Country: <strong>${d["Country Name"]}</strong><br>Value: <strong>${getTooltipText(d)}</strong>`)
+                  .style("top", (event.pageY - 10) + "px")
+                  .style("left", (event.pageX + 10) + "px");
+          })
+          .on("mousemove", function (event, d) {
+              tooltip.style("top", (event.pageY - 10) + "px")
+                  .style("left", (event.pageX + 10) + "px");
+          })
+          .on("mouseout", function () {
+              tooltip.style("visibility", "hidden");
+          });
 
-        const rects = groups.selectAll("rect")
-            .data(d => d)
-            .enter()
-            .append("rect")
-            .attr("x", (d, i) => xScale(data[i]['Country Name']))
-            .attr("y", d => yScale(d[1]))
-            .attr("height", d => yScale(d[0]) - yScale(d[1]))
-            .attr("width", xScale.bandwidth())
-            .on("mouseover", showTooltip)
-            .on("mouseout", hideTooltip);
+      // Update bars and colors on radio button change
+      d3.selectAll("input[name='class']").on("change", function () {
+          const selectedClass = this.value;
 
-        svg.append("g")
-            .attr("transform", `translate(0, ${height - padding})`)
-            .call(d3.axisBottom(xScale));
+          bars.transition()
+              .duration(500)
+              .attr("y", d => y(+d[selectedClass]))
+              .attr("height", d => height - y(+d[selectedClass]))
+              .attr("fill", d => colorScale[selectedClass]);
+      });
 
-        svg.append("g")
-            .attr("transform", `translate(${padding}, 0)`)
-            .call(d3.axisLeft(yScale));
+      // Set "Total" radio button as default
+      d3.select("input[value='Total']").property("checked", true);
+  });
 
-        const tooltip = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0);
-
-        function showTooltip(event, d) {
-            const gender = d3.select(this.parentNode).datum().key;
-            const value = d.data[gender];
-
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", 0.9);
-            tooltip.html(`${gender}: ${d3.format(",")(value)}`)
-                .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY - 28) + "px");
-        }
-
-        function hideTooltip() {
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
-        }
-    });
+  function getTooltipText(d) {
+      const selectedClass = d3.select("input[name='class']:checked").node().value;
+      return selectedClass === "Male" ? d["Male"] :
+             selectedClass === "Female" ? d["Female"] :
+             d["Total"];
+  }
 }
 
 window.onload = init;

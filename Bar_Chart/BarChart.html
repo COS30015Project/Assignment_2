@@ -1,68 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Bar Chart</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
-            background: url('background.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            color: black; /* Default text color */
+            background-image: url('background.jpg');
+            background-size: cover; /* Adjust as needed */
         }
 
-        #chart {
-            width: 80%;
-            max-width: 1000px;
-            height: 600px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        #chart-container {
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: rgba(249, 249, 249, 0.9); /* Adjust as needed for background overlay */
         }
 
-        h1 {
-            color: white; /* Text color for h1 element */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Adding a text shadow for better visibility */
-            text-align: center; /* Center-align the text */
-            margin-bottom: 20px; /* Add some space below the h1 element */
+        #chart-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333; /* Adjust as needed */
         }
 
-        .axis text {
-            font-size: 12px;
-        }
-
-        .axis .tick line {
-            display: none;
+        .bar {
+            transition: fill 0.5s;
         }
 
         .tooltip {
             position: absolute;
-            text-align: center;
-            padding: 8px;
-            font: 12px sans-serif;
-            background: lightsteelblue;
-            border: 0.5px solid steelblue;
-            border-radius: 8px;
-            pointer-events: none;
-            opacity: 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            visibility: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
     </style>
-</head>
-
-<body>
-    <h1>Interactive Bar Chart: Male and Female Data by Country</h1>
-    <div id="chart"></div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="BarChart.js"></script>
+</head>
+<body>
+    <div id="chart-container">
+        <div id="chart-header">Bar Chart: Migration for Education for Better Jobs</div>
+        <div id="chart"></div>
+        <input type="radio" id="male" name="class" value="Male" checked>
+        <label for="male">Male</label>
+        <input type="radio" id="female" name="class" value="Female">
+        <label for="female">Female</label>
+        <input type="radio" id="total" name="class" value="Total">
+        <label for="total">Total</label>
+    </div>
 </body>
-
 </html>
