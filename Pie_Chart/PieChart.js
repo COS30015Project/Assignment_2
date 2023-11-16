@@ -9,8 +9,8 @@ function init() {
 
         // Define colors for each country
         const customColors = {
-            'Country1': '#ff0000',
-            'Country2': '#00ff00',
+            'Bangladesh': '#ff0000',
+            'China': '#00ff00',
             // Add more countries and colors as needed
         };
 
