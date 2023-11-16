@@ -1,16 +1,41 @@
+
+To create an interactive D3.js v7 pie chart that reads the provided CSV file and includes a legend with different colors for each country, you can use the following HTML, CSS, and JavaScript code. Make sure to include the D3.js library in your project:
+
+html
+Copy code
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Interactive Pie Chart</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D3.js Pie Chart with Legend</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="PieChart.js"></script>
 
-    <script src="PieChart.js"></script>
-    <link href="PieChart.css" rel="stylesheet" />
-    
+  <style>
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+    }
 
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+    }
+
+    .legend-item span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 5px;
+      border-radius: 50%;
+    }
+  </style>
 </head>
 <body>
-    <div id="chart"></div>
+
+<div id="pie-chart"></div>
+<div class="legend" id="legend"></div>
 </body>
 </html>
