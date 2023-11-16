@@ -55,15 +55,27 @@
     }
 
     .tooltip {
-      position: absolute;
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent rgba(255, 255, 255, 0.9) transparent;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
   </style>
 </head>
 <body>
