@@ -1,6 +1,6 @@
 function init() {
     // Load the CSV file and create the pie chart
-    d3.csv("PieChart.csv").then(function(data) {
+    d3.csv("PieChart.csv").then(function (data) {
         // Extract column headers (countries)
         const countries = Object.keys(data[0]).slice(0, -1);
 
@@ -11,6 +11,7 @@ function init() {
         const customColors = {
             'Country1': '#ff0000',
             'Country2': '#00ff00',
+            // Add more countries and colors as needed
         };
 
         // Create color scale for countries using custom colors
