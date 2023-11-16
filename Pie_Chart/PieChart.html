@@ -10,7 +10,7 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background-color: #f4f4f4;
+      background-color: #f8f8f8;
       margin: 0;
       padding: 0;
       display: flex;
@@ -19,8 +19,14 @@
       height: 100vh;
     }
 
+    #container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     #chart {
-      margin-right: 20px;
+      margin-bottom: 20px;
     }
 
     .legend {
@@ -45,9 +51,9 @@
 
     .tooltip {
       position: absolute;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.9);
       padding: 10px;
-      border: 1px solid #ccc;
+      border: 1px solid #ddd;
       border-radius: 5px;
       pointer-events: none;
       opacity: 0;
@@ -57,9 +63,11 @@
 </head>
 <body>
 
-<div id="chart"></div>
-<div class="legend" id="legend"></div>
-<div class="tooltip" id="tooltip"></div>
+<div id="container">
+  <div id="chart"></div>
+  <div class="legend" id="legend"></div>
+  <div class="tooltip" id="tooltip"></div>
+</div>
 
 </body>
 </html>
