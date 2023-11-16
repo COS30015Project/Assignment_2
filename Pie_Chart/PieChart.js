@@ -9,7 +9,7 @@ function init() {
 
         // Define colors for each country
         const customColors = {
-            'Country1': 'white',
+            'Country1': '#ff0000',
             'Country2': 'pink',
         };
 
