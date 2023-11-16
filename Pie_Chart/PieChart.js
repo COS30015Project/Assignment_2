@@ -30,12 +30,14 @@ function init() {
         const svg = d3.select("#chart")
             .append("svg")
             .attr("width", 600) // Adjust the width for a smaller pie chart
-            .attr("height", 600) // Adjust the height for a smaller pie chart
-            .append("g")
+            .attr("height", 600) // Adjust the height for a smaller pie chart;
+
+        // Center the SVG container
+        const svgContainer = svg.append("g")
             .attr("transform", "translate(300,300)"); // Adjust the translate for centering
 
         // Generate arcs and bind data
-        const arcs = svg.selectAll("path")
+        const arcs = svgContainer.selectAll("path")
             .data(pie(values[0]))
             .enter()
             .append("path")
