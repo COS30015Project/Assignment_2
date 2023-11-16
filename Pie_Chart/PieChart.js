@@ -24,7 +24,7 @@ function init() {
       // Set up the arc generator
       const arc = d3.arc()
         .innerRadius(0)
-        .outerRadius(150); // Adjust the outerRadius for a smaller pie chart
+        .outerRadius(250); // Adjust the outerRadius for a smaller pie chart
   
       // Create SVG container for the pie chart
       const svg = d3.select("#chart")
