@@ -3,46 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Professional Pie Chart with Legend</title>
+  <title>D3.js Beautiful Pie Chart with Legend</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="PieChart.js"></script>
 
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f5f5;
+      font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      background: url('your-background-image.jpg') no-repeat center center fixed;
+      background-size: cover;
     }
 
     #container {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      background-color: #ffffff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      border-radius: 8px;
     }
 
     #chart {
-      margin-bottom: 20px;
+      margin-right: 20px;
     }
 
     .legend {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
+      color: #fff;
+      text-align: left;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      margin-right: 20px;
+      margin-bottom: 10px;
       font-size: 14px;
     }
 
@@ -69,10 +66,10 @@
 <body>
 
 <div id="container">
-  <div id="chart"></div>
   <div class="legend" id="legend"></div>
-  <div class="tooltip" id="tooltip"></div>
+  <div id="chart"></div>
 </div>
+<div class="tooltip" id="tooltip"></div>
 
 </body>
 </html>
