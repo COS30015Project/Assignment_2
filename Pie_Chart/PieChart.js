@@ -7,10 +7,16 @@ function init() {
       // Extract values for each country
       const values = data.map(d => countries.map(country => +d[country]));
   
-      // Create color scale for countries
+      // Define colors for each country
+      const customColors = {
+        'Country1': '#ff0000', 
+        'Country2': '#00ff00', 
+      };
+  
+      // Create color scale for countries using custom colors
       const colorScale = d3.scaleOrdinal()
         .domain(countries)
-        .range(d3.schemeSet2);
+        .range(countries.map(country => customColors[country] || d3.schemeSet2[countries.indexOf(country)]));
   
       // Set up the pie chart layout
       const pie = d3.pie();
@@ -18,15 +24,15 @@ function init() {
       // Set up the arc generator
       const arc = d3.arc()
         .innerRadius(0)
-        .outerRadius(300); // Double the outerRadius for a larger pie chart
+        .outerRadius(150); // Adjust the outerRadius for a smaller pie chart
   
       // Create SVG container for the pie chart
       const svg = d3.select("#chart")
         .append("svg")
-        .attr("width", 800) // Double the width
-        .attr("height", 800) // Double the height
+        .attr("width", 600) // Adjust the width for a smaller pie chart
+        .attr("height", 600) // Adjust the height for a smaller pie chart
         .append("g")
-        .attr("transform", "translate(400,400)"); // Adjust the translate for centering
+        .attr("transform", "translate(200,200)"); // Adjust the translate for centering
   
       // Generate arcs and bind data
       const arcs = svg.selectAll("path")
