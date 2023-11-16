@@ -48,6 +48,7 @@
 
     .legend {
       display: flex;
+      flex-wrap: wrap; /* Allow items to wrap to the next line */
       flex-direction: column;
       background-color: rgba(0, 0, 0, 0.5);
       padding: 15px;
@@ -60,6 +61,7 @@
       align-items: center;
       margin-bottom: 10px;
       font-size: 14px;
+      flex-basis: 50%; /* Set the width of each item to 50% to create two columns */
     }
 
     .legend-item span {
