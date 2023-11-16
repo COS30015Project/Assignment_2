@@ -18,15 +18,15 @@ function init() {
       // Set up the arc generator
       const arc = d3.arc()
         .innerRadius(0)
-        .outerRadius(100);
+        .outerRadius(150); // Increase the outerRadius for a larger pie chart
   
       // Create SVG container for the pie chart
       const svg = d3.select("#chart")
         .append("svg")
-        .attr("width", 300)
-        .attr("height", 300)
+        .attr("width", 400) // Increase the width
+        .attr("height", 400) // Increase the height
         .append("g")
-        .attr("transform", "translate(150,150)");
+        .attr("transform", "translate(200,200)"); // Adjust the translate for centering
   
       // Generate arcs and bind data
       const arcs = svg.selectAll("path")
