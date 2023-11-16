@@ -11,7 +11,7 @@ function init() {
         const customColors = {
             'Bangladesh': '#ff0000',
             'China': '#00ff00',
-            // Add more countries and colors as needed
+            
         };
 
         // Create color scale for countries using custom colors
