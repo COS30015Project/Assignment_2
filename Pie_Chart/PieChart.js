@@ -66,16 +66,6 @@ function init() {
                 d3.select("#tooltip").style("opacity", 0);
             });
 
-        // Add text to show total value at the bottom of the pie chart
-        const totalValue = d3.sum(values[0]);
-        svgContainer.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", "1.5em") // Adjust vertical position
-            .style("font-size", "20px") // Adjust font size
-            .style("font-weight", "bold") // Add bold font
-            .style("fill", "#fff")
-            .text(`Total: ${totalValue}`);
-
         // Create legend
         const legend = d3.select("#legend")
             .selectAll(".legend-item")
@@ -90,6 +80,17 @@ function init() {
         legend.append("p")
             .text(d => d)
             .style("color", "#fff"); // Adjust the legend text color for better readability
+
+        // Add text to show total value below the pie chart
+        const totalValue = d3.sum(values[0]);
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("x", 300) // Adjust x-coordinate to center it
+            .attr("y", 500) // Adjust y-coordinate to position it below the pie chart
+            .style("font-size", "20px") // Adjust font size
+            .style("font-weight", "bold") // Add bold font
+            .style("fill", "#fff")
+            .text(`Total: ${totalValue}`);
     });
 }
 
