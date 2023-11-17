@@ -5,13 +5,20 @@ function init() {
         const countries = Object.keys(data[0]).slice(0, -1);
 
         // Extract values for each country
-        const values = data.map(d => countries.map(country => +d[country]));
+        const values = [countries.map(country => +data[0][country])];
 
         // Define colors for each country
         const customColors = {
             'Bangladesh': '#ff0000',
             'China': '#00ff00',
-            
+            'India': '#0000ff',
+            'Iran': '#ff9900',
+            'Korea': '#ff00ff',
+            'Pakistan': '#9900ff',
+            'Philippines': '#00ffff',
+            'Taiwan': '#ffcc00',
+            'Vietnam': '#cc00ff',
+            'Others': '#cccccc',
         };
 
         // Create color scale for countries using custom colors
@@ -31,7 +38,7 @@ function init() {
         const svg = d3.select("#chart")
             .append("svg")
             .attr("width", 600) // Adjust the width for a smaller pie chart
-            .attr("height", 600) // Adjust the height for a smaller pie chart;
+            .attr("height", 600); // Adjust the height for a smaller pie chart
 
         // Center the SVG container
         const svgContainer = svg.append("g")
