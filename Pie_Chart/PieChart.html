@@ -51,18 +51,18 @@
   flex-wrap: wrap;
   flex-direction: row; /* Change to row to align items horizontally */
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 15px;
+  padding: 10px; /* Reduce padding to make the legend closer */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  justify-content: space-between; 
+  justify-content: space-between;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px; /* Reduce margin to make the gap closer */
   font-size: 14px;
-  flex-basis: calc(50% - 5px); /* Adjusted to allow two items per row with margin */
+  flex-basis: calc(50% - 5px); /* Adjusted to allow two items per row with reduced margin */
 }
 
 .legend-item span {
@@ -72,6 +72,7 @@
   margin-right: 8px;
   border-radius: 50%;
 }
+
 
 
     .tooltip {
