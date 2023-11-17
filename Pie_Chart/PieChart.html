@@ -49,20 +49,22 @@
     .legend {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: row; /* Change to row to align items horizontally */
   background-color: rgba(0, 0, 0, 0.5);
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  justify-content: space-between; /* Add space between legend items */
+  justify-content: space-around; /* Use space-around to distribute items more evenly */
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
   font-size: 14px;
-  flex-basis: calc(50% - 10px); /* Adjusted to allow two items per row with margin */
+  margin-right: 20px; /* Add some space between legend items */
+}
+
+.legend-item:last-child {
+  margin-right: 0; /* Remove margin for the last legend item */
 }
 
 .legend-item span {
@@ -72,6 +74,7 @@
   margin-right: 8px;
   border-radius: 50%;
 }
+
 
 
 
