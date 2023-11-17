@@ -66,6 +66,15 @@ function init() {
                 d3.select("#tooltip").style("opacity", 0);
             });
 
+        // Add text to show total value at the bottom of the pie chart
+        const totalValue = d3.sum(values[0]);
+        svgContainer.append("text")
+            .attr("text-anchor", "middle")
+            .attr("dy", "0.35em")
+            .style("font-size", "16px")
+            .style("fill", "#fff")
+            .text(`Total: ${totalValue}`);
+
         // Create legend
         const legend = d3.select("#legend")
             .selectAll(".legend-item")
