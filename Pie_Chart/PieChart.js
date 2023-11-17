@@ -70,8 +70,9 @@ function init() {
         const totalValue = d3.sum(values[0]);
         svgContainer.append("text")
             .attr("text-anchor", "middle")
-            .attr("dy", "0.35em")
-            .style("font-size", "16px")
+            .attr("dy", "1.5em") // Adjust vertical position
+            .style("font-size", "20px") // Adjust font size
+            .style("font-weight", "bold") // Add bold font
             .style("fill", "#fff")
             .text(`Total: ${totalValue}`);
 
