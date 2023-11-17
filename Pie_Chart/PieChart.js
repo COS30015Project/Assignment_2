@@ -86,7 +86,7 @@ function init() {
         svg.append("text")
             .attr("text-anchor", "middle")
             .attr("x", 300) // Adjust x-coordinate to center it
-            .attr("y", 650) // Adjust y-coordinate to position it below the pie chart
+            .attr("y", 550) // Adjust y-coordinate to position it below the pie chart
             .style("font-size", "20px") // Adjust font size
             .style("font-weight", "bold") // Add bold font
             .style("fill", "#fff")
