@@ -20,7 +20,7 @@ function init() {
     let selectedYear = 2022; // Default year
 
     // Create a tooltip
-    var Tooltip = d3.select("#chart")
+    var Tooltip = d3.select("body")
       .append("div")
       .style("opacity", 0)
       .attr("class", "tooltip")
@@ -49,20 +49,22 @@ function init() {
       // Set up zoom behavior
       const zoom = d3.zoom()
         .scaleExtent([1, 8])
-        .extent([[0, 0], [width, height]])
+        .translateExtent([[0, 0], [width, height]])
         .on("zoom", zoomed);
 
       svg.call(zoom);
 
       function zoomed(event) {
-        g.selectAll('path')
-          .attr('transform', event.transform);
-        Tooltip.style("opacity", 0);
+        g.style("stroke-width", 1.5 / event.transform.k + "px");
+        g.attr("transform", event.transform);
       }
 
       // Function for mouseover event
       var mouseover = function (event, d) {
         Tooltip.style("opacity", 1);
+
+        Tooltip.style("left", (event.pageX + 10) + "px");
+        Tooltip.style("top", (event.pageY + 10) + "px");
 
         if (selectedState !== d) {
           d3.select(this)
@@ -230,6 +232,9 @@ function init() {
             Total: +d.Total,
           };
         });
+
+        // After updating the data, update the map
+        updateMap();
       }
 
       // Function to update the map based on the selected year
@@ -244,6 +249,7 @@ function init() {
             return d3.interpolateGnBu(total / maxTotal);
           });
       }
+
     });
 }
 
