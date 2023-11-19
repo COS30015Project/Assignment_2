@@ -19,7 +19,6 @@ function init() {
     let selectedState = null;
     let selectedYear = 2022; // Default year
   
-    // Create a tooltip
     var Tooltip = d3.select("body")
       .append("div")
       .style("opacity", 0)
@@ -30,19 +29,19 @@ function init() {
       .style("padding", "10px")
       .style("position", "absolute");
   
-    // Function to load data for a given year and CSV file
     function loadData(year, csvFile) {
       Promise.all([
-        d3.json("usa.json"), // Load GeoJSON data
-        d3.csv(csvFile)      // Load CSV data dynamically
+        d3.json("usa.json"),
+        d3.csv(csvFile)
       ]).then(function (data) {
         let json = data[0];
         let csvData = data[1];
   
         let processedData = {};
         let processedTotal = {};
+        let columns = Object.keys(csvData[0]).filter(key => key !== 'US States' && key !== 'Total');
   
-        updateData(csvData);
+        updateData(csvData, columns);
   
         const totalValues = Object.values(processedTotal).map(d => d.Total);
         const maxTotal = d3.max(totalValues);
@@ -74,7 +73,7 @@ function init() {
   
             if (totalData) {
               const total = totalData.Total;
-              const formattedData = formatData(processedData[stateName]);
+              const formattedData = formatData(processedData[stateName], columns);
               Tooltip.html(
                 `<div class="tooltip-title">${stateName}</div><div>Total: ${total}</div>${formattedData}`
               );
@@ -86,7 +85,7 @@ function init() {
           if (selectedState === d) {
             const stateName = d.properties.NAME;
             const data = processedData[stateName];
-            const formattedData = formatData(data);
+            const formattedData = formatData(data, columns);
             Tooltip.html(
               `<div class="tooltip-title">${stateName}</div>${formattedData}`
             );
@@ -191,11 +190,8 @@ function init() {
           }
         }
   
-        function formatData(data) {
-          const formattedData = [];
-          for (const category in data) {
-            formattedData.push(`${category}: ${data[category]}`);
-          }
+        function formatData(data, columns) {
+          const formattedData = columns.map(category => `${category}: ${data[category]}`);
           return `<div>${formattedData.join("<br>")}</div>`;
         }
   
@@ -205,32 +201,23 @@ function init() {
         slider.addEventListener("input", function () {
           selectedYear = +this.value;
           selectedYearText.textContent = selectedYear;
-          // Dynamically generate the CSV file name based on the selected year
           const csvFileName = `${selectedYear}.csv`;
           d3.csv(csvFileName).then(function (newCsvData) {
-            updateData(newCsvData);
+            updateData(newCsvData, columns);
             updateMap();
           });
         });
   
-        function updateData(newCsvData) {
+        function updateData(newCsvData, columns) {
           processedData = {};
           processedTotal = {};
   
           newCsvData.forEach(function (d) {
             const stateName = d['US States'];
-            processedData[stateName] = {
-              Bangladesh: +d.Bangladesh,
-              China: +d.China,
-              India: +d.India,
-              Iran: +d.Iran,
-              Korea: +d.Korea,
-              Pakistan: +d.Pakistan,
-              Philippines: +d.Philippines,
-              Taiwan: +d.Taiwan,
-              Vietnam: +d.Vietnam,
-              Others: +d.Others,
-            };
+            processedData[stateName] = {};
+            columns.forEach(category => {
+              processedData[stateName][category] = +d[category];
+            });
   
             processedTotal[stateName] = {
               Total: +d.Total,
@@ -258,7 +245,6 @@ function init() {
       });
     }
   
-    // Load data for the default year and CSV file
     loadData(selectedYear, "2022.csv");
   }
   
