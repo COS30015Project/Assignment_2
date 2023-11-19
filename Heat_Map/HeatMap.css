@@ -90,8 +90,11 @@ footer {
     text-align: center;
 }
 
+label[for="yearSlider"] {
+    color: white; 
+}
+
 #yearSlider {
-    background-color: white;
     width: 80%;
     margin-top: 10px;
 }
