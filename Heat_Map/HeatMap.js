@@ -73,9 +73,8 @@ function init() {
   
             if (totalData) {
               const total = totalData.Total;
-              const formattedData = formatData(processedData[stateName], columns);
               Tooltip.html(
-                `<div class="tooltip-title">${stateName}</div></div>${formattedData}`
+                `<div class="tooltip-title">${stateName}</div><div>Total: ${total}`
               );
             }
           }
@@ -185,6 +184,15 @@ function init() {
                 .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
                 .translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
             );
+
+            const stateName = d.properties.NAME;
+      const data = processedData[stateName];
+      const formattedData = formatData(data, columns);
+      DetailTooltip.style("opacity", 1);
+      DetailTooltip.style("left", (event.pageX + 10) + "px");
+      DetailTooltip.style("top", (event.pageY + 10) + "px");
+      DetailTooltip.html(`<div class="tooltip-title">${stateName}</div>${formattedData}`);
+      
           } else {
             reset();
           }
