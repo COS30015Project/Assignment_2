@@ -34,7 +34,7 @@ function init() {
       const zoom = setupZoom(svg, g, width, height);
   
       // Draw map features
-      drawMapFeatures(g, json, path, processedTotal, maxTotal, zoom, selectedState, Tooltip);
+      drawMapFeatures(g, json, path, processedTotal, maxTotal, zoom, selectedState, Tooltip, svg);
   
       // Create a horizontal legend
       const legendGroup = createLegend(svg, width, height, maxTotal);
@@ -43,7 +43,7 @@ function init() {
       const resetFunction = createResetFunction(selectedState, g, svg, zoom, path);
   
       // Attach events to map features
-      attachMapEvents(g, path, zoom, resetFunction);
+      attachMapEvents(g, path, zoom, resetFunction, Tooltip, processedTotal);
   
       // Attach events to legend
       attachLegendEvents(legendGroup, processedTotal, maxTotal, g, path, zoom, resetFunction);
@@ -106,7 +106,7 @@ function init() {
     return zoom;
   }
   
-  function drawMapFeatures(g, json, path, processedTotal, maxTotal, zoom, selectedState, Tooltip) {
+  function drawMapFeatures(g, json, path, processedTotal, maxTotal, zoom, selectedState, Tooltip, svg) {
     g.selectAll("path")
       .data(json.features)
       .enter()
@@ -232,7 +232,7 @@ function init() {
     return legendGroup;
   }
   
-  function attachMapEvents(g, path, zoom, resetFunction) {
+  function attachMapEvents(g, path, zoom, resetFunction, Tooltip, processedTotal) {
     g.selectAll(".feature").on("click", clicked)
       .on("mouseover", mouseover)
       .on("mousemove", mousemove)
