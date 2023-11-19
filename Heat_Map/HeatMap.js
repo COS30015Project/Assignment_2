@@ -20,7 +20,7 @@ function init() {
     let selectedYear = 2022; // Default year
 
     // Create a tooltip
-    var Tooltip = d3.select("body")
+    var Tooltip = d3.select("#chart")
       .append("div")
       .style("opacity", 0)
       .attr("class", "tooltip")
@@ -49,22 +49,20 @@ function init() {
       // Set up zoom behavior
       const zoom = d3.zoom()
         .scaleExtent([1, 8])
-        .translateExtent([[0, 0], [width, height]])
+        .extent([[0, 0], [width, height]])
         .on("zoom", zoomed);
 
       svg.call(zoom);
 
       function zoomed(event) {
-        g.style("stroke-width", 1.5 / event.transform.k + "px");
-        g.attr("transform", event.transform);
+        g.selectAll('path')
+          .attr('transform', event.transform);
+        Tooltip.style("opacity", 0);
       }
 
       // Function for mouseover event
       var mouseover = function (event, d) {
         Tooltip.style("opacity", 1);
-
-        Tooltip.style("left", (event.pageX + 10) + "px");
-        Tooltip.style("top", (event.pageY + 10) + "px");
 
         if (selectedState !== d) {
           d3.select(this)
@@ -246,7 +244,6 @@ function init() {
             return d3.interpolateGnBu(total / maxTotal);
           });
       }
-
     });
 }
 
