@@ -24,17 +24,17 @@ function init() {
       .append("div")
       .style("opacity", 0)
       .attr("class", "tooltip")
-      .style("background-color", "rgba(255, 255, 255, 0.9)") // Add transparency to the background color
-      .style("border", "1px solid #000") // Add a border
+      .style("background-color", "rgba(255, 255, 255, 0.9)")
+      .style("border", "1px solid #000")
       .style("border-radius", "5px")
-      .style("padding", "10px") // Increase padding
+      .style("padding", "10px")
       .style("position", "absolute");
   
-    // Function to load data for a given year
-    function loadData(year) {
+    // Function to load data for a given year and CSV file
+    function loadData(year, csvFile) {
       Promise.all([
         d3.json("usa.json"), // Load GeoJSON data
-        d3.csv(`${year}.csv`)
+        d3.csv(csvFile)      // Load CSV data dynamically
       ]).then(function (data) {
         let json = data[0];
         let csvData = data[1];
@@ -44,11 +44,9 @@ function init() {
   
         updateData(csvData);
   
-        // Set the color domain based on the range of total values
         const totalValues = Object.values(processedTotal).map(d => d.Total);
         const maxTotal = d3.max(totalValues);
   
-        // Set up zoom behavior
         const zoom = d3.zoom()
           .scaleExtent([1, 8])
           .translateExtent([[0, 0], [width, height]])
@@ -61,7 +59,6 @@ function init() {
           g.attr("transform", event.transform);
         }
   
-        // Function for mouseover event
         var mouseover = function (event, d) {
           Tooltip.style("opacity", 1);
   
@@ -75,7 +72,6 @@ function init() {
             const stateName = d.properties.NAME;
             const totalData = processedTotal[stateName];
   
-            // Check if data for the state exists
             if (totalData) {
               const total = totalData.Total;
               const formattedData = formatData(processedData[stateName]);
@@ -86,7 +82,6 @@ function init() {
           }
         };
   
-        // Function for mousemove event
         var mousemove = function (event, d) {
           if (selectedState === d) {
             const stateName = d.properties.NAME;
@@ -98,7 +93,6 @@ function init() {
           }
         };
   
-        // Function for mouseleave event
         var mouseleave = function (event, d) {
           Tooltip.style("opacity", 0);
           if (selectedState !== d) {
@@ -118,12 +112,10 @@ function init() {
             const stateName = d.properties.NAME;
             const totalData = processedTotal[stateName];
   
-            // Check if data for the state exists
             if (totalData) {
               const total = totalData.Total;
               return d3.interpolateGnBu(total / maxTotal);
             } else {
-              // Handle the case when data is not available
               return "lightgray";
             }
           })
@@ -132,7 +124,6 @@ function init() {
           .on("mousemove", mousemove)
           .on("mouseleave", mouseleave);
   
-        // Create a horizontal legend
         const legendGroup = svg.append("g")
           .attr("transform", `translate(${width - 220}, ${height - 40})`);
   
@@ -146,7 +137,6 @@ function init() {
         const legendAxis = d3.axisBottom(legendScale)
           .tickValues(d3.range(0, maxTotal, maxTotal / 4));
   
-        // Create a linear gradient for the legend
         const defs = svg.append("defs");
   
         const linearGradient = defs.append("linearGradient")
@@ -173,7 +163,6 @@ function init() {
           .attr("class", "legend-axis")
           .call(legendAxis);
   
-        // Reset function
         function reset() {
           selectedState = null;
           g.selectAll(".feature").style("fill", function (d) {
@@ -202,7 +191,6 @@ function init() {
           }
         }
   
-        // Function to format data
         function formatData(data) {
           const formattedData = [];
           for (const category in data) {
@@ -211,20 +199,20 @@ function init() {
           return `<div>${formattedData.join("<br>")}</div>`;
         }
   
-        // Slider event handling
         const slider = document.getElementById("yearSlider");
         const selectedYearText = document.getElementById("selectedYear");
   
         slider.addEventListener("input", function () {
           selectedYear = +this.value;
           selectedYearText.textContent = selectedYear;
-          d3.csv(`${selectedYear}.csv`).then(function (newCsvData) {
+          // Dynamically generate the CSV file name based on the selected year
+          const csvFileName = `${selectedYear}.csv`;
+          d3.csv(csvFileName).then(function (newCsvData) {
             updateData(newCsvData);
             updateMap();
           });
         });
   
-        // Function to update data based on the selected year
         function updateData(newCsvData) {
           processedData = {};
           processedTotal = {};
@@ -250,7 +238,6 @@ function init() {
           });
         }
   
-        // Function to update the map based on the selected year
         function updateMap() {
           g.selectAll("path")
             .data(json.features)
@@ -260,12 +247,10 @@ function init() {
               const stateName = d.properties.NAME;
               const totalData = processedTotal[stateName];
   
-              // Check if data for the state exists
               if (totalData) {
                 const total = totalData.Total;
                 return d3.interpolateGnBu(total / maxTotal);
               } else {
-                // Handle the case when data is not available
                 return "lightgray";
               }
             });
@@ -273,8 +258,8 @@ function init() {
       });
     }
   
-    // Load data for the default year
-    loadData(selectedYear);
+    // Load data for the default year and CSV file
+    loadData(selectedYear, "2022.csv");
   }
   
   window.onload = init;
