@@ -125,8 +125,11 @@ label[for="yearSlider"] {
     font-size: 45px; 
 }
 
-#year-info span,
+#year-info span {
+    font-size: 45px; 
+}
 #total-info span {
     font-weight: bold;
+    font-size: 45px; 
 }
 
