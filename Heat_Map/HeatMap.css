@@ -109,7 +109,7 @@ label[for="yearSlider"] {
 #info-container {
     position: absolute;
     top: 50%;
-    left: 10px;
+    left: 35px;
     transform: translateY(-50%);
     color: white;
     font-size: 45px; 
@@ -121,7 +121,7 @@ label[for="yearSlider"] {
     margin-bottom: 10px;
 }
 
-.large-text {
+.yearText {
     font-size: 45px; 
 }
 
