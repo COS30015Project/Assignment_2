@@ -121,6 +121,9 @@ function init() {
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("mouseleave", mouseleave);
+
+          const yearInfo = document.getElementById("selectedYear");
+          const totalMigrationInfo = document.getElementById("totalMigration");
   
         const legendGroup = svg.append("g")
           .attr("transform", `translate(${width - 220}, ${height - 40})`);
@@ -192,7 +195,7 @@ function init() {
       DetailTooltip.style("left", (event.pageX + 10) + "px");
       DetailTooltip.style("top", (event.pageY + 10) + "px");
       DetailTooltip.html(`<div class="tooltip-title">${stateName}</div>${formattedData}`);
-      
+
           } else {
             reset();
           }
@@ -241,6 +244,9 @@ function init() {
             .style("fill", function (d) {
               const stateName = d.properties.NAME;
               const totalData = processedTotal[stateName];
+
+              const totalMigration = getTotalMigration(processedTotal);
+                totalMigrationInfo.textContent = totalMigration;
   
               if (totalData) {
                 const total = totalData.Total;
@@ -251,6 +257,16 @@ function init() {
             });
         }
       });
+    }
+
+    function getTotalMigration(processedTotal) {
+        // Calculate and return the total migration from processedTotal
+        // (sum the 'Total' property of each state)
+        let totalMigration = 0;
+        Object.values(processedTotal).forEach(stateData => {
+            totalMigration += stateData.Total || 0;
+        });
+        return totalMigration;
     }
   
     loadData(selectedYear, "2022.csv");
