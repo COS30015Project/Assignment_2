@@ -75,7 +75,7 @@ function init() {
               const total = totalData.Total;
               const formattedData = formatData(processedData[stateName], columns);
               Tooltip.html(
-                `<div class="tooltip-title">${stateName}</div><div>Total: ${total}</div>${formattedData}`
+                `<div class="tooltip-title">${stateName}</div></div>${formattedData}`
               );
             }
           }
