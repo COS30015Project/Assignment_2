@@ -23,10 +23,6 @@ h1 {
     margin-bottom: 10px;
 }
 
-p {
-    font-size: 18px;
-}
-
 main {
     display: flex;
     flex-direction: column;
