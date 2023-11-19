@@ -237,18 +237,76 @@ function init() {
         updateMap();
       }
 
-      // Function to update the map based on the selected year
-      function updateMap() {
-        g.selectAll("path")
-          .data(json.features)
-          .transition()
-          .duration(500)
-          .style("fill", function (d) {
-            const stateName = d.properties.NAME;
-            const total = processedTotal[stateName].Total;
-            return d3.interpolateGnBu(total / maxTotal);
-          });
-      }
+     // Function to update the map based on the selected year
+function updateMap() {
+    g.selectAll("path")
+      .data(json.features)
+      .transition()
+      .duration(500)
+      .style("fill", function (d) {
+        const stateName = d.properties.NAME;
+        const totalData = processedTotal[stateName];
+        
+        // Check if data for the state exists
+        if (totalData) {
+          const total = totalData.Total;
+          return d3.interpolateGnBu(total / maxTotal);
+        } else {
+          // Handle the case when data is not available
+          return "lightgray"; // You can set a default color or handle it as needed
+        }
+      });
+  }
+  
+  // Function for mouseover event
+  var mouseover = function (event, d) {
+    Tooltip.style("opacity", 1);
+  
+    Tooltip.style("left", (event.pageX + 10) + "px");
+    Tooltip.style("top", (event.pageY + 10) + "px");
+  
+    const stateName = d.properties.NAME;
+    const totalData = processedTotal[stateName];
+    
+    // Check if data for the state exists
+    if (totalData) {
+      d3.select(this)
+        .style("stroke", "black")
+        .style("opacity", 1);
+      
+      const total = totalData.Total;
+  
+      Tooltip.html(
+        `<div class="tooltip-title">${stateName}</div><div>Total: ${total}</div>`
+      );
+    }
+  };
+  
+  // Function to update the data based on the selected year
+  function updateData(newCsvData) {
+    processedData = {};
+    processedTotal = {};
+  
+    newCsvData.forEach(function (d) {
+      const stateName = d['US States'];
+      processedData[stateName] = {
+        Bangladesh: +d.Bangladesh,
+        China: +d.China,
+        India: +d.India,
+        Iran: +d.Iran,
+        Korea: +d.Korea,
+        Pakistan: +d.Pakistan,
+        Philippines: +d.Philippines,
+        Taiwan: +d.Taiwan,
+        Vietnam: +d.Vietnam,
+        Others: +d.Others,
+      };
+  
+      processedTotal[stateName] = {
+        Total: +d.Total,
+      };
+    });
+  }
 
     });
 }
