@@ -105,3 +105,21 @@ label[for="yearSlider"] {
     font-size: 14px;
     color: white;
 }
+
+#info-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 16px;
+}
+
+#year-info,
+#total-info {
+    margin-bottom: 10px;
+}
+
+#year-info span,
+#total-info span {
+    font-weight: bold;
+}
