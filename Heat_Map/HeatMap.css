@@ -106,13 +106,15 @@ label[for="yearSlider"] {
     color: white;
 }
 
+/* Add these styles to your existing CSS */
+
 #info-container {
     position: absolute;
     top: 50%;
     left: 10px;
     transform: translateY(-50%);
     color: white;
-    font-size: 20px;
+    font-size: 30px; /* Adjust the font size as needed */
     text-align: left;
 }
 
@@ -125,3 +127,4 @@ label[for="yearSlider"] {
 #total-info span {
     font-weight: bold;
 }
+
